@@ -3,12 +3,20 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
+import { BrowserRouter, Route, Routes} from 'react-router-dom';
+import Dashboard from './Dashboard';
+import CustomerDashboard from './CustomerDashboard';
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+const isAdmin = false;
+
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <BrowserRouter >
+  <Routes>
+    <Route exact={true} path="/" element={<App />} />
+    <Route exact={true} path="/dashboard" element={isAdmin == true ? <Dashboard /> : <CustomerDashboard />} />
+  </Routes>
+  </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function
