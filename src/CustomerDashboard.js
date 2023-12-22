@@ -80,9 +80,9 @@ class CustomerDashboard extends Component {
         ]
         return (
             <div style={{ backgroundColor: 'var(--darker-bg)' }}>
-                {!this.state.onTop && <Icon_arrow className='interactable dashboard-up-btn' onClick={() => this.scrollToTop()} />}
-                <h1 style={{ marginTop: 50, padding: '20px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: (this.state.requestingOffer == true || this.state.requestSent == true) ? 'blur(3px)' : '' }}>Dashboard</h1>
-                <button className='rounded-btn-primary' style={{ position: 'relative', top: -5, left: '50%', filter: (this.state.requestingOffer == true || this.state.requestSent == true) ? 'blur(3px)' : '' }}
+                {!this.state.onTop && <Icon_arrow className='interactable dashboard-up-btn' style={{marginTop: 5}} onClick={() => this.scrollToTop()} />}
+                <h1 style={{ marginTop: 65, padding: '20px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: (this.state.requestingOffer == true || this.state.requestSent == true) ? 'blur(3px)' : '' }}>Dashboard</h1>
+                <button className='rounded-btn-primary' style={{ position: 'relative', top: 0, left: '50%', filter: (this.state.requestingOffer == true || this.state.requestSent == true) ? 'blur(3px)' : '' }}
                     onClick={() => this.requestOfferPopUp()}>Request New Offer</button>
                 <div className='dashboard-header' style={{ filter: (this.state.requestingOffer == true || this.state.requestSent == true) ? 'blur(3px)' : '' }}>
                     <Card onClick={() => this.scrollToComponent(this.offer_requestsRef)}>

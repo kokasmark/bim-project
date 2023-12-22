@@ -18,7 +18,7 @@ class App extends Component {
       <div>
 
         <div ref={this.heroRef}>
-          <div style={{ display: 'inline-block', position: 'relative', left: 300 }}>
+          <div style={{ display: 'inline-block', position: 'relative', left: 300, top: -200}}>
             <h1 style={{ fontSize: 56, width: 600 }}>
               Digitális Műszaki előkészítés
             </h1>
@@ -32,7 +32,7 @@ class App extends Component {
               })
             }>More Info</b>
           </div>
-          <img src={hero_img} style={{ position: 'relative', top: 100, left: '32%' }} />
+          <img src={hero_img} style={{ position: 'relative', top: 100, left: '32%', width: 980, height: '100%' }} />
         </div>
         <div style={{ position: 'relative', top: 500, marginLeft: '15%', height: 800 }} ref={this.moreInfoRef}>
           <Icon_arrow className='interactable' style={{ position: 'relative', left: '39%', width: 50, height: 50 }} onClick={() =>
