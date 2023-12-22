@@ -7,6 +7,7 @@
   
   --bg: #010F17;
   --darker-bg: #01080c;
+  --lighter-bg: #0d171e;
   --shadow: #000203;
 }
 body{
@@ -17,6 +18,7 @@ body{
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
+  font-family: 'Roboto';
 }
 .rounded-btn-primary{
   background-color: var(--primary);
@@ -197,6 +199,23 @@ input::placeholder{
 .upload-file p{
   color: #8492C4 !important;
   margin-top: -10px;
+}
+.request-sent{
+  position: absolute;
+  top: 20%;
+  left: 15%;
+  width: 70%;
+  height: 40%;
+  background-color: var(--bg);
+  border-radius: 10px;
+  animation: anim-scale .5s ease;
+  box-shadow: 5px 5px 5px var(--shadow);
+}
+.request-sent .request-head{
+  text-align: center;
+}
+.request-sent .request-data{
+  background-color: var(--lighter-bg);
 }
 @keyframes anim-scale {
   0%{

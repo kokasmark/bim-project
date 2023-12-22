@@ -49,7 +49,7 @@ class App extends Component {
               <p style={{ fontSize: 14 }}>Váltson papíralapú tervekről digitális formátumra, és élvezze a megnövekedett hatékonyságot és hozzáférhetőséget. A digitálisra váltással nem csak a fákat kíméli, de a műszaki tervek frissítése és megosztása is azonnal elvégezhető.</p>
             </div>
           </div>
-          <div className='home-card' style={{ position: 'relative', top: -25 }}>
+          <div className='home-card' style={{ position: 'relative', top: -5 }}>
             <img src={blue_icon} style={{ margin: 10 }} />
             <div style={{ margin: 20 }}>
               <p style={{ fontSize: 22 }}>Műszaki szakembereket mentesítse az előkészítési folymatoktól</p>
