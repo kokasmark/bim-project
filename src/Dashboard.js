@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import NavBar from './NavBar';
 import { Card } from 'react-bootstrap';
 import { ReactComponent as Icon_arrow } from './assets/icon-arrow-up.svg';
+import calc_icon from './assets/dashboard_icons/calculate_black_24dp 1.png'
 
 
 class Dashboard extends Component {
@@ -83,22 +84,24 @@ class Dashboard extends Component {
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-5.png')} /> Offer Requests</Card.Title>
                         <Card.Body>
-                            <div className='column-headers'>
+                            <div className='column-headers-rw-6'>
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
                                 <p>Rövid cégnév</p>
                                 <p>Ajánlatkérési dátum</p>
+                                <p>Action</p>
                                 <div className='line'></div>
                             </div>
 
                             {this.state.offer_requests.map((offer) =>
-                                <div className='rows'>
+                                <div className='rows-rw-6'>
                                     <p>{offer.sorszam}</p>
                                     <p>{offer.projekt}</p>
                                     <p>{offer.munkanem}</p>
                                     <p>{offer.cegnev}</p>
                                     <p>{offer.datum}</p>
+                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -50}}><img src={calc_icon}/>Calculation</p>
                                     <div className='line'>
                                     </div>
                                 </div>
@@ -110,22 +113,24 @@ class Dashboard extends Component {
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-1.png')} /> Sent Offers</Card.Title>
                         <Card.Body>
-                            <div className='column-headers'>
+                            <div className='column-headers-rw-6'>
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
                                 <p>Rövid cégnév</p>
                                 <p>Ajánlatkérési dátum</p>
+                                <p>Status</p>
                                 <div className='line'></div>
                             </div>
 
                             {this.state.offer_requests.map((offer) =>
-                                <div className='rows'>
+                                <div className='rows-rw-6'>
                                     <p>{offer.sorszam}</p>
                                     <p>{offer.projekt}</p>
                                     <p>{offer.munkanem}</p>
                                     <p>{offer.cegnev}</p>
                                     <p>{offer.datum}</p>
+                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -30}}>See Offer</p>
                                     <div className='line'>
                                     </div>
                                 </div>
@@ -137,22 +142,24 @@ class Dashboard extends Component {
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-2.png')} /> Orders (paid)</Card.Title>
                         <Card.Body>
-                            <div className='column-headers'>
+                            <div className='column-headers-rw-6'>
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
                                 <p>Rövid cégnév</p>
                                 <p>Ajánlatkérési dátum</p>
+                                <p>Action</p>
                                 <div className='line'></div>
                             </div>
 
                             {this.state.offer_requests.map((offer) =>
-                                <div className='rows'>
+                                <div className='rows-rw-6'>
                                     <p>{offer.sorszam}</p>
                                     <p>{offer.projekt}</p>
                                     <p>{offer.munkanem}</p>
                                     <p>{offer.cegnev}</p>
                                     <p>{offer.datum}</p>
+                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -70}}>Deposit arrived</p>
                                     <div className='line'>
                                     </div>
                                 </div>
@@ -164,22 +171,24 @@ class Dashboard extends Component {
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-3.png')} /> Processing</Card.Title>
                         <Card.Body>
-                            <div className='column-headers'>
+                            <div className='column-headers-rw-6'>
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
                                 <p>Rövid cégnév</p>
                                 <p>Ajánlatkérési dátum</p>
+                                <p>Action</p>
                                 <div className='line'></div>
                             </div>
 
                             {this.state.offer_requests.map((offer) =>
-                                <div className='rows'>
+                                <div className='rows-rw-6'>
                                     <p>{offer.sorszam}</p>
                                     <p>{offer.projekt}</p>
                                     <p>{offer.munkanem}</p>
                                     <p>{offer.cegnev}</p>
                                     <p>{offer.datum}</p>
+                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -90}}>Send Finished Job</p>
                                     <div className='line'>
                                     </div>
                                 </div>
@@ -191,22 +200,24 @@ class Dashboard extends Component {
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-4.png')} /> Invoiced Jobs</Card.Title>
                         <Card.Body>
-                            <div className='column-headers'>
+                            <div className='column-headers-rw-6'>
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
                                 <p>Rövid cégnév</p>
                                 <p>Ajánlatkérési dátum</p>
+                                <p>Action</p>
                                 <div className='line'></div>
                             </div>
 
                             {this.state.offer_requests.map((offer) =>
-                                <div className='rows'>
+                                <div className='rows-rw-6'>
                                     <p>{offer.sorszam}</p>
                                     <p>{offer.projekt}</p>
                                     <p>{offer.munkanem}</p>
                                     <p>{offer.cegnev}</p>
                                     <p>{offer.datum}</p>
+                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -50}}>Send Invoice</p>
                                     <div className='line'>
                                     </div>
                                 </div>

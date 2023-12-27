@@ -29,6 +29,11 @@ body{
   color: white;
   cursor: pointer;
 }
+.rounded-btn-primary img{
+  width: 20px;
+  height: 20px;
+  margin-bottom: -5px;
+}
 .outlined-btn-secondary{
   background-color: transparent;
   color: var(--secondary);
@@ -78,6 +83,9 @@ body{
   animation-fill-mode: forwards;
   box-shadow: 5px 5px 5px var(--shadow);
 }
+.dashboard-header .card-text{
+  margin-left: 10px;
+}
 .dashboard-header .card:nth-child(2){animation-delay: .1s;}
 .dashboard-header .card:nth-child(3){animation-delay: .2s;}
 .dashboard-header .card:nth-child(4){animation-delay: .3s;}
@@ -89,46 +97,81 @@ body{
 .dashboard-category .card{
   display: inline-block;
   width: 95%;
-  height: 350px;
+  height: fit-content;
+  padding-bottom: 50px;
   background-color: var(--bg);
   border-radius: 8px;
   margin: 2.5%;
   box-shadow: 5px 5px 5px var(--shadow);
 }
-.column-headers{
+.dashboard-category .card-body{
   margin-left: 100px;
 }
-.column-headers p{
+.column-headers-rw-5 p{
   display: inline-block;
   color: white;
   width: calc(100%/5);
   font-weight: bold;
 }
-.column-headers .line{
-  width: 90%;
-  height: 1px;
-  background-color: white;
+.column-headers-rw-6 p{
+  display: inline-block;
+  color: white;
+  width: calc(100%/6);
+  font-weight: bold;
 }
-.rows{
-  margin-left: 100px;
+.column-headers-rw-7 p{
+  display: inline-block;
+  color: white;
+  width: calc(100%/7);
+  font-weight: bold;
 }
-.rows p{
+.rows-rw-5 p{
   display: inline-block;
   color: white;
   width: calc(100%/5);
 }
-.rows .line{
+.rows-rw-6 p{
+  display: inline-block;
+  color: white;
+  width: calc(100%/6);
+}
+.rows-rw-7 p{
+  display: inline-block;
+  color: white;
+  width: calc(100%/7);
+}
+.rows-rw-7 .rounded-btn-primary{
+  font-size: 15px !important;
+}
+.rows-rw-7 .outlined-btn-secondary{
+  font-size: 15px !important;
+}
+.rows-rw-6 .rounded-btn-primary{
+  font-size: 15px !important;
+}
+.rows-rw-6 .outlined-btn-secondary{
+  font-size: 15px !important;
+}
+.rows-rw-5 .rounded-btn-primary{
+  font-size: 15px !important;
+}
+.rows-rw-5 .outlined-btn-secondary{
+  font-size: 15px !important;
+}
+.line{
   width: 90%;
   height: 1px;
   background-color: white;
 }
 .dashboard-up-btn{
   position: fixed; 
-  top: 60px; 
-  left: 49%;
+  top: 100px; 
+  left: 5px;
   width: 30px; 
   height: 30px;
+  border-radius: 100px;
   animation: anim-scale .5s ease;
+  z-index: 10;
 }
 .request-offer{
   position: absolute;
