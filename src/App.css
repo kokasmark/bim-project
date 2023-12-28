@@ -20,6 +20,26 @@ body{
   user-select: none; /* Standard syntax */
   font-family: 'Roboto';
 }
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
 .rounded-btn-primary{
   background-color: var(--primary);
   border-radius: 40px;
@@ -161,7 +181,12 @@ body{
 .line{
   width: 90%;
   height: 1px;
-  background-color: white;
+  background-color: #181F25;
+}
+.vline{
+  width: 1px;
+  height: 90%;
+  background-color: #181F25;
 }
 .dashboard-up-btn{
   position: fixed; 
@@ -260,6 +285,96 @@ input::placeholder{
 .request-sent .request-data{
   background-color: var(--lighter-bg);
 }
+.request-sent .request-data{
+  margin-left: 100px;
+  margin-right: 100px;
+  padding-left: 50px;
+}
+.deposit-popup{
+  position: absolute !important;
+  top: 10%;
+  left: 30%;
+  width: 40%;
+  height: 80%;
+  background-color: var(--bg);
+  border-radius: 8px;
+  display: inline-block;
+  animation: anim-scale .5s ease;
+}
+.deposit-popup-head{
+  margin-top: 50px;
+  margin-left: 7%;
+  margin-right: 5%;
+  height: 30%;
+  text-align: center;
+  
+}
+.deposit-popup-order-info{
+  height: 70%;
+  width: 40%;
+  padding-left: 30px;
+  margin-top: -50px;
+}
+.deposit-popup-order-info .vline{
+  margin-top: -170%;
+  margin-left: 100%;
+  height: 109.5%;
+  background-color: #181F25;
+}
+.deposit-popup-head .line{
+  width: 112%;
+  margin-left: -7%;
+  background-color: #181F25;
+}
+.deposit-popup-order-info .header-text{
+  font-weight: bold;
+  margin-bottom: calc(100%/6);
+}
+.deposit-popup-order-info .text{
+  margin-top: -40px;
+  height: 30px;
+}
+.deposit-popup-payment-info{
+  width: 60%;
+  height: 70%;
+  position: absolute;
+  top: 30%;
+  left: 50%;
+}
+.deposit-popup-payment-info .header-text{
+  font-weight:lighter;
+  font-size: 13px;
+}
+.deposit-popup-payment-info .text{
+  margin-top: -30px;
+  margin-bottom: 30px;
+  width: 80%;
+  font-weight: bold;
+  font-size: 16px;
+  display: inline-block;
+}
+.deposit-popup-payment-info .text img{
+  position: relative;
+  top: 5px;
+}
+.deposit-popup-payment-info .line{
+  margin-left: -8%;
+  background-color: #181F25;
+}
+.deposit-popup-payment-info .img-text{
+  font-weight: bold;
+  vertical-align:middle;
+  font-size: 16px;
+  margin-bottom: 50px;
+  margin-top: -30px;
+  margin-left: 10px;
+}
+.deposit-popup-payment-info .img-text img{
+  position: relative;
+  top: 15px;
+  left: -20px
+}
+
 @keyframes anim-scale {
   0%{
     transform: scale(0.1);

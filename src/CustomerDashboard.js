@@ -5,7 +5,9 @@ import { Card } from 'react-bootstrap';
 import { ReactComponent as Icon_arrow } from './assets/icon-arrow-up.svg';
 import { ReactComponent as Icon_close } from './assets/dashboard_icons/icon-close.svg';
 import card_icon from './assets/dashboard_icons/credit_card.png';
+import card_icon_with_bg from './assets/dashboard_icons/icon-4.png';
 import download_icon from './assets/dashboard_icons/download.png';
+import icon_copy from './assets/dashboard_icons/icon-copy.png';
 
 import Select from 'react-select';
 import { FileUploader } from "react-drag-drop-files";
@@ -29,7 +31,10 @@ class CustomerDashboard extends Component {
         requestSent: false,
         acceptedFilesOnUpload: ["JPG", "PNG", "SVG", "PDF"],
         request: { sorszam: '', projekt: '', munkanem: '', cegnev: '', datum: '' },
-        selectedWorktypes: ''
+        selectedOffer: {},
+        selectedWorktypes: '',
+        depositpopup: false,
+        blur: false
     }
     scrollToComponent(ref) {
         this.setState({ onTop: false });
@@ -43,7 +48,7 @@ class CustomerDashboard extends Component {
         this.scrollToTop();
     }
     requestOfferPopUp() {
-        this.setState({ requestingOffer: true });
+        this.setState({ requestingOffer: true,blur: true });
     }
     uploadFile() {
 
@@ -65,7 +70,7 @@ class CustomerDashboard extends Component {
     sendOfferRequest() {
         var date = new Date();
         var r = {
-            sorszam: this.pad(this.state.offer_requests.length, 6),
+            sorszam: this.pad(this.state.offer_requests.length+1, 6),
             projekt: document.getElementById('project-name').value,
             munkanem: this.state.selectedWorktypes,
             cegnev: document.getElementById('company-name').value,
@@ -75,6 +80,9 @@ class CustomerDashboard extends Component {
         this.setState({ request: r, offer_requests: [...this.state.offer_requests, r] })
         this.setState({ requestingOffer: false, requestSent: true });
     }
+    depositPopUp(offer){
+        this.setState({depositpopup: true, blur: true,selectedOffer: offer})
+    }
     render() {
         const options = [
             { value: 'ajzatbeton', label: 'Ajzat Beton' },
@@ -82,13 +90,11 @@ class CustomerDashboard extends Component {
             { value: 'ajto', label: 'Ajtó' }
         ]
         return (
-            <div style={{ backgroundColor: 'var(--darker-bg)' }}>
-                {!this.state.onTop && <div className='dashboard-up-btn' onClick={() => this.scrollToTop()}>
-                    <Icon_arrow className='interactable' style={{marginTop: 5}}/><p style={{width: 'fit-content'}}>Go Back</p></div>}
-                <h1 style={{ marginTop: 65, padding: '20px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: (this.state.requestingOffer == true || this.state.requestSent == true) ? 'blur(3px)' : '' }}>Dashboard</h1>
-                <button className='rounded-btn-primary' style={{ position: 'relative', top: 0, left: '50%', filter: (this.state.requestingOffer == true || this.state.requestSent == true) ? 'blur(3px)' : '' }}
+            <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: 'scroll', maxHeight: '1000px' }}>
+                <h1 style={{ marginTop: 65, padding: '20px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : ''}}>Dashboard</h1>
+                <button className='rounded-btn-primary' style={{ position: 'relative', top: 0, left: '50%', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}
                     onClick={() => this.requestOfferPopUp()}>Request New Offer</button>
-                <div className='dashboard-header' style={{ filter: (this.state.requestingOffer == true || this.state.requestSent == true) ? 'blur(3px)' : '' }}>
+                <div className='dashboard-header' style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card onClick={() => this.scrollToComponent(this.offer_requestsRef)}>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-5.png')} />
@@ -135,7 +141,7 @@ class CustomerDashboard extends Component {
                         </Card.Body>
                     </Card>
                 </div>
-                <div className='dashboard-category' ref={this.offer_requestsRef} style={{ filter: (this.state.requestingOffer == true || this.state.requestSent == true) ? 'blur(3px)' : '' }}>
+                <div className='dashboard-category' ref={this.offer_requestsRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-5.png')} /> Custom Offers</Card.Title>
                         <Card.Body>
@@ -164,7 +170,7 @@ class CustomerDashboard extends Component {
                         </Card.Body>
                     </Card>
                 </div>
-                <div className='dashboard-category' ref={this.sent_offersRef} style={{ filter: (this.state.requestingOffer == true || this.state.requestSent == true) ? 'blur(3px)' : '' }}>
+                <div className='dashboard-category' ref={this.sent_offersRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-2.png')} /> Orders (waiting payment)</Card.Title>
                         <Card.Body>
@@ -179,15 +185,15 @@ class CustomerDashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offer_requests.map((offer) =>
-                                <div className='rows-rw-7'>
+                            {this.state.offer_requests.map((offer,_index) =>
+                                <div className='rows-rw-7' index={_index}>
                                     <p>{offer.sorszam}</p>
                                     <p>{offer.projekt}</p>
                                     <p>{offer.munkanem}</p>
                                     <p>{offer.cegnev}</p>
                                     <p>{offer.datum}</p>
                                     <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -20}}>See offer</p>
-                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: 50}}><img src={card_icon}/> Pay the deposit</p>
+                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: 50}} onClick={()=> this.depositPopUp(offer)}><img src={card_icon} /> Pay the deposit</p>
                                     <div className='line'>
                                     </div>
                                 </div>
@@ -195,7 +201,7 @@ class CustomerDashboard extends Component {
                         </Card.Body>
                     </Card>
                 </div>
-                <div className='dashboard-category' ref={this.ordersRef} style={{ filter: (this.state.requestingOffer == true || this.state.requestSent == true) ? 'blur(3px)' : '' }}>
+                <div className='dashboard-category' ref={this.ordersRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-6.png')} /> Orders (paid)</Card.Title>
                         <Card.Body>
@@ -224,7 +230,7 @@ class CustomerDashboard extends Component {
                         </Card.Body>
                     </Card>
                 </div>
-                <div className='dashboard-category' ref={this.processingRef} style={{ filter: (this.state.requestingOffer == true || this.state.requestSent == true) ? 'blur(3px)' : '' }}>
+                <div className='dashboard-category' ref={this.processingRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-1.png')} /> Finished Jobs</Card.Title>
                         <Card.Body>
@@ -255,7 +261,7 @@ class CustomerDashboard extends Component {
                         </Card.Body>
                     </Card>
                 </div>
-                <div className='dashboard-category' ref={this.invoicedRef} style={{ filter: (this.state.requestingOffer == true || this.state.requestSent == true) ? 'blur(3px)' : '' }}>
+                <div className='dashboard-category' ref={this.invoicedRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-7.png')} /> Billed Jobs</Card.Title>
                         <Card.Body>
@@ -313,7 +319,7 @@ class CustomerDashboard extends Component {
                                         <img src={upload_file_icon} />
                                         <p>Click to upload or drag and drop</p>
                                     </div>} name="file" types={this.acceptedFilesOnUpload} /></div>
-                                <button className='outlined-btn-secondary' style={{ height: 40 }} onClick={() => this.setState({ requestingOffer: false })}>Back</button>
+                                <button className='outlined-btn-secondary' style={{ height: 40 }} onClick={() => this.setState({ requestingOffer: false,blur: false })}>Back</button>
                                 <button className='rounded-btn-primary' style={{ width: '90%', position: 'relative', top: -40, left: 100, height: 40 }}
                                     onClick={() => this.sendOfferRequest()}>Send offer Request</button>
                             </div>
@@ -323,13 +329,13 @@ class CustomerDashboard extends Component {
                     <div tyle={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0}}>
                         <div className='request-sent'>
                             <div className='request-head'>
-                                <Icon_close style={{position: 'relative', left: '58%', top: -30}} className='interactable' onClick={()=> this.setState({requestSent: false})}/>
+                                <Icon_close style={{position: 'relative', left: '58%', top: -30}} className='interactable' onClick={()=> this.setState({requestSent: false,blur: false})}/>
                                 <img src={logo} />
                                 <p style={{ color: 'green' }}>We recieved your request with the following datas</p>
                                 <p style={{ color: 'gray' }}>The expected time to recieve your offer is 5 working days</p>
                             </div>
                             <div className='request-data'>
-                                <div className='column-headers'>
+                                <div className='column-headers-rw-5'>
                                     <p>Ajánlatkérési sorszám</p>
                                     <p>Projekt</p>
                                     <p>Munkanem</p>
@@ -337,7 +343,7 @@ class CustomerDashboard extends Component {
                                     <p>Ajánlatkérési dátum</p>
                                     <div className='line'></div>
                                 </div>
-                                <div className='rows'>
+                                <div className='rows-rw-5'>
                                     <p>{this.state.request.sorszam}</p>
                                     <p>{this.state.request.projekt}</p>
                                     <p>{this.state.request.munkanem}</p>
@@ -345,6 +351,44 @@ class CustomerDashboard extends Component {
                                     <p>{this.state.request.datum}</p>
                                 </div>
                             </div>
+                        </div>
+                    </div>}
+
+                {this.state.depositpopup && 
+                    <div className='deposit-popup'>
+                        <div className='deposit-popup-head'>
+                            <Icon_close style={{position: 'relative', left: '70%', top: -40}} className='interactable' onClick={()=> this.setState({depositpopup: false,blur: false})}/>
+                            <img src={logo}/>
+                            <p style={{color: 'green'}}>We recieved your order with your following data</p>
+                            <div className='line'></div>
+                        </div>
+                        <div className='deposit-popup-order-info'>
+                            <p className='header-text'>Your order number</p>
+                            <p className='text' style={{color: 'green',fontWeight: 'bolder'}}>000000</p>
+                            <p className='header-text'>Offer number</p>
+                            <p className='text'>{this.state.selectedOffer.sorszam}</p>
+                            <p className='header-text'>Project</p>
+                            <p className='text'>{this.state.selectedOffer.projekt}</p>
+                            <p className='header-text'>Work type</p>
+                            <p className='text'>{this.state.selectedOffer.munkanem}</p>
+                            <p className='header-text'>Short company name</p>
+                            <p className='text'>{this.state.selectedOffer.cegnev}</p>
+                            <p className='header-text'>Offer request date</p>
+                            <p className='text'>{this.state.selectedOffer.datum}</p>
+                            <div className='vline'></div> 
+                        </div>
+                        <div className='deposit-popup-payment-info'>
+                            <p className='img-text'><img src={card_icon_with_bg}/>50% advance payment details</p>
+                            <p className='header-text'>Név</p>
+                            <p className='text'>Bim Revolution Kft. <img className='interactable' src={icon_copy} onClick={() => {navigator.clipboard.writeText('Bim Revolution Kft.')}}/></p>
+                            <p className='header-text'>Bank számlaszám</p>
+                            <p className='text'>123145678-12345678-121345678 <img className='interactable' src={icon_copy} onClick={() => {navigator.clipboard.writeText('123145678-12345678-121345678')}}/></p>
+                            <p className='header-text'>Közlemény</p>
+                            <p className='text'>{this.state.selectedOffer.sorszam} <img className='interactable' src={icon_copy} onClick={() => {navigator.clipboard.writeText(this.state.selectedOffer.sorszam)}}/></p>
+                            <div className='line' style={{marginBottom: 50}}></div>
+                            <p className='header-text'>Összeg</p>
+                            <p className='text'>150 000 Ft</p>
+                            <p style={{color: 'gray', marginTop: -30, fontSize: 12}}>(net offer price x1.27 what is our vat (=VAT))</p>
                         </div>
                     </div>}
 
