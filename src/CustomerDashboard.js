@@ -15,6 +15,7 @@ import upload_file_icon from './assets/dashboard_icons/UploadFileFilled.png';
 import logo from './assets/logo.png';
 
 import Swal from 'sweetalert2';
+import Offer from './Offer';
 
 class CustomerDashboard extends Component {
     offer_requestsRef = React.createRef();
@@ -34,6 +35,8 @@ class CustomerDashboard extends Component {
         selectedOffer: {},
         selectedWorktypes: '',
         depositpopup: false,
+        offerpopup: false,
+        seeOffer: {},
         blur: false
     }
     scrollToComponent(ref) {
@@ -90,7 +93,7 @@ class CustomerDashboard extends Component {
             { value: 'ajto', label: 'Ajtó' }
         ]
         return (
-            <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: 'scroll', maxHeight: '1000px' }}>
+            <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }}>
                 <h1 style={{ marginTop: 65, padding: '20px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : ''}}>Dashboard</h1>
                 <button className='rounded-btn-primary' style={{ position: 'relative', top: 0, left: '50%', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}
                     onClick={() => this.requestOfferPopUp()}>Request New Offer</button>
@@ -192,7 +195,7 @@ class CustomerDashboard extends Component {
                                     <p>{offer.munkanem}</p>
                                     <p>{offer.cegnev}</p>
                                     <p>{offer.datum}</p>
-                                    <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -20}}>See offer</p>
+                                    <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -20}} onClick={()=> this.setState({offerpopup: true,blur: true, seeOffer: offer})}>See offer</p>
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: 50}} onClick={()=> this.depositPopUp(offer)}><img src={card_icon} /> Pay the deposit</p>
                                     <div className='line'>
                                     </div>
@@ -391,7 +394,10 @@ class CustomerDashboard extends Component {
                             <p style={{color: 'gray', marginTop: -30, fontSize: 12}}>(net offer price x1.27 what is our vat (=VAT))</p>
                         </div>
                     </div>}
-
+                    
+                    
+                    {this.state.offerpopup && <Offer offer={this.state.seeOffer}/>}
+                    
                 <NavBar />
             </div>
         )
