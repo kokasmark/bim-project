@@ -442,6 +442,11 @@ input::placeholder{
   margin-left: -3%;
   overflow-y: scroll;
   max-height: 400px;
+  
+}
+.offer-order .fields li{
+  animation: anim-scale 0.2s;
+  width: 99%;
 }
 .offer-order .row .rows-rw-4{
   background-color: var(--darker-bg);

@@ -8,13 +8,14 @@ import Dashboard from './Dashboard';
 import CustomerDashboard from './CustomerDashboard';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-const isAdmin = true;
+const isAdmin = false;
 
 root.render(
   <BrowserRouter >
   <Routes>
     <Route exact={true} path="/" element={<App />} />
     <Route exact={true} path="/dashboard" element={isAdmin == true ? <Dashboard /> : <CustomerDashboard />} />
+    <Route exact={true} path="/admin_dashboard" element={<Dashboard />} />
   </Routes>
   </BrowserRouter>
 );

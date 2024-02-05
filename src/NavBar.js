@@ -12,6 +12,7 @@ class NavBar extends Component{
         <div style={{width: '100%'}}>
           <div style={{marginTop: -50, marginLeft: 200}}>
               <Link to={'/dashboard'}><p>Dashboard</p></Link>
+              <Link to={'/admin_dashboard'}><p>Admin Dashboard(For testing)</p></Link>
               <Link to={'/orders'}><p>Orders</p></Link>
           </div>
 

@@ -7,7 +7,7 @@ import { ReactComponent as Icon_close } from './assets/dashboard_icons/icon-clos
 class Offer extends Component {
   state = {
     open: false,
-    data: [{ title: "Helységkönyv", elements: [{ title: "helységkönyv", ftDb: 0, db: 0 }] }],
+    data: [{ title: "Helységkönyv", elements: [{ title: "helységkönyv", ftDb: 0, db: 0 },{ title: "helységkönyv", ftDb: 0, db: 0 },{ title: "helységkönyv", ftDb: 0, db: 0 }] }],
     editingData: [],//[[{data:[0,0,0]}],[{data:[0]}]]
     editing: false
   }
@@ -23,14 +23,28 @@ class Offer extends Component {
   }
   addDataLine(){
     var updatedData = this.state.editingData;
-    updatedData.push({elements: [0]});
+    updatedData.push({title: "",elements: [{title: "", ftDb: 0, db: 0 }]});
     console.log("Added new line")
     this.setState({editingData: updatedData})
   }
   addElementLine(index){
     var updatedData = this.state.editingData;
-    updatedData[index].elements.push(0);
+    updatedData[index].elements.push({title: "", ftDb: 0, db: 0 });//add new line to elements
     this.setState({editingData: updatedData})
+  }
+  ChangeDataFtDb(index,eindex, value){
+    var updatedData = this.state.editingData;
+    updatedData[index].elements[eindex].ftDb = (value == NaN ? 0 : value);
+    this.setState({editingData: updatedData})
+  }
+  ChangeDataDb(index,eindex, value){
+    var updatedData = this.state.editingData;
+    updatedData[index].elements[eindex].db = (value == NaN ? 0 : value);
+    this.setState({editingData: updatedData})
+  }
+  CalculateFt(index,eindex){
+    var updatedData = this.state.editingData;
+    return (updatedData[index].elements[eindex].db == NaN ? 0 : updatedData[index].elements[eindex].db) * (updatedData[index].elements[eindex].ftDb == NaN ? 0 : updatedData[index].elements[eindex].ftDb);
   }
   render() {
     return (
@@ -93,17 +107,17 @@ class Offer extends Component {
                       <li key={element.id}>
                         <div className='rows-rw-4'>
                         <div><input style={{backgroundColor: "var(--lighter-bg)", border: "none", margin: 5}} placeholder='Pl. helységköny'></input></div>
-                        <div><input id={`${data.index}-${eindex}-ftdb`} style={{width: 50,backgroundColor: "var(--lighter-bg)", border: "none"}}></input><p>Ft/db</p></div>
-                        <div><input id={`${data.index}-${eindex}-db`} style={{width: 50, backgroundColor: "var(--lighter-bg)", border: "none"}}></input><p>db</p></div>
-                        <div><input disabled style={{width: 50, backgroundColor: "var(--lighter-bg)", border: "none"}}></input><p>Ft</p></div>
+                        <div><input id={`${index}-${eindex}-ftdb`} style={{width: 50,backgroundColor: "var(--lighter-bg)", border: "none"}} onChange={(e) => this.ChangeDataFtDb(index,eindex,e.target.value)}></input><p>Ft/db</p></div>
+                        <div><input id={`${index}-${eindex}-db`} style={{width: 50, backgroundColor: "var(--lighter-bg)", border: "none"}} onChange={(e) => this.ChangeDataDb(index,eindex,e.target.value)}></input><p>db</p></div>
+                        <div><input disabled style={{width: 50, backgroundColor: "var(--lighter-bg)", border: "none"}}value={this.CalculateFt(index,eindex)} ></input><p>Ft</p></div>
                         </div>
                       </li>
                     ))}
-                    <h2 onClick={()=> this.addElementLine(index)} className='interactable'>+</h2>
+                    <h2  style={{width: "90%", padding: 5,backgroundColor: "var(--bg)", borderRadius: 10}} onClick={()=> this.addElementLine(index)} className='interactable'>+</h2>
                   </ul>
                 </li>
               ))}
-              <h1 onClick={()=> this.addDataLine()} className='interactable'>+</h1>
+              <h1 style={{width: "90%", padding: 5,backgroundColor: "var(--bg)", borderRadius: 10}} onClick={()=> this.addDataLine()} className='interactable'>+</h1>
             </ul>}
           </div>
         </div>}
