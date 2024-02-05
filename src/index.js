@@ -8,7 +8,7 @@ import Dashboard from './Dashboard';
 import CustomerDashboard from './CustomerDashboard';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-const isAdmin = false;
+const isAdmin = true;
 
 root.render(
   <BrowserRouter >
