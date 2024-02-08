@@ -18,11 +18,13 @@ import Swal from 'sweetalert2';
 import Offer from './Offer';
 
 class CustomerDashboard extends Component {
+    dashboard = React.createRef();
     offer_requestsRef = React.createRef();
     sent_offersRef = React.createRef();
     ordersRef = React.createRef();
     processingRef = React.createRef();
     invoicedRef = React.createRef();
+    offerRef = React.createRef();
 
     state = {
         onTop: true,
@@ -86,6 +88,16 @@ class CustomerDashboard extends Component {
     depositPopUp(offer){
         this.setState({depositpopup: true, blur: true,selectedOffer: offer})
     }
+    closeOfferPopUp(){
+        this.setState({offerpopup: false})
+    }
+    offerPopUp(offer){
+        this.setState({blur: true, seeOffer: offer});
+        this.offerRef.current.popUpOpen()
+    }
+    blur(flag){
+        this.setState({blur: flag})
+    }
     render() {
         const options = [
             { value: 'ajzatbeton', label: 'Ajzat Beton' },
@@ -93,7 +105,7 @@ class CustomerDashboard extends Component {
             { value: 'ajto', label: 'Ajtó' }
         ]
         return (
-            <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }}>
+            <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }} ref={this.dashboard}>
                 <h1 style={{ marginTop: 65, padding: '20px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : ''}}>Dashboard</h1>
                 <button className='rounded-btn-primary' style={{ position: 'relative', top: 0, left: '50%', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}
                     onClick={() => this.requestOfferPopUp()}>Request New Offer</button>
@@ -195,7 +207,7 @@ class CustomerDashboard extends Component {
                                     <p>{offer.munkanem}</p>
                                     <p>{offer.cegnev}</p>
                                     <p>{offer.datum}</p>
-                                    <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -20}} onClick={()=> this.setState({offerpopup: true,blur: true, seeOffer: offer})}>See offer</p>
+                                    <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -20}} onClick={()=> this.offerPopUp(offer)}>See offer</p>
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: 50}} onClick={()=> this.depositPopUp(offer)}><img src={card_icon} /> Pay the deposit</p>
                                     <div className='line'>
                                     </div>
@@ -285,7 +297,7 @@ class CustomerDashboard extends Component {
                                     <p>{offer.munkanem}</p>
                                     <p>{offer.cegnev}</p>
                                     <p>{offer.datum}</p>
-                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -60, backgroundColor: 'lightgreen'}}><img src={download_icon}/>Download Job</p>
+                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -60, backgroundColor: 'var(--success)'}}><img src={download_icon}/>Download Job</p>
                                     <div className='line'>
                                     </div>
                                 </div>
@@ -396,7 +408,7 @@ class CustomerDashboard extends Component {
                     </div>}
                     
                     
-                    {this.state.offerpopup && <Offer offer={this.state.seeOffer}/>}
+                    <Offer offer={this.state.seeOffer} ref={this.offerRef} parent={this}/>
                     
                 <NavBar />
             </div>

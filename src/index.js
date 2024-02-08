@@ -15,6 +15,7 @@ root.render(
   <Routes>
     <Route exact={true} path="/" element={<App />} />
     <Route exact={true} path="/dashboard" element={isAdmin == true ? <Dashboard /> : <CustomerDashboard />} />
+    <Route exact={true} path="/admin_dashboard" element={<Dashboard />} />
   </Routes>
   </BrowserRouter>
 );
