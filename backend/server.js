@@ -68,24 +68,22 @@ app.post('/api/add-offer', async (req, res) => {
   try {
     // Extract email and offer data from the request body
     const { email, offer } = req.body;
-    console.log(email)
 
     // Find the user document by email
-    const userQuerySnapshot = await db.collection('Offers').where('email', '==', email).get();
-    console.log(db.collection('Offers').doc(email))
+    const userDocRef = db.collection('users').doc(email);
+    const userDoc = await userDocRef.get();
     // Check if the user exists
-    if (userQuerySnapshot.empty) {
+    if (userDoc === undefined) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Get the user's sub-table reference
-    const userDocId = userQuerySnapshot.docs[0].id;
-    const userOffersRef = db.collection('offers').doc(userDocId).collection('offers');
-
-    // Add the offer to the user's sub-table
-    await userOffersRef.add(offer);
+    // Get the user document reference
+    const userData = userDoc.data();
+    const updatedOffersData = { ...userData.offers, ...offer };
+    await userDocRef.update({ offers: updatedOffersData });
 
     res.status(201).json({ message: 'Offer added successfully' });
+
   } catch (error) {
     console.error('Error adding offer:', error);
     res.status(500).json({ error: 'Internal server error' });
