@@ -72,8 +72,10 @@ app.post('/api/login', async (req, res) => {
       return res.json({ success: false, error: 'Incorrect password' });
     }
 
+    var token = generateUserToken()
+    await userRef.update({ token:  token});
     // Password matches, user is authenticated
-    res.json({ success: true, token: userData.token, name: userData.name });
+    res.json({ success: true, token: token, name: userData.name });
   } catch (error) {
     console.error('Error logging in user:', error);
     res.status(500).json({ success: false, error: 'Internal server error' });
