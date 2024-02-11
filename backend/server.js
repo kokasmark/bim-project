@@ -163,7 +163,75 @@ app.post('/api/new-admin', async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
+app.post('/api/forgot-password', async (req, res) => {
+    try {
+      // Extract email and password from the request body
+      const {email} = req.body;
+  
+      // Check if email exists in Firestore
+      const userRef = db.collection('users').doc(email);
+      const userDoc = await userRef.get();
+  
+      if (!userDoc.exists) {
+        return res.json({ success: false, error: 'User not found' });
+      }
+  
+      // Check if password matches
+      const userData = userDoc.data();
+      var nodemailer = require('nodemailer');
+      var mail = require('./mail_template')
+      var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'flexify.team2024@gmail.com',
+          pass: 'ssck hvqx jskt kyqo'
+        }
+      });
 
+      var mailOptions = {
+        from: 'BIM-Project <flexify.team2024@gmail.com>',
+        to: userData.email,
+        subject: 'Reset Password',
+        html: mail(userData.name, userData.token)//We sending the login token because it changes with every login either way
+      };
+
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+      res.status(200).json({success: true, message: "Email sent to "+userData.email})
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+});
+app.post('/api/reset-password', async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    // Query the user document based on the token field
+    const userQuerySnapshot = await db.collection('users').where('token', '==', token).get();
+
+    // Check if the user document exists
+    if (!userQuerySnapshot.empty) {
+      // There should be only one user document with a unique token
+      const userData = userQuerySnapshot.docs[0].data();
+      const userRef = userQuerySnapshot.docs[0].ref;
+      var newToken = generateUserToken(); // for security reasons;
+      let passHash = await generatePasswordHash(password);
+      await userRef.update({ password: passHash, token: newToken });
+      res.status(200).json({ success: true, message: 'Password successfully updated!'});
+    } else {
+      res.status(400).json({ success: false, error: 'User not found'});
+    }
+  } catch (error) {
+    console.error('Error getting user:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
