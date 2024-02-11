@@ -9,16 +9,20 @@ class NavBar extends Component{
     return(
       <div className='navbar'>
         <Link to={'/'}><img src={logo}/></Link>
-        <div style={{width: '100%'}}>
-          <div style={{marginTop: -50, marginLeft: 200}}>
-              <Link to={'/dashboard'}><p>Dashboard</p></Link>
-              <Link to={'/admin_dashboard'}><p>Admin Dashboard(For testing)</p></Link>
-              <Link to={'/orders'}><p>Orders</p></Link>
-          </div>
+        <Link to={'/dashboard'}><p>Dashboard</p></Link>
+        <Link to={'/orders'}><p>Orders</p></Link>
 
-          <p  style={{position: 'relative', top: -30, left: '88%', fontSize: 20}}>Sign In</p>
-          <button className='rounded-btn-primary' style={{position: 'relative', top: -30, left: '88%'}}>Sign Up</button>
-        </div>
+        {!localStorage.getItem("login-token") && <div>
+          <Link to={'/signup'}><button  className='rounded-btn-secondary' style={{right: 120, marginTop: 15}}>Sign Up</button></Link>
+          <Link to={'/signin'}><button className='rounded-btn-primary'>Sign In</button></Link>
+        </div>}
+
+        {localStorage.getItem("login-token") && 
+          <div style={{position: "absolute", right: 100}}>
+              <h5>Logged in as {localStorage.getItem("login-name")}</h5>
+          </div>
+        }
+
       </div>
     )
   }

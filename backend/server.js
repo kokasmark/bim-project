@@ -1,12 +1,13 @@
 const express = require('express');
 const admin = require('firebase-admin');
 const cors = require('cors');
+const bcrypt = require("bcrypt");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-const port = 3000;
+const port = 3001;
 
 // Initialize Firebase Admin SDK with your service account credentials
 const serviceAccount = require('./serviceAccountKey.json');
@@ -17,25 +18,39 @@ admin.initializeApp({
 // Initialize Firestore
 const db = admin.firestore();
 
+function generateUserToken(){
+  return require('crypto').randomBytes(32).toString('hex');
+}
+
+async function generatePasswordHash(password){
+  return  await bcrypt.hash(password, 10).catch(err => log(err, 1))
+}
+async function compareHash(password, hash){
+  return await (bcrypt.compare(password, hash).catch(err => log(err, 1)))
+}
 app.post('/api/register', async (req, res) => {
   try {
 
-    const { email, password } = req.body;
+    const { email, password,name } = req.body;
 
     const userRef = db.collection('users').doc(email);
     const userDoc = await userRef.get();
 
     if (userDoc.exists) {
-      return res.status(400).json({ error: 'Email already registered' });
+      return res.status(400).json({success: false, error: 'Email already registered' });
     }
 
+    var token = generateUserToken();
+    let passHash = await generatePasswordHash(password);
+    passHash = passHash.toString();
+    console.log({email, passHash, name, token})
     // Add the new user document to Firestore
-    await userRef.set({ email, password });
+    await userRef.set({ email, password: passHash, name, token});
 
-    res.status(201).json({ message: 'User registered successfully' });
+    res.status(201).json({success: true, token: token, name: name });
   } catch (error) {
     console.error('Error registering user:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({success: false,  error: 'Internal server error' });
   }
 });
 app.post('/api/login', async (req, res) => {
@@ -48,20 +63,20 @@ app.post('/api/login', async (req, res) => {
     const userDoc = await userRef.get();
 
     if (!userDoc.exists) {
-      return res.json({ success: false, message: 'User not found' });
+      return res.json({ success: false, error: 'User not found' });
     }
 
     // Check if password matches
     const userData = userDoc.data();
-    if (userData.password !== password) {
-      return res.json({ success: false, message: 'Incorrect password' });
+    if (!await compareHash(password,userData.password)) {
+      return res.json({ success: false, error: 'Incorrect password' });
     }
 
     // Password matches, user is authenticated
-    res.json({ success: true, message: 'Login successful' });
+    res.json({ success: true, token: userData.token, name: userData.name });
   } catch (error) {
     console.error('Error logging in user:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
 app.post('/api/add-offer', async (req, res) => {

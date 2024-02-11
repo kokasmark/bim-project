@@ -16,6 +16,7 @@ import logo from './assets/logo.png';
 
 import Swal from 'sweetalert2';
 import Offer from './Offer';
+import AuthRedirect from './authRedirect';
 
 class CustomerDashboard extends Component {
     dashboard = React.createRef();
@@ -416,4 +417,4 @@ class CustomerDashboard extends Component {
     }
 }
 
-export default CustomerDashboard;
+export default AuthRedirect(CustomerDashboard);

@@ -7,6 +7,7 @@ import yellow_icon from './assets/yellow-card-icon.png';
 import blue_icon from './assets/blue-card-icon.png';
 import orange_icon from './assets/orange-card-icon.png';
 import { ReactComponent as Icon_arrow } from './assets/icon-arrow-up.svg';
+import AuthRedirect from './authRedirect';
 
 
 

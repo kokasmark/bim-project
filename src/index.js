@@ -6,6 +6,8 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Route, Routes} from 'react-router-dom';
 import Dashboard from './Dashboard';
 import CustomerDashboard from './CustomerDashboard';
+import SignUpPage from './SignUpPage';
+import SignInWrapper from './SignInPage';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 const isAdmin = false;
@@ -16,6 +18,9 @@ root.render(
     <Route exact={true} path="/" element={<App />} />
     <Route exact={true} path="/dashboard" element={isAdmin == true ? <Dashboard /> : <CustomerDashboard />} />
     <Route exact={true} path="/admin_dashboard" element={<Dashboard />} />
+
+    <Route exact={true} path="/signup" element={<SignUpPage />} />
+    <Route exact={true} path="/signin" element={<SignInWrapper />} />
   </Routes>
   </BrowserRouter>
 );

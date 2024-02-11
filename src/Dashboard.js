@@ -17,6 +17,7 @@ import logo from './assets/logo.png';
 import Swal from 'sweetalert2';
 import Offer from './Offer';
 import calc_icon from './assets/dashboard_icons/calculate_black_24dp 1.png'
+import AuthRedirect from './authRedirect';
 
 
 class Dashboard extends Component {
@@ -479,4 +480,4 @@ class Dashboard extends Component {
     }
 }
 
-export default Dashboard;
+export default AuthRedirect(Dashboard);
