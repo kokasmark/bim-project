@@ -45,7 +45,7 @@ app.post('/api/register', async (req, res) => {
     passHash = passHash.toString();
     console.log({email, passHash, name, token})
     // Add the new user document to Firestore
-    await userRef.set({ email, password: passHash, name, token});
+    await userRef.set({ email, password: passHash, name, token, role: 0});
 
     res.status(201).json({success: true, token: token, name: name });
   } catch (error) {
@@ -102,6 +102,63 @@ app.post('/api/add-offer', async (req, res) => {
   } catch (error) {
     console.error('Error adding offer:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+app.post('/api/role', async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    // Query the user document based on the token field
+    const userQuerySnapshot = await db.collection('users').where('token', '==', token).get();
+
+    // Check if the user document exists
+    if (!userQuerySnapshot.empty) {
+      // There should be only one user document with a unique token
+      const userData = userQuerySnapshot.docs[0].data();
+      res.status(200).json({ success: true, role: userData.role });
+    } else {
+      res.status(400).json({ success: false, error: 'User not found', role: -1 });
+    }
+  } catch (error) {
+    console.error('Error getting user:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+app.post('/api/new-admin', async (req, res) => {
+  try {
+    const { token, newAdmin } = req.body;
+
+    // Query the user document based on the token field
+    const userQuerySnapshot = await db.collection('users').where('token', '==', token).get();
+
+    // Check if the user document exists
+    if (!userQuerySnapshot.empty) {
+      // There should be only one user document with a unique token
+      const userData = userQuerySnapshot.docs[0].data();
+      if(userData.role === 1)
+      {
+        const newAdminQuery = await db.collection('users').where('email', '==', newAdmin).get();
+        if(!newAdminQuery.empty){
+          const newAdminDocRef = newAdminQuery.docs[0].ref;
+
+          // Update the user document with the new role field value
+          await newAdminDocRef.update({ role: 1 });
+          res.status(200).json({ success: true, message: `New admin added: ${newAdmin}` });
+        }
+        else{
+          res.status(400).json({ success: false, error: `Cant find user: ${newAdmin}` });
+        }
+       
+      }
+      else{
+        res.status(400).json({ success: false, error: 'Cant add admin, no permission!'});
+      }
+    } else {
+      res.status(400).json({ success: false, error: 'User not found', role: -1 });
+    }
+  } catch (error) {
+    console.error('Error getting user:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
 

@@ -480,4 +480,4 @@ class Dashboard extends Component {
     }
 }
 
-export default AuthRedirect(Dashboard);
+export default AuthRedirect(Dashboard,1);

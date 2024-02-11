@@ -8,16 +8,17 @@ import Dashboard from './Dashboard';
 import CustomerDashboard from './CustomerDashboard';
 import SignUpPage from './SignUpPage';
 import SignInWrapper from './SignInPage';
+import { getCookie } from './cookie';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-const isAdmin = false;
+
 
 root.render(
   <BrowserRouter >
   <Routes>
     <Route exact={true} path="/" element={<App />} />
-    <Route exact={true} path="/dashboard" element={isAdmin == true ? <Dashboard /> : <CustomerDashboard />} />
-    <Route exact={true} path="/admin_dashboard" element={<Dashboard />} />
+    <Route exact={true} path="/dashboard" element={<CustomerDashboard />} />
+    <Route exact={true} path="/admin" element={<Dashboard />} />
 
     <Route exact={true} path="/signup" element={<SignUpPage />} />
     <Route exact={true} path="/signin" element={<SignInWrapper />} />

@@ -4,7 +4,7 @@ import logo from './assets/logo.png';
 import { Link } from 'react-router-dom';
 import PasswordStrengthBar from 'react-password-strength-bar';
 import Swal from 'sweetalert2';
-
+import {setCookie} from './cookie';
 
 
 class SignUpPage extends Component{
@@ -37,8 +37,8 @@ class SignUpPage extends Component{
         var r = JSON.parse(result)
         if(r.success){
           Swal.fire("Success!", "Successfully registered!","success"); 
-          localStorage.setItem("login-token", r.token);
-          localStorage.setItem("login-name", r.name);
+          setCookie("login-token", r.token,1);
+          setCookie("login-name", r.name,1);
         }else{
           Swal.fire("Oops!",r.error,"error")
         }

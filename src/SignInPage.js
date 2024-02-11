@@ -4,12 +4,14 @@ import logo from './assets/logo.png';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom";
+import {setCookie} from './cookie';
 const SignInWrapper = () => {
   const navigate = useNavigate();
 
   return <SignInPage navigate={navigate} />;
 };
 class SignInPage extends Component{
+  
   validate(){
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -32,10 +34,10 @@ class SignInPage extends Component{
         var r = JSON.parse(result)
         if(r.success){
           Swal.fire("Success!", "Successfully logged in!","success"); 
-          localStorage.setItem("login-token", r.token);
-          localStorage.setItem("login-name", r.name);
+          setCookie("login-token", r.token,1);
+          setCookie("login-name", r.name,1);
           const { navigate } = this.props;
-          navigate("/dashboard");
+          navigate("/");
         }else{
           Swal.fire("Oops!",r.error,"error")
         }
