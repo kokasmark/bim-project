@@ -41,7 +41,7 @@ class CustomerDashboard extends Component {
         offerpopup: false,
         seeOffer: {},
         blur: false,
-        statusText: ["Waiting Calculation", "Waiting payment", "Paid", "Can be downloaded", "Billed"]
+        statusText: ["Sent","Waiting Calculation", "Waiting payment", "Paid", "Can be downloaded", "Billed"]
     }
     getOffers(){
         var myHeaders = new Headers();
@@ -88,10 +88,15 @@ class CustomerDashboard extends Component {
         offers.forEach(offer => {
             let updatedOffers = this.state.offers;
             console.log(offer)
-            if(offer.status != 0){
-            updatedOffers[0].push(offer)
+            if(offer.status > 0){
+                updatedOffers[0].push(offer)
             }
-            updatedOffers[offer.status].push(offer)
+
+            try{
+                updatedOffers[offer.status-1].push(offer)
+            }catch{
+                updatedOffers[0].push(offer)
+            }
             this.setState({offers: updatedOffers})
         });
     }
@@ -142,6 +147,15 @@ class CustomerDashboard extends Component {
     }
     blur(flag){
         this.setState({blur: flag})
+    }
+    calculateDepositOsszeg(offer){
+        var osszeg = 0
+        offer.data.forEach(data => {
+            data.elements.forEach(element => {
+                osszeg += Number(element.ftDb * element.db);
+            });
+        });
+        return osszeg / 2;
     }
     render() {
         const options = [
@@ -292,7 +306,7 @@ class CustomerDashboard extends Component {
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.companyName}</p>
                                     <p>{offer.header.datum}</p>
-                                    <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -50}}>Megtekintés</p>
+                                    <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -20}} onClick={()=> this.offerPopUp(offer)}>See offer</p>
                                     <div className='line'>
                                     </div>
                                 </div>
@@ -453,7 +467,7 @@ class CustomerDashboard extends Component {
                             <p className='text'>{this.state.selectedOffer.id} <img className='interactable' src={icon_copy} onClick={() => {navigator.clipboard.writeText(this.state.selectedOffer.sorszam)}}/></p>
                             <div className='line' style={{marginBottom: 50}}></div>
                             <p className='header-text'>Összeg</p>
-                            <p className='text'>150 000 Ft</p>
+                            <p className='text'>{this.calculateDepositOsszeg(this.state.selectedOffer)} Ft</p>
                             <p style={{color: 'gray', marginTop: -30, fontSize: 12}}>(net offer price x1.27 what is our vat (=VAT))</p>
                         </div>
                     </div>}

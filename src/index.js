@@ -9,6 +9,7 @@ import CustomerDashboard from './CustomerDashboard';
 import SignUpPage from './SignUpPage';
 import SignInWrapper from './SignInPage';
 import { getCookie } from './cookie';
+import ForgotPasswordWrapper from './ForgotPasswordPage';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 
@@ -22,6 +23,8 @@ root.render(
 
     <Route exact={true} path="/signup" element={<SignUpPage />} />
     <Route exact={true} path="/signin" element={<SignInWrapper />} />
+
+    <Route exact={true} path="/forgot-password" element={<ForgotPasswordWrapper/>} />
   </Routes>
   </BrowserRouter>
 );

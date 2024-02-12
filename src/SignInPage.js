@@ -58,6 +58,8 @@ class SignInPage extends Component{
               <input placeholder='Password' style={{width: "92%", marginTop: 20}} type='password' onChange={(e) => this.setState({password: e.target.value})}></input>
               
               <button className='validate-btn interactable' onClick={()=>this.validate()}>Sign In</button>
+              <br/>
+              <Link to={"/forgot-password"} style={{textDecoration: "none", color: 'white'}} className='interactable'><p>Forgot Password?</p></Link>
             </div>
             
           </div>

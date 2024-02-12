@@ -133,7 +133,7 @@ class Dashboard extends Component {
     }
     depositArrivedPopup(offer){
         Swal.fire({
-            title: `Did the deposit arrived for order ${offer.sorszam}?`,
+            title: `Did the deposit arrived for order ${offer.id}?\n\nPayment: ${this.calculateDepositOsszeg(offer)} Ft`,
             showDenyButton: true,
             showCancelButton: false,
             confirmButtonText: "Deposit arrived",
@@ -141,11 +141,40 @@ class Dashboard extends Component {
           }).then((result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+
+                const raw = JSON.stringify({
+                "companyName": offer.header.companyName,
+                "offerId": offer.id,
+                "status": 3
+                });
+
+                const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+                };
+
+                fetch("http://localhost:3001/api/update-offer", requestOptions)
+                .then((response) => response.text())
+                .then((result) => console.log(result))
+                .catch((error) => console.error(error));
               Swal.fire("Saved!", "", "success");
             } else if (result.isDenied) {
 
             }
           });
+    }
+    calculateDepositOsszeg(offer){
+        var osszeg = 0
+        offer.data.forEach(data => {
+            data.elements.forEach(element => {
+                osszeg += Number(element.ftDb * element.db);
+            });
+        });
+        return osszeg / 2;
     }
     render() {
         const options = [
@@ -180,7 +209,7 @@ class Dashboard extends Component {
                             <img src={require('./assets/dashboard_icons/icon-6.png')} />
                             <div style={{ marginTop: -30 }}>
                                 <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[2].length}</Card.Text>
-                                <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Orders (paid)</Card.Text>
+                                <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Orders (sent)</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
@@ -265,7 +294,7 @@ class Dashboard extends Component {
                 </div>
                 <div className='dashboard-category' ref={this.ordersRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
-                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-6.png')} /> Orders (paid)</Card.Title>
+                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-6.png')} /> Orders (sent)</Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-6'>
                                 <p>Ajánlatkérési sorszám</p>

@@ -85,6 +85,16 @@ class Offer extends Component {
       .then(result => {Swal.fire("Success!", `Offer [${offerId}] updated successfully!`,"success"); this.popUpClose()})
       .catch(error => {Swal.fire("Oops!", error.error, "error")});
   }
+  calculateDepositOsszeg(e){
+    var offer = this.props.offer;
+    var osszeg = 0
+    offer.data.forEach(data => {
+        data.elements.forEach(element => {
+            osszeg += Number(element.ftDb * element.db);
+        });
+    });
+    return osszeg / e;
+}
   render() {
     return (
       <div className='offer' style={{ display: this.state.open ? "block" : "none" }}>
@@ -118,25 +128,32 @@ class Offer extends Component {
               <div className='line'></div>
             </div>
 
-            {!this.props.editing && <ul className='fields'>
-              {this.props.offer.data.map(data => (
-                <li key={data.id}>
-                  <p>{data.title}</p>
-                  <ul className='row'>
-                    {data.elements.map(element => (
-                      <li key={element.id}>
-                        <div className='rows-rw-4'>
-                          <p>{element.title}</p>
-                          <p>{element.ftDb}/db</p>
-                          <p>{element.db}db</p>
-                          <p>{element.ftDb * element.db}Ft</p>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
-            </ul>}
+            {!this.props.editing && 
+            <div>
+              <ul className='fields'>
+                {this.props.offer.data.map(data => (
+                  <li key={data.id}>
+                    <p>{data.title}</p>
+                    <ul className='row'>
+                      {data.elements.map(element => (
+                        <li key={element.id}>
+                          <div className='rows-rw-4'>
+                            <p>{element.title}</p>
+                            <p>{element.ftDb}/db</p>
+                            <p>{element.db}db</p>
+                            <p>{element.ftDb * element.db}Ft</p>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ul>
+              <div style={{backgroundColor: "var(--bg)", padding: 10, borderRadius: 10, width: "fit-content"}}>
+                <h3>Összeszen: {this.calculateDepositOsszeg(1)} Ft</h3>
+                <h3>Deposit: {this.calculateDepositOsszeg(2)} Ft</h3>
+              </div>
+            </div>}
             {this.props.editing && 
             <div>
             <ul className='fields'>
