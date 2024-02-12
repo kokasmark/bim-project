@@ -10,7 +10,6 @@ export function setCookie(cname, cvalue, exdays) {
     document.cookie = cname + "=" + ";" + expires + ";path=/";
   }
 export function getCookie(cname) {
-    console.log("Getting cookie: "+cname)
     let name = cname + "=";
     let decodedCookie = decodeURIComponent(document.cookie);
     let ca = decodedCookie.split(';');

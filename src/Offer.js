@@ -48,6 +48,16 @@ class Offer extends Component {
     updatedData[index].elements[eindex].db = (value == NaN ? 0 : value);
     this.setState({editingData: updatedData})
   }
+  ChangeDataTitle(index, value){
+    var updatedData = this.state.editingData;
+    updatedData[index].title = (value == "" ? "Empty" : value);
+    this.setState({editingData: updatedData})
+  }
+  ChangeDataInnerTitle(index,eindex, value){
+    var updatedData = this.state.editingData;
+    updatedData[index].elements[eindex].title = (value == "" ? "Empty" : value);
+    this.setState({editingData: updatedData})
+  }
   CalculateFt(index,eindex){
     var updatedData = this.state.editingData;
     return (updatedData[index].elements[eindex].db == NaN ? 0 : updatedData[index].elements[eindex].db) * (updatedData[index].elements[eindex].ftDb == NaN ? 0 : updatedData[index].elements[eindex].ftDb);
@@ -96,7 +106,7 @@ class Offer extends Component {
               <p>{this.props.offer.header.projectName}</p>
               <p>{this.props.offer.header.workTypes}</p>
               <p>{this.props.offer.header.companyName}</p>
-              <p>{this.offerDateFormat(this.props.offer.datum)}</p>
+              <p>{this.offerDateFormat(this.props.offer.header.datum)}</p>
             </div>
           </div>
           <div className='offer-order'>
@@ -108,8 +118,8 @@ class Offer extends Component {
               <div className='line'></div>
             </div>
 
-            {this.props.editing == null && <ul className='fields'>
-              {this.state.data.map(data => (
+            {!this.props.editing && <ul className='fields'>
+              {this.props.offer.data.map(data => (
                 <li key={data.id}>
                   <p>{data.title}</p>
                   <ul className='row'>
@@ -127,15 +137,17 @@ class Offer extends Component {
                 </li>
               ))}
             </ul>}
-            {this.props.editing != null && <ul className='fields'>
+            {this.props.editing && 
+            <div>
+            <ul className='fields'>
               {this.state.editingData.map((data, index) => (
                 <li key={data.id}>
-                  <input style={{backgroundColor: "var(--darker-bg)", border: "none", margin: 5}}  placeholder='Pl. helységköny'></input>
+                  <input style={{backgroundColor: "var(--darker-bg)", border: "none", margin: 5}}  placeholder='Pl. helységköny' onChange={(e) => this.ChangeDataTitle(index,e.target.value)}></input>
                   <ul className='row'>
                     {data.elements.map((element,eindex) => (
                       <li key={element.id}>
                         <div className='rows-rw-4'>
-                        <div><input style={{backgroundColor: "var(--lighter-bg)", border: "none", margin: 5}} placeholder='Pl. helységköny'></input></div>
+                        <div><input style={{backgroundColor: "var(--lighter-bg)", border: "none", margin: 5}} placeholder='Pl. helységköny' onChange={(e) => this.ChangeDataInnerTitle(index,eindex,e.target.value)}></input></div>
                         <div><input id={`${index}-${eindex}-ftdb`} style={{width: 50,backgroundColor: "var(--lighter-bg)", border: "none"}} onChange={(e) => this.ChangeDataFtDb(index,eindex,e.target.value)}></input><p>Ft/db</p></div>
                         <div><input id={`${index}-${eindex}-db`} style={{width: 50, backgroundColor: "var(--lighter-bg)", border: "none"}} onChange={(e) => this.ChangeDataDb(index,eindex,e.target.value)}></input><p>db</p></div>
                         <div><input disabled style={{width: 50, backgroundColor: "var(--lighter-bg)", border: "none"}}value={this.CalculateFt(index,eindex)} ></input><p>Ft</p></div>
@@ -147,8 +159,11 @@ class Offer extends Component {
                 </li>
               ))}
               <h1 style={{width: "90%", padding: 5,backgroundColor: "var(--bg)", borderRadius: 10}} onClick={()=> this.addDataLine()} className='interactable'>+</h1>
-            </ul>}
+            </ul>
             <button className='rounded-btn-primary' onClick={()=> this.updateOffer(this.props.offer.header.companyName,this.props.offer.id)}>Update Offer</button>
+            </div>
+            }
+            
           </div>
         </div>}
       </div>

@@ -41,8 +41,7 @@ class NavBar extends Component{
     return(
       <div className='navbar'>
         <Link to={'/'}><img src={logo}/></Link>
-        <Link to={this.state.dashboard}><p>Dashboard</p></Link>
-        <Link to={'/orders'}><p>Orders</p></Link>
+        <Link to={this.state.dashboard} style={{marginLeft: 200}}><p>Dashboard</p></Link>
 
         {getCookie("login-token") == "" && <div>
           <Link to={'/signup'}><button  className='rounded-btn-secondary' style={{right: 120, marginTop: 15}}>Sign Up</button></Link>

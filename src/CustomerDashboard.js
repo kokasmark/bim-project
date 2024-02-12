@@ -30,7 +30,7 @@ class CustomerDashboard extends Component {
 
     state = {
         onTop: true,
-        offers: [[],[],[],[]],
+        offers: [[],[],[],[],[]],
         requestingOffer: false,
         requestSent: false,
         acceptedFilesOnUpload: ["JPG", "PNG", "SVG", "PDF"],
@@ -40,7 +40,8 @@ class CustomerDashboard extends Component {
         depositpopup: false,
         offerpopup: false,
         seeOffer: {},
-        blur: false
+        blur: false,
+        statusText: ["Waiting Calculation", "Waiting payment", "Paid", "Can be downloaded", "Billed"]
     }
     getOffers(){
         var myHeaders = new Headers();
@@ -87,6 +88,9 @@ class CustomerDashboard extends Component {
         offers.forEach(offer => {
             let updatedOffers = this.state.offers;
             console.log(offer)
+            if(offer.status != 0){
+            updatedOffers[0].push(offer)
+            }
             updatedOffers[offer.status].push(offer)
             this.setState({offers: updatedOffers})
         });
@@ -117,14 +121,13 @@ class CustomerDashboard extends Component {
     sendOfferRequest() {
         var date = new Date();
         var r = {
-            sorszam: 0,
             projectName: document.getElementById('project-name').value,
             workTypes: this.state.selectedWorktypes,
             companyName: document.getElementById('company-name').value,
             datum: date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate()
         };
         this.sendOffers(r)
-        this.setState({ requestingOffer: false, requestSent: true });
+        this.setState({ requestingOffer: false, requestSent: true, request: r });
     }
     depositPopUp(offer){
         this.setState({depositpopup: true, blur: true,selectedOffer: offer})
@@ -134,6 +137,7 @@ class CustomerDashboard extends Component {
     }
     offerPopUp(offer){
         this.setState({blur: true, seeOffer: offer});
+        console.log(offer.data)
         this.offerRef.current.popUpOpen()
     }
     blur(flag){
@@ -143,7 +147,17 @@ class CustomerDashboard extends Component {
         const options = [
             { value: 'ajzatbeton', label: 'Ajzat Beton' },
             { value: 'ablak', label: 'Ablak' },
-            { value: 'ajto', label: 'Ajtó' }
+            { value: 'ajto', label: 'Ajtó' },
+            { value: 'helyisegkonyv', label: 'Helyiségkönyv' },
+            { value: 'burkolas', label: 'Burkolás' },
+            { value: 'almennyezet', label: 'Álmennyezet' },
+            { value: 'homlokzati-nyilaszarok', label: 'Homlokzati nyílászárók' },
+            { value: 'belso-nyilaszarok', label: 'Belső Nyílászárók' },
+            { value: 'beepitett-butor', label: 'Beépített bútor' },
+            { value: 'mobil-butor', label: 'Mobil bútor' },
+            { value: 'szaniter', label: 'Szaniter' },
+            { value: 'lakatos', label: 'Lakatos' },
+            { value: 'egyeb', label: 'Egyéb' }
         ]
         return (
             <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }} ref={this.dashboard}>
@@ -151,7 +165,7 @@ class CustomerDashboard extends Component {
                 <button className='rounded-btn-primary' style={{ position: 'relative', top: 0, left: '50%', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}
                     onClick={() => this.requestOfferPopUp()}>Request New Offer</button>
                 <div className='dashboard-header' style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
-                    <Card onClick={() => this.scrollToComponent(this.offer_requestsRef)}>
+                    <Card>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-5.png')} />
                             <div style={{ marginTop: -30 }}>
@@ -160,38 +174,38 @@ class CustomerDashboard extends Component {
                             </div>
                         </Card.Body>
                     </Card>
-                    <Card onClick={() => this.scrollToComponent(this.sent_offersRef)}>
+                    <Card>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-2.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[0].length}</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[1].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Orders (waiting payment)</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
-                    <Card onClick={() => this.scrollToComponent(this.ordersRef)}>
+                    <Card>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-6.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[1].length}</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[2].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Orders (paid)</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
-                    <Card onClick={() => this.scrollToComponent(this.processingRef)}>
+                    <Card>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-1.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[2].length}</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[3].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Finished jobs</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
-                    <Card onClick={() => this.scrollToComponent(this.invoicedRef)}>
+                    <Card>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-7.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[3].length}</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[4].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Billed Jobs</Card.Text>
                             </div>
                         </Card.Body>
@@ -218,7 +232,7 @@ class CustomerDashboard extends Component {
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.companyName}</p>
                                     <p>{offer.header.datum}</p>
-                                    <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -20}}>Status</p>
+                                    <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -50}}>{this.state.statusText[offer.status]}</p>
                                     <div className='line'>
                                     </div>
                                 </div>
@@ -241,7 +255,7 @@ class CustomerDashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offers[0].map((offer,_index) =>
+                            {this.state.offers[1].map((offer,_index) =>
                                 <div className='rows-rw-7' index={_index}>
                                     <p>{offer.id}</p>
                                     <p>{offer.header.projectName}</p>
@@ -271,7 +285,7 @@ class CustomerDashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offers[1].map((offer) =>
+                            {this.state.offers[2].map((offer) =>
                                 <div className='rows-rw-6'>
                                     <p>{offer.id}</p>
                                     <p>{offer.header.projectName}</p>
@@ -301,7 +315,7 @@ class CustomerDashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offers[2].map((offer) =>
+                            {this.state.offers[3].map((offer) =>
                                 <div className='rows-rw-7'>
                                     <p>{offer.id}</p>
                                     <p>{offer.header.projectName}</p>
@@ -331,7 +345,7 @@ class CustomerDashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offers[3].map((offer) =>
+                            {this.state.offers[4].map((offer) =>
                                 <div className='rows-rw-6'>
                                     <p>{offer.id}</p>
                                     <p>{offer.header.projectName}</p>
@@ -391,19 +405,17 @@ class CustomerDashboard extends Component {
                                 <p style={{ color: 'gray' }}>The expected time to recieve your offer is 5 working days</p>
                             </div>
                             <div className='request-data'>
-                                <div className='column-headers-rw-5'>
-                                    <p>Ajánlatkérési sorszám</p>
+                                <div className='column-headers-rw-4'>
                                     <p>Projekt</p>
                                     <p>Munkanem</p>
                                     <p>Rövid cégnév</p>
                                     <p>Ajánlatkérési dátum</p>
                                     <div className='line'></div>
                                 </div>
-                                <div className='rows-rw-5'>
-                                    <p>{this.state.request.id}</p>
-                                    <p>{this.state.request.projekt}</p>
-                                    <p>{this.state.request.munkanem}</p>
-                                    <p>{this.state.request.cegnev}</p>
+                                <div className='rows-rw-4'>
+                                    <p>{this.state.request.projectName}</p>
+                                    <p>{this.state.request.workTypes}</p>
+                                    <p>{this.state.request.workTypes}</p>
                                     <p>{this.state.request.datum}</p>
                                 </div>
                             </div>
@@ -419,10 +431,8 @@ class CustomerDashboard extends Component {
                             <div className='line'></div>
                         </div>
                         <div className='deposit-popup-order-info'>
-                            <p className='header-text'>Your order number</p>
-                            <p className='text' style={{color: 'green',fontWeight: 'bolder'}}>000000</p>
-                            <p className='header-text'>Offer number</p>
-                            <p className='text'>{this.state.selectedOffer.id}</p>
+                            <p className='header-text'>Offer</p>
+                            <p className='text' style={{color: 'green',fontWeight: 'bolder'}}>{this.state.selectedOffer.id}</p>
                             <p className='header-text'>Project</p>
                             <p className='text'>{this.state.selectedOffer.header.projectName}</p>
                             <p className='header-text'>Work type</p>
@@ -440,7 +450,7 @@ class CustomerDashboard extends Component {
                             <p className='header-text'>Bank számlaszám</p>
                             <p className='text'>123145678-12345678-121345678 <img className='interactable' src={icon_copy} onClick={() => {navigator.clipboard.writeText('123145678-12345678-121345678')}}/></p>
                             <p className='header-text'>Közlemény</p>
-                            <p className='text'>{this.state.selectedOffer.sorszam} <img className='interactable' src={icon_copy} onClick={() => {navigator.clipboard.writeText(this.state.selectedOffer.sorszam)}}/></p>
+                            <p className='text'>{this.state.selectedOffer.id} <img className='interactable' src={icon_copy} onClick={() => {navigator.clipboard.writeText(this.state.selectedOffer.sorszam)}}/></p>
                             <div className='line' style={{marginBottom: 50}}></div>
                             <p className='header-text'>Összeg</p>
                             <p className='text'>150 000 Ft</p>
@@ -449,7 +459,7 @@ class CustomerDashboard extends Component {
                     </div>}
                     
                     
-                    <Offer offer={this.state.seeOffer} ref={this.offerRef} parent={this}/>
+                    <Offer offer={this.state.seeOffer} ref={this.offerRef} parent={this} editing={false}/>
                     
                 <NavBar />
             </div>

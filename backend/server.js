@@ -175,9 +175,9 @@ app.post('/api/get-offers', async (req, res) => {
 
       // Extract the "header" and "status" fields from each offer document
       const offers = offersQuerySnapshot.docs.map(doc => {
-        const { header, status } = doc.data();
+        const { header, status, data } = doc.data();
         const id = doc.id; // Retrieve the document ID
-        return { id, header, status };
+        return { id, header, data, status };
       });
 
       res.status(200).json({ success: true, offers });
@@ -215,9 +215,10 @@ app.post('/api/get-offers-person', async (req, res) => {
 
         // Check if the offer document exists
         if (offerDocSnapshot.exists) {
-          const { header, status } = offerDocSnapshot.data();
+          const { header, status, data } = offerDocSnapshot.data();
           const id = offerDocSnapshot.id;
-          return { id, header, status };
+          console.log({ id, header, data, status })
+          return { id, header, data, status };
         } else {
           return null;
         }

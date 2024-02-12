@@ -42,7 +42,8 @@ class Dashboard extends Component {
         depositpopup: false,
         offerpopup: false,
         seeOffer: {},
-        blur: false
+        blur: false,
+        offerAction: true //true if editing
     }
 
     getOffers(){
@@ -103,8 +104,8 @@ class Dashboard extends Component {
     closeOfferPopUp(){
         this.setState({offerpopup: false})
     }
-    offerPopUp(offer){
-        this.setState({blur: true, seeOffer: offer});
+    offerPopUp(offer,action){
+        this.setState({blur: true, seeOffer: offer, offerAction: action});
         this.offerRef.current.popUpOpen()
     }
     blur(flag){
@@ -155,8 +156,6 @@ class Dashboard extends Component {
         return (
             <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }} ref={this.dashboard}>
                 <h1 style={{ marginTop: 65, padding: '20px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : ''}}>Admin Dashboard</h1>
-                <button className='rounded-btn-primary' style={{ position: 'relative', top: 0, left: '50%', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}
-                    onClick={() => this.requestOfferPopUp()}>Request New Offer</button>
                 <div className='dashboard-header' style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
                         <Card.Body style={{ margin: 20 }}>
@@ -227,7 +226,7 @@ class Dashboard extends Component {
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.companyName}</p>
                                     <p>{this.offerDateFormat(offer.header.datum)}</p>
-                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -50}}  onClick={()=> this.offerPopUp(offer)}><img src={calc_icon}/>Calculation</p>
+                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -50}}  onClick={()=> this.offerPopUp(offer, true)}><img src={calc_icon}/>Calculation</p>
                                     <div className='line'>
                                     </div>
                                 </div>
@@ -256,7 +255,7 @@ class Dashboard extends Component {
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.companyName}</p>
                                     {this.daysToFinish(offer.header.datum)}
-                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -20}} onClick={()=> this.offerPopUp(offer)}>See offer</p>
+                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -20}} onClick={()=> this.offerPopUp(offer,false)}>See offer</p>
                                     <div className='line'>
                                     </div>
                                 </div>
@@ -455,7 +454,7 @@ class Dashboard extends Component {
                     </div>}
                     
                     
-                    <Offer offer={this.state.seeOffer} ref={this.offerRef} parent={this} editing/>
+                    <Offer offer={this.state.seeOffer} ref={this.offerRef} parent={this} editing={this.state.offerAction}/>
                     
                 <NavBar />
             </div>
