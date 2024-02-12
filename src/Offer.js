@@ -2,12 +2,13 @@ import './App.css';
 import React, { Component } from 'react';
 import logo from './assets/logo.png';
 import { ReactComponent as Icon_close } from './assets/dashboard_icons/icon-close.svg';
+import Swal from 'sweetalert2';
 
 
 class Offer extends Component {
   state = {
     open: false,
-    data: [{ title: "Helységkönyv", elements: [{ title: "helységkönyv", ftDb: 0, db: 0 },{ title: "helységkönyv", ftDb: 0, db: 0 },{ title: "helységkönyv", ftDb: 0, db: 0 }] }],
+    data: [],
     editingData: [],//[[{data:[0,0,0]}],[{data:[0]}]]
     editing: false
   }
@@ -19,7 +20,12 @@ class Offer extends Component {
     this.setState({ open: false })
   }
   offerDateFormat(date) {
+    try{
     return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate()
+    }
+    catch{
+      return date
+    }
   }
   addDataLine(){
     var updatedData = this.state.editingData;
@@ -46,6 +52,29 @@ class Offer extends Component {
     var updatedData = this.state.editingData;
     return (updatedData[index].elements[eindex].db == NaN ? 0 : updatedData[index].elements[eindex].db) * (updatedData[index].elements[eindex].ftDb == NaN ? 0 : updatedData[index].elements[eindex].ftDb);
   }
+  updateOffer(compamyName, offerId){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    console.log(`Updating offer ${offerId} at ${compamyName}`)
+    var raw = JSON.stringify({
+      "companyName": compamyName,
+      "offerId": offerId,
+      "data": this.state.editingData,
+      "status": 1
+    });
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://localhost:3001/api/update-offer", requestOptions)
+      .then(response => response.text())
+      .then(result => {Swal.fire("Success!", `Offer [${offerId}] updated successfully!`,"success"); this.popUpClose()})
+      .catch(error => {Swal.fire("Oops!", error.error, "error")});
+  }
   render() {
     return (
       <div className='offer' style={{ display: this.state.open ? "block" : "none" }}>
@@ -63,10 +92,10 @@ class Offer extends Component {
               <div className='line'></div>
             </div>
             <div className='rows-rw-5'>
-              <p>{this.props.offer.sorszam}</p>
-              <p>{this.props.offer.projekt}</p>
-              <p>{this.props.offer.munkanem}</p>
-              <p>{this.props.offer.cegnev}</p>
+              <p>{this.props.offer.id}</p>
+              <p>{this.props.offer.header.projectName}</p>
+              <p>{this.props.offer.header.workTypes}</p>
+              <p>{this.props.offer.header.companyName}</p>
               <p>{this.offerDateFormat(this.props.offer.datum)}</p>
             </div>
           </div>
@@ -119,6 +148,7 @@ class Offer extends Component {
               ))}
               <h1 style={{width: "90%", padding: 5,backgroundColor: "var(--bg)", borderRadius: 10}} onClick={()=> this.addDataLine()} className='interactable'>+</h1>
             </ul>}
+            <button className='rounded-btn-primary' onClick={()=> this.updateOffer(this.props.offer.header.companyName,this.props.offer.id)}>Update Offer</button>
           </div>
         </div>}
       </div>

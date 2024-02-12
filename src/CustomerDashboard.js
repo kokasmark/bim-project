@@ -17,6 +17,7 @@ import logo from './assets/logo.png';
 import Swal from 'sweetalert2';
 import Offer from './Offer';
 import AuthRedirect from './authRedirect';
+import { getCookie } from './cookie';
 
 class CustomerDashboard extends Component {
     dashboard = React.createRef();
@@ -29,8 +30,7 @@ class CustomerDashboard extends Component {
 
     state = {
         onTop: true,
-        offer_requests: [{ sorszam: "000001", projekt: "BNE", munkanem: "Ajzatbeton", cegnev: "WHB", datum: "2023/12/21" },
-                         { sorszam: "000002", projekt: "BNE", munkanem: "Ajzatbeton", cegnev: "WHB", datum: "2023/12/26" }],
+        offers: [[],[],[],[]],
         requestingOffer: false,
         requestSent: false,
         acceptedFilesOnUpload: ["JPG", "PNG", "SVG", "PDF"],
@@ -42,16 +42,57 @@ class CustomerDashboard extends Component {
         seeOffer: {},
         blur: false
     }
-    scrollToComponent(ref) {
-        this.setState({ onTop: false });
-        window.scrollTo({ top: ref.current.offsetTop, behavior: "smooth" })
+    getOffers(){
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+        "token": getCookie("login-token")
+        });
+
+        var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+        };
+
+        fetch("http://localhost:3001/api/get-offers-person", requestOptions)
+        .then(response => response.text())
+        .then(result => {var r = JSON.parse(result); this.assignOffers(r.offers)})
+        .catch(error => console.log('error', error));
     }
-    scrollToTop() {
-        this.setState({ onTop: true });
-        window.scrollTo({ top: 0, behavior: "smooth" })
+    sendOffers(header){
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+        "token": getCookie("login-token"),
+        "header": header
+        });
+
+        var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+        };
+
+        fetch("http://localhost:3001/api/add-offer", requestOptions)
+        .then(response => response.text())
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error));
+    }
+    assignOffers(offers){
+        offers.forEach(offer => {
+            let updatedOffers = this.state.offers;
+            console.log(offer)
+            updatedOffers[offer.status].push(offer)
+            this.setState({offers: updatedOffers})
+        });
     }
     componentDidMount() {
-        this.scrollToTop();
+        this.getOffers()
     }
     requestOfferPopUp() {
         this.setState({ requestingOffer: true,blur: true });
@@ -76,13 +117,13 @@ class CustomerDashboard extends Component {
     sendOfferRequest() {
         var date = new Date();
         var r = {
-            sorszam: this.pad(this.state.offer_requests.length+1, 6),
-            projekt: document.getElementById('project-name').value,
-            munkanem: this.state.selectedWorktypes,
-            cegnev: document.getElementById('company-name').value,
+            sorszam: 0,
+            projectName: document.getElementById('project-name').value,
+            workTypes: this.state.selectedWorktypes,
+            companyName: document.getElementById('company-name').value,
             datum: date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate()
         };
-
+        this.sendOffers(r)
         this.setState({ request: r, offer_requests: [...this.state.offer_requests, r] })
         this.setState({ requestingOffer: false, requestSent: true });
     }
@@ -115,7 +156,7 @@ class CustomerDashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-5.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offer_requests.length}</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[0].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Custom Offers</Card.Text>
                             </div>
                         </Card.Body>
@@ -124,7 +165,7 @@ class CustomerDashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-2.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>0</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[0].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Orders (waiting payment)</Card.Text>
                             </div>
                         </Card.Body>
@@ -133,7 +174,7 @@ class CustomerDashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-6.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>0</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[1].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Orders (paid)</Card.Text>
                             </div>
                         </Card.Body>
@@ -142,7 +183,7 @@ class CustomerDashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-1.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>0</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[2].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Finished jobs</Card.Text>
                             </div>
                         </Card.Body>
@@ -151,7 +192,7 @@ class CustomerDashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-7.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>0</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[3].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Billed Jobs</Card.Text>
                             </div>
                         </Card.Body>
@@ -171,13 +212,13 @@ class CustomerDashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offer_requests.map((offer) =>
+                            {this.state.offers[0].map((offer) =>
                                 <div className='rows-rw-6'>
-                                    <p>{offer.sorszam}</p>
-                                    <p>{offer.projekt}</p>
-                                    <p>{offer.munkanem}</p>
-                                    <p>{offer.cegnev}</p>
-                                    <p>{offer.datum}</p>
+                                    <p>{offer.id}</p>
+                                    <p>{offer.header.projectName}</p>
+                                    <p>{offer.header.workTypes}</p>
+                                    <p>{offer.header.companyName}</p>
+                                    <p>{offer.header.datum}</p>
                                     <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -20}}>Status</p>
                                     <div className='line'>
                                     </div>
@@ -201,13 +242,13 @@ class CustomerDashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offer_requests.map((offer,_index) =>
+                            {this.state.offers[0].map((offer,_index) =>
                                 <div className='rows-rw-7' index={_index}>
-                                    <p>{offer.sorszam}</p>
-                                    <p>{offer.projekt}</p>
-                                    <p>{offer.munkanem}</p>
-                                    <p>{offer.cegnev}</p>
-                                    <p>{offer.datum}</p>
+                                    <p>{offer.id}</p>
+                                    <p>{offer.header.projectName}</p>
+                                    <p>{offer.header.workTypes}</p>
+                                    <p>{offer.header.companyName}</p>
+                                    <p>{offer.header.datum}</p>
                                     <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -20}} onClick={()=> this.offerPopUp(offer)}>See offer</p>
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: 50}} onClick={()=> this.depositPopUp(offer)}><img src={card_icon} /> Pay the deposit</p>
                                     <div className='line'>
@@ -231,13 +272,13 @@ class CustomerDashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offer_requests.map((offer) =>
+                            {this.state.offers[1].map((offer) =>
                                 <div className='rows-rw-6'>
-                                    <p>{offer.sorszam}</p>
-                                    <p>{offer.projekt}</p>
-                                    <p>{offer.munkanem}</p>
-                                    <p>{offer.cegnev}</p>
-                                    <p>{offer.datum}</p>
+                                    <p>{offer.id}</p>
+                                    <p>{offer.header.projectName}</p>
+                                    <p>{offer.header.workTypes}</p>
+                                    <p>{offer.header.companyName}</p>
+                                    <p>{offer.header.datum}</p>
                                     <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -50}}>Megtekintés</p>
                                     <div className='line'>
                                     </div>
@@ -261,13 +302,13 @@ class CustomerDashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offer_requests.map((offer) =>
+                            {this.state.offers[2].map((offer) =>
                                 <div className='rows-rw-7'>
-                                    <p>{offer.sorszam}</p>
-                                    <p>{offer.projekt}</p>
-                                    <p>{offer.munkanem}</p>
-                                    <p>{offer.cegnev}</p>
-                                    <p>{offer.datum}</p>
+                                    <p>{offer.id}</p>
+                                    <p>{offer.header.projectName}</p>
+                                    <p>{offer.header.workTypes}</p>
+                                    <p>{offer.header.companyName}</p>
+                                    <p>{offer.header.datum}</p>
                                     <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -20}}>Sample</p>
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: 40}}> <img src={card_icon}/>Pay remaining</p>
                                     <div className='line'>
@@ -291,13 +332,13 @@ class CustomerDashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offer_requests.map((offer) =>
+                            {this.state.offers[3].map((offer) =>
                                 <div className='rows-rw-6'>
-                                    <p>{offer.sorszam}</p>
-                                    <p>{offer.projekt}</p>
-                                    <p>{offer.munkanem}</p>
-                                    <p>{offer.cegnev}</p>
-                                    <p>{offer.datum}</p>
+                                    <p>{offer.id}</p>
+                                    <p>{offer.header.projectName}</p>
+                                    <p>{offer.header.workTypes}</p>
+                                    <p>{offer.header.companyName}</p>
+                                    <p>{offer.header.datum}</p>
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -60, backgroundColor: 'var(--success)'}}><img src={download_icon}/>Download Job</p>
                                     <div className='line'>
                                     </div>
@@ -360,7 +401,7 @@ class CustomerDashboard extends Component {
                                     <div className='line'></div>
                                 </div>
                                 <div className='rows-rw-5'>
-                                    <p>{this.state.request.sorszam}</p>
+                                    <p>{this.state.request.id}</p>
                                     <p>{this.state.request.projekt}</p>
                                     <p>{this.state.request.munkanem}</p>
                                     <p>{this.state.request.cegnev}</p>
@@ -382,15 +423,15 @@ class CustomerDashboard extends Component {
                             <p className='header-text'>Your order number</p>
                             <p className='text' style={{color: 'green',fontWeight: 'bolder'}}>000000</p>
                             <p className='header-text'>Offer number</p>
-                            <p className='text'>{this.state.selectedOffer.sorszam}</p>
+                            <p className='text'>{this.state.selectedOffer.id}</p>
                             <p className='header-text'>Project</p>
-                            <p className='text'>{this.state.selectedOffer.projekt}</p>
+                            <p className='text'>{this.state.selectedOffer.header.projectName}</p>
                             <p className='header-text'>Work type</p>
-                            <p className='text'>{this.state.selectedOffer.munkanem}</p>
+                            <p className='text'>{this.state.selectedOffer.header.workTypes}</p>
                             <p className='header-text'>Short company name</p>
-                            <p className='text'>{this.state.selectedOffer.cegnev}</p>
+                            <p className='text'>{this.state.selectedOffer.header.companyName}</p>
                             <p className='header-text'>Offer request date</p>
-                            <p className='text'>{this.state.selectedOffer.datum}</p>
+                            <p className='text'>{this.state.selectedOffer.header.datum}</p>
                             <div className='vline'></div> 
                         </div>
                         <div className='deposit-popup-payment-info'>

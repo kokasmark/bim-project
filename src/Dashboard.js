@@ -18,6 +18,7 @@ import Swal from 'sweetalert2';
 import Offer from './Offer';
 import calc_icon from './assets/dashboard_icons/calculate_black_24dp 1.png'
 import AuthRedirect from './authRedirect';
+import { getCookie } from './cookie';
 
 
 class Dashboard extends Component {
@@ -31,8 +32,7 @@ class Dashboard extends Component {
 
     state = {
         onTop: true,
-        offer_requests: [{ sorszam: "000001", projekt: "BNE", munkanem: "Ajzatbeton", cegnev: "WHB", datum: new Date("2023/12/21")},
-                         { sorszam: "000002", projekt: "BNE", munkanem: "Ajzatbeton", cegnev: "WHB", datum: new Date("2023/12/26") }],
+        offers: [[],[],[],[],[]],//based on status
         requestingOffer: false,
         requestSent: false,
         acceptedFilesOnUpload: ["JPG", "PNG", "SVG", "PDF"],
@@ -44,16 +44,38 @@ class Dashboard extends Component {
         seeOffer: {},
         blur: false
     }
-    scrollToComponent(ref) {
-        this.setState({ onTop: false });
-        window.scrollTo({ top: ref.current.offsetTop, behavior: "smooth" })
+
+    getOffers(){
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+            "token": getCookie("login-token"),
+            "companyName": getCookie("login-company")
+            });
+
+        var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+        };
+
+        fetch("http://localhost:3001/api/get-offers", requestOptions)
+        .then(response => response.text())
+        .then(result => {var r = JSON.parse(result);this.assignOffers(r.offers)})
+        .catch(error => console.log('error', error));
     }
-    scrollToTop() {
-        this.setState({ onTop: true });
-        window.scrollTo({ top: 0, behavior: "smooth" })
+    assignOffers(offers){
+        offers.forEach(offer => {
+            let updatedOffers = this.state.offers;
+            console.log(offer)
+            updatedOffers[offer.status].push(offer)
+            this.setState({offers: updatedOffers})
+        });
     }
     componentDidMount() {
-        this.scrollToTop();
+        this.getOffers()
     }
     requestOfferPopUp() {
         this.setState({ requestingOffer: true,blur: true });
@@ -75,19 +97,6 @@ class Dashboard extends Component {
         }
         t.setState({ selectedWorktypes: wt })
     }
-    sendOfferRequest() {
-        var date = new Date();
-        var r = {
-            sorszam: this.pad(this.state.offer_requests.length+1, 6),
-            projekt: document.getElementById('project-name').value,
-            munkanem: this.state.selectedWorktypes,
-            cegnev: document.getElementById('company-name').value,
-            datum: date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate()
-        };
-
-        this.setState({ request: r, offer_requests: [...this.state.offer_requests, r] })
-        this.setState({ requestingOffer: false, requestSent: true });
-    }
     depositPopUp(offer){
         this.setState({depositpopup: true, blur: true,selectedOffer: offer})
     }
@@ -102,7 +111,11 @@ class Dashboard extends Component {
         this.setState({blur: flag})
     }
     offerDateFormat(date){
+        try{
         return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate()
+        }catch{
+            return date
+        }
     }
     daysToFinish(date){
         const offerDate = new Date(date);
@@ -149,7 +162,7 @@ class Dashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-5.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offer_requests.length}</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[0].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Offer Requests</Card.Text>
                             </div>
                         </Card.Body>
@@ -158,7 +171,7 @@ class Dashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-2.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>0</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[0].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Sent Offers</Card.Text>
                             </div>
                         </Card.Body>
@@ -167,7 +180,7 @@ class Dashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-6.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>0</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[1].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Orders (paid)</Card.Text>
                             </div>
                         </Card.Body>
@@ -176,7 +189,7 @@ class Dashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-1.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>0</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[2].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Processing</Card.Text>
                             </div>
                         </Card.Body>
@@ -186,7 +199,7 @@ class Dashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-7.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>0</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[3].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Invoiced Jobs</Card.Text>
                             </div>
                         </Card.Body>
@@ -207,13 +220,13 @@ class Dashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offer_requests.map((offer) =>
+                            {this.state.offers[0].map((offer) =>
                                 <div className='rows-rw-6'>
-                                    <p>{offer.sorszam}</p>
-                                    <p>{offer.projekt}</p>
-                                    <p>{offer.munkanem}</p>
-                                    <p>{offer.cegnev}</p>
-                                    <p>{this.offerDateFormat(offer.datum)}</p>
+                                    <p>{offer.id}</p>
+                                    <p>{offer.header.projectName}</p>
+                                    <p>{offer.header.workTypes}</p>
+                                    <p>{offer.header.companyName}</p>
+                                    <p>{this.offerDateFormat(offer.header.datum)}</p>
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -50}}  onClick={()=> this.offerPopUp(offer)}><img src={calc_icon}/>Calculation</p>
                                     <div className='line'>
                                     </div>
@@ -236,13 +249,13 @@ class Dashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offer_requests.map((offer,_index) =>
+                            {this.state.offers[0].map((offer,_index) =>
                                 <div className='rows-rw-6' index={_index}>
-                                    <p>{offer.sorszam}</p>
-                                    <p>{offer.projekt}</p>
-                                    <p>{offer.munkanem}</p>
-                                    <p>{offer.cegnev}</p>
-                                    {this.daysToFinish(offer.datum)}
+                                    <p>{offer.id}</p>
+                                    <p>{offer.header.projectName}</p>
+                                    <p>{offer.header.workTypes}</p>
+                                    <p>{offer.header.companyName}</p>
+                                    {this.daysToFinish(offer.header.datum)}
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -20}} onClick={()=> this.offerPopUp(offer)}>See offer</p>
                                     <div className='line'>
                                     </div>
@@ -265,13 +278,13 @@ class Dashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offer_requests.map((offer) =>
+                            {this.state.offers[1].map((offer) =>
                                 <div className='rows-rw-6'>
-                                    <p>{offer.sorszam}</p>
-                                    <p>{offer.projekt}</p>
-                                    <p>{offer.munkanem}</p>
-                                    <p>{offer.cegnev}</p>
-                                    <p>{this.offerDateFormat(offer.datum)}</p>
+                                    <p>{offer.id}</p>
+                                    <p>{offer.header.projectName}</p>
+                                    <p>{offer.header.workTypes}</p>
+                                    <p>{offer.header.companyName}</p>
+                                    <p>{this.offerDateFormat(offer.header.datum)}</p>
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -50}} onClick={()=> this.depositArrivedPopup(offer)}>Deposit arrived</p>
                                     <div className='line'>
                                     </div>
@@ -294,13 +307,13 @@ class Dashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offer_requests.map((offer) =>
+                            {this.state.offers[2].map((offer) =>
                                 <div className='rows-rw-6'>
-                                    <p>{offer.sorszam}</p>
-                                    <p>{offer.projekt}</p>
-                                    <p>{offer.munkanem}</p>
-                                    <p>{offer.cegnev}</p>
-                                    <p>{this.offerDateFormat(offer.datum)}</p>
+                                    <p>{offer.id}</p>
+                                    <p>{offer.header.projectName}</p>
+                                    <p>{offer.header.workTypes}</p>
+                                    <p>{offer.header.companyName}</p>
+                                    <p>{this.offerDateFormat(offer.header.datum)}</p>
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -50 , backgroundColor: 'var(--success)'}}>Send Finished Job</p>
                                     <div className='line'>
                                     </div>
@@ -324,13 +337,13 @@ class Dashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offer_requests.map((offer) =>
+                            {this.state.offers[3].map((offer) =>
                                 <div className='rows-rw-7'>
-                                    <p>{offer.sorszam}</p>
-                                    <p>{offer.projekt}</p>
-                                    <p>{offer.munkanem}</p>
-                                    <p>{offer.cegnev}</p>
-                                    <p>{this.offerDateFormat(offer.datum)}</p>
+                                    <p>{offer.id}</p>
+                                    <p>{offer.header.projectName}</p>
+                                    <p>{offer.header.workTypes}</p>
+                                    <p>{offer.header.companyName}</p>
+                                    <p>{this.offerDateFormat(offer.header.datum)}</p>
                                     <p className='rounded-btn-secondary' style={{width: 'fit-content', marginLeft: 0}}>Modify</p>
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: 50 , backgroundColor: 'var(--success)'}}>Send Finished Job</p>
                                     <div className='line'>
@@ -354,13 +367,13 @@ class Dashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offer_requests.map((offer) =>
+                            {this.state.offers[4].map((offer) =>
                                 <div className='rows-rw-6'>
-                                    <p>{offer.sorszam}</p>
-                                    <p>{offer.projekt}</p>
-                                    <p>{offer.munkanem}</p>
-                                    <p>{offer.cegnev}</p>
-                                    <p>{this.offerDateFormat(offer.datum)}</p>
+                                    <p>{offer.id}</p>
+                                    <p>{offer.header.projectName}</p>
+                                    <p>{offer.header.workTypes}</p>
+                                    <p>{offer.header.companyName}</p>
+                                    <p>{this.offerDateFormat(offer.header.datum)}</p>
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -60, backgroundColor: 'var(--success)'}}><img src={download_icon}/>Send Invoice</p>
                                     <div className='line'>
                                     </div>
@@ -404,34 +417,6 @@ class Dashboard extends Component {
                             </div>
                         </div>
                     </div>}
-                {this.state.requestSent &&
-                    <div tyle={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0}}>
-                        <div className='request-sent'>
-                            <div className='request-head'>
-                                <Icon_close style={{position: 'relative', left: '58%', top: -30}} className='interactable' onClick={()=> this.setState({requestSent: false,blur: false})}/>
-                                <img src={logo} />
-                                <p style={{ color: 'green' }}>We recieved your request with the following datas</p>
-                                <p style={{ color: 'gray' }}>The expected time to recieve your offer is 5 working days</p>
-                            </div>
-                            <div className='request-data'>
-                                <div className='column-headers-rw-5'>
-                                    <p>Ajánlatkérési sorszám</p>
-                                    <p>Projekt</p>
-                                    <p>Munkanem</p>
-                                    <p>Rövid cégnév</p>
-                                    <p>Befejezési határidő</p>
-                                    <div className='line'></div>
-                                </div>
-                                <div className='rows-rw-5'>
-                                    <p>{this.state.request.sorszam}</p>
-                                    <p>{this.state.request.projekt}</p>
-                                    <p>{this.state.request.munkanem}</p>
-                                    <p>{this.state.request.cegnev}</p>
-                                    <p>{this.state.request.datum}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>}
 
                 {this.state.depositpopup && 
                     <div className='deposit-popup'>
@@ -443,15 +428,13 @@ class Dashboard extends Component {
                         </div>
                         <div className='deposit-popup-order-info'>
                             <p className='header-text'>Your order number</p>
-                            <p className='text' style={{color: 'green',fontWeight: 'bolder'}}>000000</p>
-                            <p className='header-text'>Offer number</p>
-                            <p className='text'>{this.state.selectedOffer.sorszam}</p>
+                            <p className='text' style={{color: 'green',fontWeight: 'bolder'}}>{this.state.selectedOffer.id}</p>
                             <p className='header-text'>Project</p>
-                            <p className='text'>{this.state.selectedOffer.projekt}</p>
+                            <p className='text'>{this.state.selectedOffer.header.projectName}</p>
                             <p className='header-text'>Work type</p>
-                            <p className='text'>{this.state.selectedOffer.munkanem}</p>
+                            <p className='text'>{this.state.selectedOffer.header.workTypes}</p>
                             <p className='header-text'>Short company name</p>
-                            <p className='text'>{this.state.selectedOffer.cegnev}</p>
+                            <p className='text'>{this.state.selectedOffer.header.companyName}</p>
                             <p className='header-text'>Offer request date</p>
                             <p className='text'>{this.offerDateFormat(this.state.selectedOffer.datum)}</p>
                             <div className='vline'></div> 

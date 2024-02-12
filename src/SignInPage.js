@@ -36,6 +36,7 @@ class SignInPage extends Component{
           Swal.fire("Success!", "Successfully logged in!","success"); 
           setCookie("login-token", r.token,1);
           setCookie("login-name", r.name,1);
+          setCookie("login-company", r.company)
           const { navigate } = this.props;
           navigate("/");
         }else{

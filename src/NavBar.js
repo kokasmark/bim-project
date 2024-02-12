@@ -51,7 +51,7 @@ class NavBar extends Component{
 
         {getCookie("login-token") != ""  && 
           <div style={{position: "absolute", right: 100, display: 'flex'}}>
-              <h5>Logged in as {getCookie("login-name")}</h5>
+              <h5>Logged in as {getCookie("login-name")}({getCookie("login-company")})</h5>
               <p className='interactable' onClick={()=> {removeCookie("login-token");  window.location.reload(false);}} style={{color: "red"}}>sign out</p>
           </div>
         }
