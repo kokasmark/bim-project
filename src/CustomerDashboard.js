@@ -124,7 +124,6 @@ class CustomerDashboard extends Component {
             datum: date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate()
         };
         this.sendOffers(r)
-        this.setState({ request: r, offer_requests: [...this.state.offer_requests, r] })
         this.setState({ requestingOffer: false, requestSent: true });
     }
     depositPopUp(offer){

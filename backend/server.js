@@ -85,15 +85,15 @@ app.post('/api/add-offer', async (req, res) => {
   try {
     const { token, header } = req.body;
 
-    // Retrieve the document reference for the user based on the token
-    const userQuerySnapshot = await db.collection('companies').where('name', '==', header.companyName).get();
+    // Retrieve the document reference for the company based on the company name
+    const companyQuerySnapshot = await db.collection('companies').where('name', '==', header.companyName).get();
 
-    // Check if the user document exists
-    if (!userQuerySnapshot.empty) {
-      const userDocRef = userQuerySnapshot.docs[0].ref;
+    // Check if the company document exists
+    if (!companyQuerySnapshot.empty) {
+      const companyDocRef = companyQuerySnapshot.docs[0].ref;
 
-      // Access the "offers" subcollection for the user
-      const offersCollectionRef = userDocRef.collection('offers');
+      // Access the "offers" subcollection for the company
+      const offersCollectionRef = companyDocRef.collection('offers');
 
       // Add a new document to the "offers" subcollection with the offer data
       const offerDocRef = await offersCollectionRef.add({ header: header, data: "", status: 0 });
@@ -105,10 +105,9 @@ app.post('/api/add-offer', async (req, res) => {
       if (!userQuerySnapshotByToken.empty) {
         const userDocRefByToken = userQuerySnapshotByToken.docs[0].ref;
 
-        // Update the user document to push the offer document ID into the "sentOffers" array field
-        await userDocRefByToken.update({
-          sentOffers: admin.firestore.FieldValue.arrayUnion(offerDocRef.id)
-        });
+        // Access the "sentOffers" subcollection for the user and add a new document with a reference to the offer
+        const sentOffersCollectionRef = userDocRefByToken.collection('sentOffers');
+        await sentOffersCollectionRef.add({ offerRef: offerDocRef });
 
         res.status(200).json({ success: true, message: 'Offer uploaded successfully' });
       } else {
@@ -122,6 +121,8 @@ app.post('/api/add-offer', async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
+
+
 app.post('/api/update-offer', async (req, res) => {
   try {
     const { companyName, offerId, data, status } = req.body;
@@ -190,30 +191,35 @@ app.post('/api/get-offers', async (req, res) => {
 });
 app.post('/api/get-offers-person', async (req, res) => {
   try {
-    const { token, company } = req.body;
+    const { token } = req.body;
 
     // Retrieve the document reference for the user based on the token
     const userQuerySnapshot = await db.collection('users').where('token', '==', token).get();
 
     // Check if the user document exists
     if (!userQuerySnapshot.empty) {
-      const userData = userQuerySnapshot.docs[0].data();
+      const userDocRef = userQuerySnapshot.docs[0].ref;
 
-      // Retrieve the user's sentOffers array
-      const sentOffers = userData.sentOffers || [];
+      // Access the "sentOffers" subcollection for the user
+      const sentOffersCollectionRef = userDocRef.collection('sentOffers');
 
-      // Fetch all offers from the "offers" collection that have IDs stored in the user's sentOffers array
-      const offersPromises = sentOffers.map(async (id) => {
-        const companyDocsSnapshot = await db.collection('companies').where('name', '==', company).get();
-        const companyDocRef = companyDocsSnapshot.docs[0].ref;
+      // Query the "sentOffers" subcollection
+      const sentOffersQuerySnapshot = await sentOffersCollectionRef.limit(10).get();
 
-        // Access the "offers" subcollection for the company
-        const offerDocSnapshot = companyDocRef.collection('offers').doc(id);
+      // Extract the "offerRef" fields from each sent offer document
+      const offersPromises = sentOffersQuerySnapshot.docs.map(async (doc) => {
+        const { offerRef } = doc.data();
+
+        // Retrieve the offer document based on the reference
+        const offerDocSnapshot = await offerRef.get();
+
+        // Check if the offer document exists
         if (offerDocSnapshot.exists) {
           const { header, status } = offerDocSnapshot.data();
-          return { id: offerDocSnapshot.id, header, status };
+          const id = offerDocSnapshot.id;
+          return { id, header, status };
         } else {
-          return null; // Offer with this ID does not exist
+          return null;
         }
       });
 
@@ -232,6 +238,7 @@ app.post('/api/get-offers-person', async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
+
 app.post('/api/role', async (req, res) => {
   try {
     const { token } = req.body;

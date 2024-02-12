@@ -32,7 +32,7 @@ class Dashboard extends Component {
 
     state = {
         onTop: true,
-        offers: [[],[],[],[],[]],//based on status
+        offers: [[],[],[],[],[],[]],//based on status
         requestingOffer: false,
         requestSent: false,
         acceptedFilesOnUpload: ["JPG", "PNG", "SVG", "PDF"],
@@ -121,7 +121,7 @@ class Dashboard extends Component {
         const offerDate = new Date(date);
 
         const timeLine = new Date();
-        timeLine.setDate(timeLine.getDate() + 5);
+        timeLine.setDate(timeLine.getDate() - 5);
         const timeDifference = offerDate-timeLine;
         const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
         if(daysDifference > 0){
@@ -171,7 +171,7 @@ class Dashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-2.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[0].length}</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[1].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Sent Offers</Card.Text>
                             </div>
                         </Card.Body>
@@ -180,7 +180,7 @@ class Dashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-6.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[1].length}</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[2].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Orders (paid)</Card.Text>
                             </div>
                         </Card.Body>
@@ -189,7 +189,7 @@ class Dashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-1.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[2].length}</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[3].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Processing</Card.Text>
                             </div>
                         </Card.Body>
@@ -199,7 +199,7 @@ class Dashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-7.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[3].length}</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[4].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Invoiced Jobs</Card.Text>
                             </div>
                         </Card.Body>
@@ -249,7 +249,7 @@ class Dashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offers[0].map((offer,_index) =>
+                            {this.state.offers[1].map((offer,_index) =>
                                 <div className='rows-rw-6' index={_index}>
                                     <p>{offer.id}</p>
                                     <p>{offer.header.projectName}</p>
@@ -278,7 +278,7 @@ class Dashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offers[1].map((offer) =>
+                            {this.state.offers[2].map((offer) =>
                                 <div className='rows-rw-6'>
                                     <p>{offer.id}</p>
                                     <p>{offer.header.projectName}</p>
@@ -307,7 +307,7 @@ class Dashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offers[2].map((offer) =>
+                            {this.state.offers[3].map((offer) =>
                                 <div className='rows-rw-6'>
                                     <p>{offer.id}</p>
                                     <p>{offer.header.projectName}</p>
@@ -337,7 +337,7 @@ class Dashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offers[3].map((offer) =>
+                            {this.state.offers[4].map((offer) =>
                                 <div className='rows-rw-7'>
                                     <p>{offer.id}</p>
                                     <p>{offer.header.projectName}</p>
@@ -367,7 +367,7 @@ class Dashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offers[4].map((offer) =>
+                            {this.state.offers[5].map((offer) =>
                                 <div className='rows-rw-6'>
                                     <p>{offer.id}</p>
                                     <p>{offer.header.projectName}</p>
