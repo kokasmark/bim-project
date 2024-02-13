@@ -10,6 +10,10 @@
   --lighter-bg: #0d171e;
   --shadow: #000203;
 }
+.page{
+  width: 100vw;
+  height: 100vh;
+}
 body{
   background-color: var(--bg);
   color: white;
@@ -91,7 +95,7 @@ body{
   top: 0px;
   background-color: var(--bg);
   box-shadow: 0px 5px 5px var(--shadow);
-  justify-content: start;
+  justify-content: center;
   flex-direction: row;
 }
 .navbar p{
@@ -499,6 +503,32 @@ input::placeholder{
   color: white;
   font-size: 20px;
   margin-top: 50px;
+}
+.manage-panel{
+  width: 60%;
+  margin-left: 20%;
+  height: 100%;
+  color: white;
+  text-align: center;
+}
+.manage-panel h1{
+  position: relative;
+  top: 100px;
+  font-size: 60px;
+  margin-bottom: 150px;
+}
+.manage-panel h2{
+  text-align: start;
+  margin-left: 20%;
+}
+.manage-panel input{
+  width: 60%;
+  margin-right: 20px;
+  margin-left: 80px;
+}
+.manage-panel ul{
+  text-align: start;
+  margin-left: 20%;
 }
 @keyframes anim-scale {
   0%{

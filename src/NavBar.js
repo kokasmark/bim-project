@@ -2,11 +2,12 @@ import './App.css';
 import React, {Component} from 'react';
 import logo from './assets/logo.png';
 import { Link } from 'react-router-dom';
-import {getCookie, removeCookie} from './cookie'
+import {getCookie, removeCookie, setCookie} from './cookie'
 
 class NavBar extends Component{
   state = {
-    dashboard:"/dashboard"
+    dashboard:"/dashboard",
+    role: 0
   }
   getRole(){
     var myHeaders = new Headers();
@@ -29,7 +30,8 @@ class NavBar extends Component{
             var r = JSON.parse(result);
             if(r.success){
               console.log(r.role)
-              this.setState({dashboard: r.role === 1 ? "/admin" : "/dashboard"})
+              setCookie("login-company", r.company,1)
+              this.setState({dashboard: r.role === 1 ? "/admin" : "/dashboard", role: r.role})
             }
           })
           .catch(error => console.log('error', error));
@@ -41,7 +43,9 @@ class NavBar extends Component{
     return(
       <div className='navbar'>
         <Link to={'/'}><img src={logo}/></Link>
-        <Link to={this.state.dashboard} style={{marginLeft: 200}}><p>Dashboard</p></Link>
+        <Link to={this.state.dashboard}><p>Dashboard</p></Link>
+        {this.state.role > 0 && <Link to={'/dashboard'}><p>Orders</p></Link>}
+        {this.state.role > 0 && <Link to={'/manage'}><p>Manage</p></Link>}
 
         {getCookie("login-token") == "" && <div>
           <Link to={'/signup'}><button  className='rounded-btn-secondary' style={{right: 120, marginTop: 15}}>Sign Up</button></Link>

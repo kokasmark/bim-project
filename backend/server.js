@@ -252,7 +252,7 @@ app.post('/api/role', async (req, res) => {
     if (!userQuerySnapshot.empty) {
       // There should be only one user document with a unique token
       const userData = userQuerySnapshot.docs[0].data();
-      res.status(200).json({ success: true, role: userData.role });
+      res.status(200).json({ success: true, role: userData.role, company: userData.company });
     } else {
       res.status(400).json({ success: false, error: 'User not found', role: -1 });
     }
@@ -278,9 +278,15 @@ app.post('/api/admin/add', async (req, res) => {
         if(!newAdminQuery.empty){
           const newAdminDocRef = newAdminQuery.docs[0].ref;
 
-          // Update the user document with the new role field value
-          await newAdminDocRef.update({ role: 1 });
-          res.status(200).json({ success: true, message: `New admin added: ${newAdmin}` });
+          console.log(`${newAdmin} from ${newAdminQuery.docs[0].data().company}`)
+          if(userData.company === newAdminQuery.docs[0].data().company){
+            // Update the user document with the new role field value
+            await newAdminDocRef.update({ role: 1 });
+            res.status(200).json({ success: true, message: `New admin added: ${newAdmin}` });
+          }
+          else{
+            res.status(400).json({ success: false, error: `${newAdmin} is not a part of ${userData.company}!` });
+          }
         }
         else{
           res.status(400).json({ success: false, error: `Cant find user: ${newAdmin}` });
@@ -361,6 +367,29 @@ app.post('/api/reset-password', async (req, res) => {
       res.status(200).json({ success: true, message: 'Password successfully updated!'});
     } else {
       res.status(400).json({ success: false, error: 'User not found'});
+    }
+  } catch (error) {
+    console.error('Error getting user:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+app.post('/api/get-colleagues', async (req, res) => {
+  try {
+    const { company } = req.body;
+
+    // Query the user document based on the token field
+    const userQuerySnapshot = await db.collection('users').where('company', '==', company).get();
+
+    // Check if the user document exists
+    if (!userQuerySnapshot.empty) {
+      let colleagues = []
+      for(var i = 0; i < userQuerySnapshot.docs.length; i++){
+        const userData = userQuerySnapshot.docs[i].data();
+        colleagues.push({email: userData.email, role: userData.role})
+      }
+      res.status(200).json({ success: true, colleagues: colleagues });
+    } else {
+      res.status(400).json({ success: false, error: 'Company not found', role: -1 });
     }
   } catch (error) {
     console.error('Error getting user:', error);

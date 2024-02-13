@@ -10,6 +10,7 @@ import SignUpPage from './SignUpPage';
 import SignInWrapper from './SignInPage';
 import { getCookie } from './cookie';
 import ForgotPasswordWrapper from './ForgotPasswordPage';
+import ManageWrapper from './ManagePage'
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 
@@ -20,6 +21,7 @@ root.render(
     <Route exact={true} path="/" element={<App />} />
     <Route exact={true} path="/dashboard" element={<CustomerDashboard />} />
     <Route exact={true} path="/admin" element={<Dashboard />} />
+    <Route exact={true} path="/manage" element={<ManageWrapper />} />
 
     <Route exact={true} path="/signup" element={<SignUpPage />} />
     <Route exact={true} path="/signin" element={<SignInWrapper />} />

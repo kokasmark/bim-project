@@ -167,6 +167,28 @@ class Dashboard extends Component {
             }
           });
     }
+    sendFinishedJob(offer){
+        const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+
+                const raw = JSON.stringify({
+                "companyName": offer.header.companyName,
+                "offerId": offer.id,
+                "status": 4
+                });
+
+                const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+                };
+
+                fetch("http://localhost:3001/api/update-offer", requestOptions)
+                .then((response) => response.text())
+                .then((result) => console.log(result))
+                .catch((error) => console.error(error));
+    }
     calculateDepositOsszeg(offer){
         var osszeg = 0
         offer.data.forEach(data => {
@@ -184,7 +206,7 @@ class Dashboard extends Component {
         ]
         return (
             <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }} ref={this.dashboard}>
-                <h1 style={{ marginTop: 65, padding: '20px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : ''}}>Admin Dashboard</h1>
+                <h1 style={{ marginTop: 100, padding: '60px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : ''}}>{getCookie("login-company")} Dashboard</h1>
                 <div className='dashboard-header' style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
                         <Card.Body style={{ margin: 20 }}>
@@ -209,7 +231,7 @@ class Dashboard extends Component {
                             <img src={require('./assets/dashboard_icons/icon-6.png')} />
                             <div style={{ marginTop: -30 }}>
                                 <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[2].length}</Card.Text>
-                                <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Orders (sent)</Card.Text>
+                                <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Orders(Not paid)</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
@@ -217,7 +239,7 @@ class Dashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-1.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[3].length}</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[3].length + this.state.offers[4].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Processing</Card.Text>
                             </div>
                         </Card.Body>
@@ -227,7 +249,7 @@ class Dashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-7.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[4].length}</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[5].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Invoiced Jobs</Card.Text>
                             </div>
                         </Card.Body>
@@ -241,7 +263,7 @@ class Dashboard extends Component {
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
-                                <p>Rövid cégnév</p>
+                                <p>Megrendelő</p>
                                 <p>Ajánlatkérési dátum</p>
                                 <p>Action</p>
                                 
@@ -253,7 +275,7 @@ class Dashboard extends Component {
                                     <p>{offer.id}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
-                                    <p>{offer.header.companyName}</p>
+                                    <p>{offer.header.author}</p>
                                     <p>{this.offerDateFormat(offer.header.datum)}</p>
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -50}}  onClick={()=> this.offerPopUp(offer, true)}><img src={calc_icon}/>Calculation</p>
                                     <div className='line'>
@@ -271,7 +293,7 @@ class Dashboard extends Component {
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
-                                <p>Rövid cégnév</p>
+                                <p>Megrendelő</p>
                                 <p>Befejezési határidő</p>
                                 <p>Action</p>
                                 <div className='line'></div>
@@ -282,7 +304,7 @@ class Dashboard extends Component {
                                     <p>{offer.id}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
-                                    <p>{offer.header.companyName}</p>
+                                    <p>{offer.header.author}</p>
                                     {this.daysToFinish(offer.header.datum)}
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -20}} onClick={()=> this.offerPopUp(offer,false)}>See offer</p>
                                     <div className='line'>
@@ -294,13 +316,13 @@ class Dashboard extends Component {
                 </div>
                 <div className='dashboard-category' ref={this.ordersRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
-                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-6.png')} /> Orders (sent)</Card.Title>
+                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-6.png')} /> Orders(Not paid)</Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-6'>
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
-                                <p>Rövid cégnév</p>
+                                <p>Megrendelő</p>
                                 <p>Befejezési határidő</p>
                                 <p>Action</p>
                                 <div className='line'></div>
@@ -311,7 +333,7 @@ class Dashboard extends Component {
                                     <p>{offer.id}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
-                                    <p>{offer.header.companyName}</p>
+                                    <p>{offer.header.author}</p>
                                     <p>{this.offerDateFormat(offer.header.datum)}</p>
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -50}} onClick={()=> this.depositArrivedPopup(offer)}>Deposit arrived</p>
                                     <div className='line'>
@@ -329,7 +351,7 @@ class Dashboard extends Component {
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
-                                <p>Rövid cégnév</p>
+                                <p>Megrendelő</p>
                                 <p>Befejezési határidő</p>
                                 <p>Action</p>
                                 <div className='line'></div>
@@ -340,9 +362,9 @@ class Dashboard extends Component {
                                     <p>{offer.id}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
-                                    <p>{offer.header.companyName}</p>
+                                    <p>{offer.header.author}</p>
                                     <p>{this.offerDateFormat(offer.header.datum)}</p>
-                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -50 , backgroundColor: 'var(--success)'}}>Send Finished Job</p>
+                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -50 , backgroundColor: 'var(--success)'}} onClick={()=> this.sendFinishedJob(offer)}>Send Finished Job</p>
                                     <div className='line'>
                                     </div>
                                 </div>
@@ -352,13 +374,13 @@ class Dashboard extends Component {
                 </div>
                 <div className='dashboard-category' ref={this.processingRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
-                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-1.png')} /> Processing</Card.Title>
+                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-1.png')} /> Finished Jobs</Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-7'>
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
-                                <p>Rövid cégnév</p>
+                                <p>Megrendelő</p>
                                 <p>Befejezési határidő</p>
                                 <p></p>
                                 <p>Action</p>
@@ -370,10 +392,10 @@ class Dashboard extends Component {
                                     <p>{offer.id}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
-                                    <p>{offer.header.companyName}</p>
+                                    <p>{offer.header.author}</p>
                                     <p>{this.offerDateFormat(offer.header.datum)}</p>
-                                    <p className='rounded-btn-secondary' style={{width: 'fit-content', marginLeft: 0}}>Modify</p>
-                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: 50 , backgroundColor: 'var(--success)'}}>Send Finished Job</p>
+                                    <p className='rounded-btn-secondary' style={{width: 'fit-content', marginLeft: 0}} onClick={()=> this.offerPopUp(offer,true)}>Modify</p>
+                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: 50 , backgroundColor: 'var(--success)'}} onClick={()=>this.sendFinishedJob(offer)}>Send Finished Job</p>
                                     <div className='line'>
                                     </div>
                                 </div>
@@ -389,7 +411,7 @@ class Dashboard extends Component {
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
-                                <p>Rövid cégnév</p>
+                                <p>Megrendelő</p>
                                 <p>Befejezési határidő</p>
                                 <p>Status</p>
                                 <div className='line'></div>
@@ -400,7 +422,7 @@ class Dashboard extends Component {
                                     <p>{offer.id}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
-                                    <p>{offer.header.companyName}</p>
+                                    <p>{offer.header.author}</p>
                                     <p>{this.offerDateFormat(offer.header.datum)}</p>
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -60, backgroundColor: 'var(--success)'}}><img src={download_icon}/>Send Invoice</p>
                                     <div className='line'>

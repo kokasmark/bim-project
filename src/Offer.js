@@ -62,15 +62,15 @@ class Offer extends Component {
     var updatedData = this.state.editingData;
     return (updatedData[index].elements[eindex].db == NaN ? 0 : updatedData[index].elements[eindex].db) * (updatedData[index].elements[eindex].ftDb == NaN ? 0 : updatedData[index].elements[eindex].ftDb);
   }
-  updateOffer(compamyName, offerId){
+  updateOffer(offer){
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    console.log(`Updating offer ${offerId} at ${compamyName}`)
+    console.log(`Updating offer ${offer.id} at ${offer.header.companyName}`)
     var raw = JSON.stringify({
-      "companyName": compamyName,
-      "offerId": offerId,
+      "companyName": offer.header.companyName,
+      "offerId": offer.id,
       "data": this.state.editingData,
-      "status": 1
+      "status": offer.status > 1 ? offer.status : 1
     });
 
     var requestOptions = {
@@ -82,7 +82,7 @@ class Offer extends Component {
 
     fetch("http://localhost:3001/api/update-offer", requestOptions)
       .then(response => response.text())
-      .then(result => {Swal.fire("Success!", `Offer [${offerId}] updated successfully!`,"success"); this.popUpClose()})
+      .then(result => {Swal.fire("Success!", `Offer [${offer.id}] updated successfully!`,"success"); this.popUpClose()})
       .catch(error => {Swal.fire("Oops!", error.error, "error")});
   }
   calculateDepositOsszeg(e){
@@ -94,6 +94,12 @@ class Offer extends Component {
         });
     });
     return osszeg / e;
+}
+componentDidUpdate(prevProps, prevState){
+  if(prevProps.offer != this.props.offer){
+    console.log(this.props.offer.data)
+  this.setState({editingData: this.props.offer.data})
+  }
 }
   render() {
     return (
@@ -159,15 +165,15 @@ class Offer extends Component {
             <ul className='fields'>
               {this.state.editingData.map((data, index) => (
                 <li key={data.id}>
-                  <input style={{backgroundColor: "var(--darker-bg)", border: "none", margin: 5}}  placeholder='Pl. helységköny' onChange={(e) => this.ChangeDataTitle(index,e.target.value)}></input>
+                  <input style={{backgroundColor: "var(--darker-bg)", border: "none", margin: 5}}  placeholder='Pl. helységköny' value={data.title} onChange={(e) => this.ChangeDataTitle(index,e.target.value)}></input>
                   <ul className='row'>
                     {data.elements.map((element,eindex) => (
                       <li key={element.id}>
                         <div className='rows-rw-4'>
-                        <div><input style={{backgroundColor: "var(--lighter-bg)", border: "none", margin: 5}} placeholder='Pl. helységköny' onChange={(e) => this.ChangeDataInnerTitle(index,eindex,e.target.value)}></input></div>
-                        <div><input id={`${index}-${eindex}-ftdb`} style={{width: 50,backgroundColor: "var(--lighter-bg)", border: "none"}} onChange={(e) => this.ChangeDataFtDb(index,eindex,e.target.value)}></input><p>Ft/db</p></div>
-                        <div><input id={`${index}-${eindex}-db`} style={{width: 50, backgroundColor: "var(--lighter-bg)", border: "none"}} onChange={(e) => this.ChangeDataDb(index,eindex,e.target.value)}></input><p>db</p></div>
-                        <div><input disabled style={{width: 50, backgroundColor: "var(--lighter-bg)", border: "none"}}value={this.CalculateFt(index,eindex)} ></input><p>Ft</p></div>
+                        <div><input style={{backgroundColor: "var(--lighter-bg)", border: "none", margin: 5}} placeholder='Pl. helységköny' value={element.title} onChange={(e) => this.ChangeDataInnerTitle(index,eindex,e.target.value)}></input></div>
+                        <div><input id={`${index}-${eindex}-ftdb`} style={{width: 50,backgroundColor: "var(--lighter-bg)", border: "none"}} value={element.ftDb} onChange={(e) => this.ChangeDataFtDb(index,eindex,e.target.value)}></input><p>Ft/db</p></div>
+                        <div><input id={`${index}-${eindex}-db`} style={{width: 50, backgroundColor: "var(--lighter-bg)", border: "none"}} value={element.db} onChange={(e) => this.ChangeDataDb(index,eindex,e.target.value)}></input><p>db</p></div>
+                        <div><input disabled style={{width: 50, backgroundColor: "var(--lighter-bg)", border: "none"}}value={this.CalculateFt(index,eindex)}></input><p>Ft</p></div>
                         </div>
                       </li>
                     ))}
@@ -177,7 +183,7 @@ class Offer extends Component {
               ))}
               <h1 style={{width: "90%", padding: 5,backgroundColor: "var(--bg)", borderRadius: 10}} onClick={()=> this.addDataLine()} className='interactable'>+</h1>
             </ul>
-            <button className='rounded-btn-primary' onClick={()=> this.updateOffer(this.props.offer.header.companyName,this.props.offer.id)}>Update Offer</button>
+            <button className='rounded-btn-primary' onClick={()=> this.updateOffer(this.props.offer)}>Update Offer</button>
             </div>
             }
             

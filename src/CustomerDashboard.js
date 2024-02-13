@@ -91,11 +91,16 @@ class CustomerDashboard extends Component {
             if(offer.status > 0){
                 updatedOffers[0].push(offer)
             }
-
-            try{
-                updatedOffers[offer.status-1].push(offer)
-            }catch{
-                updatedOffers[0].push(offer)
+            
+            if(offer.status == 1){
+                updatedOffers[offer.status].push(offer)
+            }
+            else{
+                try{
+                    updatedOffers[offer.status-1].push(offer)
+                }catch{
+                    updatedOffers[0].push(offer)
+                }
             }
             this.setState({offers: updatedOffers})
         });
@@ -129,6 +134,7 @@ class CustomerDashboard extends Component {
             projectName: document.getElementById('project-name').value,
             workTypes: this.state.selectedWorktypes,
             companyName: document.getElementById('company-name').value,
+            author: `${getCookie("login-name")}(${getCookie("login-company")})`,
             datum: date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate()
         };
         this.sendOffers(r)
@@ -174,8 +180,8 @@ class CustomerDashboard extends Component {
             { value: 'egyeb', label: 'Egyéb' }
         ]
         return (
-            <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }} ref={this.dashboard}>
-                <h1 style={{ marginTop: 65, padding: '20px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : ''}}>Dashboard</h1>
+            <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '100%' }} ref={this.dashboard}>
+                <h1 style={{ marginTop: 100, padding: '50px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : ''}}>Customer Dashboard</h1>
                 <button className='rounded-btn-primary' style={{ position: 'relative', top: 0, left: '50%', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}
                     onClick={() => this.requestOfferPopUp()}>Request New Offer</button>
                 <div className='dashboard-header' style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
@@ -246,7 +252,7 @@ class CustomerDashboard extends Component {
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.companyName}</p>
                                     <p>{offer.header.datum}</p>
-                                    <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -50}}>{this.state.statusText[offer.status]}</p>
+                                    <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -20}}>{this.state.statusText[offer.status]}</p>
                                     <div className='line'>
                                     </div>
                                 </div>
