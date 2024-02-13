@@ -18,13 +18,13 @@ class ManagePage extends Component{
       emailToAdmin: "",
       colleagues: []
   }
-  addAdmin(){
+  addAdmin(email){
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
     "token": getCookie("login-token"),
-    "newAdmin": this.state.emailToAdmin
+    "newAdmin": email
     });
 
     var requestOptions = {
@@ -40,7 +40,97 @@ class ManagePage extends Component{
       {
         var r = JSON.parse(result);
         if(r.success){
-          Swal.fire("Success!", `${this.state.emailToAdmin} was added as an admin!`,"success")
+          Swal.fire("Success!", `${email} was added as an admin!`,"success")
+        }
+        else{
+          Swal.fire("Oops!", r.error,"error")
+        }
+    })
+    .catch(error => {Swal.fire("Oops!", error.error,"error")});
+  }
+  removeAdmin(email){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+    "token": getCookie("login-token"),
+    "newAdmin": email
+    });
+
+    var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+    };
+
+    fetch("http://localhost:3001/api/admin/remove", requestOptions)
+    .then(response => response.text())
+    .then(result => 
+      {
+        var r = JSON.parse(result);
+        if(r.success){
+          Swal.fire("Success!", `${email} was removed as an admin!`,"success")
+        }
+        else{
+          Swal.fire("Oops!", r.error,"error")
+        }
+    })
+    .catch(error => {Swal.fire("Oops!", error.error,"error")});
+  }
+  addColleague(){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+    "token": getCookie("login-token"),
+    "newColleauge": this.state.emailToCompany
+    });
+
+    var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+    };
+
+    fetch("http://localhost:3001/api/admin/add-colleague", requestOptions)
+    .then(response => response.text())
+    .then(result => 
+      {
+        var r = JSON.parse(result);
+        if(r.success){
+          Swal.fire("Success!", `${this.state.emailToCompany} was added as a colleague!`,"success")
+        }
+        else{
+          Swal.fire("Oops!", r.error,"error")
+        }
+    })
+    .catch(error => {Swal.fire("Oops!", error.error,"error")});
+  }
+  removeColleague(email){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+    "token": getCookie("login-token"),
+    "newColleauge": email
+    });
+
+    var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+    };
+
+    fetch("http://localhost:3001/api/admin/remove-colleague", requestOptions)
+    .then(response => response.text())
+    .then(result => 
+      {
+        var r = JSON.parse(result);
+        if(r.success){
+          Swal.fire("Success!", `${email} was removed as a colleague!`,"success")
         }
         else{
           Swal.fire("Oops!", r.error,"error")
@@ -78,13 +168,16 @@ class ManagePage extends Component{
           <h1>Manage({getCookie("login-company")})</h1>
           <h2>Add to company</h2>
           <input type='text' placeholder='Email' onChange={(e)=> this.setState({emailToCompany: e.target.value})}></input>
-          <button className='rounded-btn-secondary'>Add</button>
-          <h2>Add as admin</h2>
-          <input type='text' placeholder='Email'  onChange={(e)=> this.setState({emailToAdmin: e.target.value})}></input>
-          <button className='rounded-btn-secondary' onClick={()=>this.addAdmin()}>Add</button>
+          <button className='rounded-btn-secondary' onClick={()=>this.addColleague()}>Add</button>
           <ul>
             {this.state.colleagues.map((colleague) => (
-              <li>{colleague.email} - {colleague.role == 1? "Admin" : "Colleague"}</li>
+              <div className='li-i'>
+                <li><h5>{colleague.email} - {colleague.role == 1? "Admin" : "Colleague"}</h5></li>
+                <p className='interactable' onClick={()=>this.removeColleague(colleague.email)}>Remove</p> 
+                {colleague.role == 1 && <p className='interactable' onClick={()=>this.removeAdmin(colleague.email)}>Remove as admin</p>}
+                {colleague.role == 0 && <p className='interactable' style={{color: "lightgreen"}} onClick={()=>this.addAdmin(colleague.email)}>Promote to admin</p>}
+                <br></br>
+              </div>
             ))}
           </ul>
         </div>

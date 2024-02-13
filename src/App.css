@@ -530,6 +530,21 @@ input::placeholder{
   text-align: start;
   margin-left: 20%;
 }
+.manage-panel ul .li-i{
+  display: inline;
+}
+.manage-panel li{
+  width: 300px !important;
+  display: inline-block;
+}
+.manage-panel ul p{
+  display: inline;
+  color: red;
+  margin-left: 20px;
+}
+.manage-panel ul h5{
+  display: inline;
+}
 @keyframes anim-scale {
   0%{
     transform: scale(0.1);

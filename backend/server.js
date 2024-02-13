@@ -304,6 +304,134 @@ app.post('/api/admin/add', async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
+app.post('/api/admin/remove', async (req, res) => {
+  try {
+    const { token, newAdmin } = req.body;
+
+    // Query the user document based on the token field
+    const userQuerySnapshot = await db.collection('users').where('token', '==', token).get();
+
+    // Check if the user document exists
+    if (!userQuerySnapshot.empty) {
+      // There should be only one user document with a unique token
+      const userData = userQuerySnapshot.docs[0].data();
+      if(userData.role === 1)
+      {
+        const newAdminQuery = await db.collection('users').where('email', '==', newAdmin).get();
+        if(!newAdminQuery.empty){
+          const newAdminDocRef = newAdminQuery.docs[0].ref;
+
+          console.log(`${newAdmin} from ${newAdminQuery.docs[0].data().company}`)
+          if(userData.company === newAdminQuery.docs[0].data().company){
+            // Update the user document with the new role field value
+            await newAdminDocRef.update({ role: 0 });
+            res.status(200).json({ success: true, message: `Admin removed: ${newAdmin}` });
+          }
+          else{
+            res.status(400).json({ success: false, error: `${newAdmin} is not a part of ${userData.company}!` });
+          }
+        }
+        else{
+          res.status(400).json({ success: false, error: `Cant find user: ${newAdmin}` });
+        }
+       
+      }
+      else{
+        res.status(400).json({ success: false, error: 'Cant add admin, no permission!'});
+      }
+    } else {
+      res.status(400).json({ success: false, error: 'User not found', role: -1 });
+    }
+  } catch (error) {
+    console.error('Error getting user:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+app.post('/api/admin/add-colleague', async (req, res) => {
+  try {
+    const { token, newColleauge } = req.body;
+
+    // Query the user document based on the token field
+    const userQuerySnapshot = await db.collection('users').where('token', '==', token).get();
+
+    // Check if the user document exists
+    if (!userQuerySnapshot.empty) {
+      // There should be only one user document with a unique token
+      const userData = userQuerySnapshot.docs[0].data();
+      if(userData.role === 1)
+      {
+        const newColleaugeQuery = await db.collection('users').where('email', '==', newColleauge).get();
+        if(!newColleaugeQuery.empty){
+          const newColleaugeDocRef = newColleaugeQuery.docs[0].ref;
+
+          console.log(`${newColleauge} from ${newColleaugeQuery.docs[0].data().company}`)
+          if(newColleaugeQuery.docs[0].data().company === "" || newColleaugeQuery.docs[0].data().company === "Person"){
+            // Update the user document with the new role field value
+            await newColleaugeDocRef.update({ company: userData.company});
+            res.status(200).json({ success: true, message: `New colleague added: ${newColleauge}` });
+          }
+          else{
+            res.status(400).json({ success: false, error: `${newColleauge} is already a part of a company!` });
+          }
+        }
+        else{
+          res.status(400).json({ success: false, error: `Cant find user: ${newAdmin}` });
+        }
+       
+      }
+      else{
+        res.status(400).json({ success: false, error: 'Cant add admin, no permission!'});
+      }
+    } else {
+      res.status(400).json({ success: false, error: 'User not found', role: -1 });
+    }
+  } catch (error) {
+    console.error('Error getting user:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+app.post('/api/admin/remove-colleague', async (req, res) => {
+  try {
+    const { token, newColleauge } = req.body;
+
+    // Query the user document based on the token field
+    const userQuerySnapshot = await db.collection('users').where('token', '==', token).get();
+
+    // Check if the user document exists
+    if (!userQuerySnapshot.empty) {
+      // There should be only one user document with a unique token
+      const userData = userQuerySnapshot.docs[0].data();
+      if(userData.role === 1)
+      {
+        const newColleaugeQuery = await db.collection('users').where('email', '==', newColleauge).get();
+        if(!newColleaugeQuery.empty){
+          const newColleaugeDocRef = newColleaugeQuery.docs[0].ref;
+
+          if(newColleaugeQuery.docs[0].data().company === userData.company){
+            // Update the user document with the new role field value
+            await newColleaugeDocRef.update({ company: "Person"});
+            res.status(200).json({ success: true, message: `Colleague removed: ${newColleauge}` });
+          }
+          else{
+            res.status(400).json({ success: false, error: `${newColleauge} is already a part of a company!` });
+          }
+        }
+        else{
+          res.status(400).json({ success: false, error: `Cant find user: ${newAdmin}` });
+        }
+       
+      }
+      else{
+        res.status(400).json({ success: false, error: 'Cant add admin, no permission!'});
+      }
+    } else {
+      res.status(400).json({ success: false, error: 'User not found', role: -1 });
+    }
+  } catch (error) {
+    console.error('Error getting user:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
 app.post('/api/forgot-password', async (req, res) => {
     try {
       // Extract email and password from the request body
