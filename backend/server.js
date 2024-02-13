@@ -218,7 +218,6 @@ app.post('/api/get-offers-person', async (req, res) => {
         if (offerDocSnapshot.exists) {
           const { header, status, data } = offerDocSnapshot.data();
           const id = offerDocSnapshot.id;
-          console.log({ id, header, data, status })
           return { id, header, data, status };
         } else {
           return null;
@@ -322,7 +321,7 @@ app.post('/api/admin/remove', async (req, res) => {
           const newAdminDocRef = newAdminQuery.docs[0].ref;
 
           console.log(`${newAdmin} from ${newAdminQuery.docs[0].data().company}`)
-          if(userData.company === newAdminQuery.docs[0].data().company){
+          if(userData.company === newAdminQuery.docs[0].data().company  && (userData.token != newAdminQuery.docs[0].data().token)){
             // Update the user document with the new role field value
             await newAdminDocRef.update({ role: 0 });
             res.status(200).json({ success: true, message: `Admin removed: ${newAdmin}` });
@@ -363,9 +362,8 @@ app.post('/api/admin/add-colleague', async (req, res) => {
         const newColleaugeQuery = await db.collection('users').where('email', '==', newColleauge).get();
         if(!newColleaugeQuery.empty){
           const newColleaugeDocRef = newColleaugeQuery.docs[0].ref;
-
-          console.log(`${newColleauge} from ${newColleaugeQuery.docs[0].data().company}`)
-          if(newColleaugeQuery.docs[0].data().company === "" || newColleaugeQuery.docs[0].data().company === "Person"){
+          
+          if((newColleaugeQuery.docs[0].data().company === "" || newColleaugeQuery.docs[0].data().company === "Person")){
             // Update the user document with the new role field value
             await newColleaugeDocRef.update({ company: userData.company});
             res.status(200).json({ success: true, message: `New colleague added: ${newColleauge}` });
@@ -407,7 +405,7 @@ app.post('/api/admin/remove-colleague', async (req, res) => {
         if(!newColleaugeQuery.empty){
           const newColleaugeDocRef = newColleaugeQuery.docs[0].ref;
 
-          if(newColleaugeQuery.docs[0].data().company === userData.company){
+          if(newColleaugeQuery.docs[0].data().company === userData.company  && (userData.token != newColleaugeQuery.docs[0].data().token)){
             // Update the user document with the new role field value
             await newColleaugeDocRef.update({ company: "Person"});
             res.status(200).json({ success: true, message: `Colleague removed: ${newColleauge}` });
@@ -516,6 +514,45 @@ app.post('/api/get-colleagues', async (req, res) => {
         colleagues.push({email: userData.email, role: userData.role})
       }
       res.status(200).json({ success: true, colleagues: colleagues });
+    } else {
+      res.status(400).json({ success: false, error: 'Company not found', role: -1 });
+    }
+  } catch (error) {
+    console.error('Error getting user:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+app.get('/api/get-companies', async (req, res) => {
+  try {
+    // Query the user document based on the token field
+    const userQuerySnapshot = await db.collection('companies').get();
+
+    // Check if the user document exists
+    if (!userQuerySnapshot.empty) {
+      let companies = []
+      for(var i = 0; i < userQuerySnapshot.docs.length; i++){
+        const userData = userQuerySnapshot.docs[i].data();
+        companies.push({label: userData.name})
+      }
+      res.status(200).json({ success: true, companies: companies });
+    } else {
+      res.status(400).json({ success: false, error: 'Company not found', role: -1 });
+    }
+  } catch (error) {
+    console.error('Error getting user:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+app.post('/api/get-worktypes', async (req, res) => {
+  try {
+    const { company } = req.body;
+    // Query the user document based on the token field
+    const userQuerySnapshot = await db.collection('companies').where("name", "==", company).get();
+
+    // Check if the user document exists
+    if (!userQuerySnapshot.empty) {
+      let companyQuerry = userQuerySnapshot.docs[0].data()
+      res.status(200).json({ success: true, workTypes: companyQuerry.workTypes });
     } else {
       res.status(400).json({ success: false, error: 'Company not found', role: -1 });
     }

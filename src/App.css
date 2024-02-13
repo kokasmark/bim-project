@@ -529,21 +529,32 @@ input::placeholder{
 .manage-panel ul{
   text-align: start;
   margin-left: 20%;
+  margin-bottom: 100px;
 }
 .manage-panel ul .li-i{
   display: inline;
 }
-.manage-panel li{
+.manage-panel .li-i li{
   width: 300px !important;
   display: inline-block;
+  margin-bottom: 10px;
 }
 .manage-panel ul p{
   display: inline;
-  color: red;
+  color: var(--error);
   margin-left: 20px;
+  font-weight: 800;
 }
 .manage-panel ul h5{
   display: inline;
+}
+.manage-panel .work-types li{
+  display: inline-block;
+}
+.manage-panel .work-types input{
+  margin-bottom: 20px;
+  margin-left: -50px;
+  width: 200px;
 }
 @keyframes anim-scale {
   0%{

@@ -41,7 +41,9 @@ class CustomerDashboard extends Component {
         offerpopup: false,
         seeOffer: {},
         blur: false,
-        statusText: ["Sent","Waiting Calculation", "Waiting payment", "Paid", "Can be downloaded", "Billed"]
+        statusText: ["Sent","Waiting Calculation", "Waiting payment", "Paid", "Can be downloaded", "Billed"],
+        companies: [],
+        selectableWorkTypes: []
     }
     getOffers(){
         var myHeaders = new Headers();
@@ -105,8 +107,52 @@ class CustomerDashboard extends Component {
             this.setState({offers: updatedOffers})
         });
     }
+    start(){
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+            };
+    
+            fetch("http://localhost:3001/api/get-companies", requestOptions)
+            .then(response => response.text())
+            .then(result => 
+                {
+                    var r = JSON.parse(result);
+                    if(r.success){
+                        console.log(r)
+                        this.setState({companies: r.companies})
+                    }
+                })
+            .catch(error => console.log('error', error));
+    
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+    
+            var raw = JSON.stringify({
+            "company": getCookie("login-company")
+            });
+    
+            requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+            };
+    
+            fetch("http://localhost:3001/api/get-worktypes", requestOptions)
+            .then(response => response.text())
+            .then(result => 
+                {
+                    var r = JSON.parse(result);
+                    if(r.success){
+                        this.setState({workTypes: r.workTypes})
+                    }
+                })
+            .catch(error => console.log('error', error));
+    }
     componentDidMount() {
         this.getOffers()
+        this.start()
     }
     requestOfferPopUp() {
         this.setState({ requestingOffer: true,blur: true });
@@ -127,6 +173,10 @@ class CustomerDashboard extends Component {
             }
         }
         t.setState({ selectedWorktypes: wt })
+    }
+    handleSelectChange(option, t){
+        console.log(option)
+        t.setState({selectedCompany: option.label})
     }
     sendOfferRequest() {
         var date = new Date();
@@ -164,23 +214,8 @@ class CustomerDashboard extends Component {
         return osszeg / 2;
     }
     render() {
-        const options = [
-            { value: 'ajzatbeton', label: 'Ajzat Beton' },
-            { value: 'ablak', label: 'Ablak' },
-            { value: 'ajto', label: 'Ajtó' },
-            { value: 'helyisegkonyv', label: 'Helyiségkönyv' },
-            { value: 'burkolas', label: 'Burkolás' },
-            { value: 'almennyezet', label: 'Álmennyezet' },
-            { value: 'homlokzati-nyilaszarok', label: 'Homlokzati nyílászárók' },
-            { value: 'belso-nyilaszarok', label: 'Belső Nyílászárók' },
-            { value: 'beepitett-butor', label: 'Beépített bútor' },
-            { value: 'mobil-butor', label: 'Mobil bútor' },
-            { value: 'szaniter', label: 'Szaniter' },
-            { value: 'lakatos', label: 'Lakatos' },
-            { value: 'egyeb', label: 'Egyéb' }
-        ]
         return (
-            <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '100%' }} ref={this.dashboard}>
+            <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }} ref={this.dashboard}>
                 <h1 style={{ marginTop: 100, padding: '50px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : ''}}>Customer Dashboard</h1>
                 <button className='rounded-btn-primary' style={{ position: 'relative', top: 0, left: '50%', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}
                     onClick={() => this.requestOfferPopUp()}>Request New Offer</button>
@@ -389,13 +424,21 @@ class CustomerDashboard extends Component {
                             <p style={{ textAlign: 'center', marginTop: -30 }}>To request an offer, fill in all the details and we will process it within  2 business days</p>
 
                             <div className='form'>
-                                <input placeholder='Company Name' id='company-name'></input>
-                                <input placeholder='VAT number'></input>
-                                <input placeholder='Short project Name' id='project-name'></input>
+                                <Select
+                                    name="Work types"
+                                    options={this.state.companies}
+                                    className="basic-multi-select"
+                                    classNamePrefix="select"
+                                    placeholder="Company"
+                                    id='company-select'
+                                    onChange={(e) => this.handleSelectChange(e, this)}
+                                />
+                                <input placeholder='Short project Name' id='project-name' style={{marginTop: 20}}></input>
+                                
                                 <Select
                                     isMulti
                                     name="Work types"
-                                    options={options}
+                                    options={this.state.workTypes}
                                     className="basic-multi-select"
                                     classNamePrefix="select"
                                     placeholder="Work types"
