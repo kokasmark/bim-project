@@ -15,7 +15,7 @@
   height: 100vh;
 }
 body{
-  background-color: var(--bg);
+  background-color: var(--darker-bg);
   color: white;
   overflow: hidden;
   transition: 0.5s ease;
@@ -505,8 +505,8 @@ input::placeholder{
   margin-top: 50px;
 }
 .manage-panel{
-  width: 60%;
-  margin-left: 20%;
+  width: 50%;
+  margin-left: 25%;
   height: 100%;
   color: white;
   text-align: center;
@@ -551,10 +551,33 @@ input::placeholder{
 .manage-panel .work-types li{
   display: inline-block;
 }
-.manage-panel .work-types input{
-  margin-bottom: 20px;
-  margin-left: -50px;
+.manage-panel .work-types{
+  width: fit-content;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.manage-panel .work-types .worktype{
+  background-color: var(--secondary);
+  padding: 5px;
+  border-radius: 5px;
+}
+.manage-panel .new-worktype-input{
+  position: relative;
   width: 200px;
+  left: -210px;
+}
+.manage-panel .workTypes-panel{
+  position: relative;
+  background-color: var(--bg);
+  padding: 10px;
+  border-radius: 10px;
+  height: 250px;
+}
+.manage-panel .colleagues-panel{
+  background-color: var(--bg);
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
 }
 @keyframes anim-scale {
   0%{

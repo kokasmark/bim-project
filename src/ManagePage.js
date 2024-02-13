@@ -16,131 +16,131 @@ class ManagePage extends Component {
   state = {
     emailToCompany: "",
     emailToAdmin: "",
-    colleagues: [],
-    workTypes: []
+    colleagues: [{}],
+    workTypes: [{}]
   }
   addAdmin(email) {
-  
-      var myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
 
-      var raw = JSON.stringify({
-        "token": getCookie("login-token"),
-        "newAdmin": email
-      });
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
 
-      var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
-      };
+    var raw = JSON.stringify({
+      "token": getCookie("login-token"),
+      "newAdmin": email
+    });
 
-      fetch("http://localhost:3001/api/admin/add", requestOptions)
-        .then(response => response.text())
-        .then(result => {
-          var r = JSON.parse(result);
-          if (r.success) {
-            Swal.fire("Success!", `${email} was added as an admin!`, "success")
-          }
-          else {
-            Swal.fire("Oops!", r.error, "error")
-          }
-        })
-        .catch(error => { Swal.fire("Oops!", error.error, "error") });
-    
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://localhost:3001/api/admin/add", requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        var r = JSON.parse(result);
+        if (r.success) {
+          Swal.fire("Success!", `${email} was added as an admin!`, "success")
+        }
+        else {
+          Swal.fire("Oops!", r.error, "error")
+        }
+      })
+      .catch(error => { Swal.fire("Oops!", error.error, "error") });
+
   }
   removeAdmin(email) {
-    
-      var myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
 
-      var raw = JSON.stringify({
-        "token": getCookie("login-token"),
-        "newAdmin": email
-      });
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
 
-      var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
-      };
+    var raw = JSON.stringify({
+      "token": getCookie("login-token"),
+      "newAdmin": email
+    });
 
-      fetch("http://localhost:3001/api/admin/remove", requestOptions)
-        .then(response => response.text())
-        .then(result => {
-          var r = JSON.parse(result);
-          if (r.success) {
-            Swal.fire("Success!", `${email} was removed as an admin!`, "success")
-          }
-          else {
-            Swal.fire("Oops!", r.error, "error")
-          }
-        })
-        .catch(error => { Swal.fire("Oops!", error.error, "error") });
-    
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://localhost:3001/api/admin/remove", requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        var r = JSON.parse(result);
+        if (r.success) {
+          Swal.fire("Success!", `${email} was removed as an admin!`, "success")
+        }
+        else {
+          Swal.fire("Oops!", r.error, "error")
+        }
+      })
+      .catch(error => { Swal.fire("Oops!", error.error, "error") });
+
   }
   addColleague(email) {
-      var myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
 
-      var raw = JSON.stringify({
-        "token": getCookie("login-token"),
-        "newColleauge": email
-      });
+    var raw = JSON.stringify({
+      "token": getCookie("login-token"),
+      "newColleauge": email
+    });
 
-      var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
-      };
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
 
-      fetch("http://localhost:3001/api/admin/add-colleague", requestOptions)
-        .then(response => response.text())
-        .then(result => {
-          var r = JSON.parse(result);
-          if (r.success) {
-            Swal.fire("Success!", `${email} was added as a colleague!`, "success")
-          }
-          else {
-            Swal.fire("Oops!", r.error, "error")
-          }
-        })
-        .catch(error => { Swal.fire("Oops!", error.error, "error") });
-    
+    fetch("http://localhost:3001/api/admin/add-colleague", requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        var r = JSON.parse(result);
+        if (r.success) {
+          Swal.fire("Success!", `${email} was added as a colleague!`, "success")
+        }
+        else {
+          Swal.fire("Oops!", r.error, "error")
+        }
+      })
+      .catch(error => { Swal.fire("Oops!", error.error, "error") });
+
   }
   removeColleague(email) {
-   
-      var myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
 
-      var raw = JSON.stringify({
-        "token": getCookie("login-token"),
-        "newColleauge": email
-      });
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
 
-      var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
-      };
+    var raw = JSON.stringify({
+      "token": getCookie("login-token"),
+      "newColleauge": email
+    });
 
-      fetch("http://localhost:3001/api/admin/remove-colleague", requestOptions)
-        .then(response => response.text())
-        .then(result => {
-          var r = JSON.parse(result);
-          if (r.success) {
-            Swal.fire("Success!", `${email} was removed as a colleague!`, "success")
-          }
-          else {
-            Swal.fire("Oops!", r.error, "error")
-          }
-        })
-        .catch(error => { Swal.fire("Oops!", error.error, "error") });
-    
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://localhost:3001/api/admin/remove-colleague", requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        var r = JSON.parse(result);
+        if (r.success) {
+          Swal.fire("Success!", `${email} was removed as a colleague!`, "success")
+        }
+        else {
+          Swal.fire("Oops!", r.error, "error")
+        }
+      })
+      .catch(error => { Swal.fire("Oops!", error.error, "error") });
+
   }
   getColleagues() {
     const myHeaders = new Headers();
@@ -166,7 +166,7 @@ class ManagePage extends Component {
     this.getColleagues()
     this.getWorkTypes()
   }
-   warn(person, asA, action, func) {
+  warn(person, asA, action, func) {
     Swal.fire({
       title: "Are you sure?",
       text: `Do you wanna ${action} ${person} as a/an ${asA}?`,
@@ -181,61 +181,117 @@ class ManagePage extends Component {
       }
     });
   }
-  getWorkTypes(){
+  getWorkTypes() {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
-    "company": getCookie("login-company")
+      "company": getCookie("login-company")
     });
 
     var requestOptions = {
-    method: 'POST',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow'
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
     };
 
     fetch("http://localhost:3001/api/get-worktypes", requestOptions)
-    .then(response => response.text())
-    .then(result => 
-        {
-            var r = JSON.parse(result);
-            if(r.success){
-                this.setState({workTypes: r.workTypes.workTypes})
-            }
-        })
-    .catch(error => console.log('error', error));
+      .then(response => response.text())
+      .then(result => {
+        var r = JSON.parse(result);
+        if (r.success) {
+          this.setState({ workTypes: r.workTypes })
+        }
+      })
+      .catch(error => console.log('error', error));
+  }
+  add(){
+
+    var worktype = document.getElementById("new-worktype").value;
+    this.addWorkTypes([...this.state.workTypes, {"label": worktype}])
+    this.setState({workTypes: [...this.state.workTypes, {"label": worktype}]})
+  }
+  addWorkTypes(workTypes) {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      "company": getCookie("login-company"),
+      "workTypes": workTypes
+    });
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://localhost:3001/api/add-worktypes", requestOptions)
+      .then(response => response.text())
+      .then(result => {})
+      .catch(error => console.log('error', error));
+  }
+  removeWorkTypes(index) {
+    var workTypes = this.state.workTypes;
+    workTypes.splice(index,1);
+    this.setState({workTypes: workTypes})
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      "company": getCookie("login-company"),
+      "index": index
+    });
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://localhost:3001/api/remove-worktypes", requestOptions)
+      .then(response => response.text())
+      .then(result => {})
+      .catch(error => console.log('error', error));
   }
   render() {
     return (
       <div className='page'>
         <div className='manage-panel'>
           <h1>Manage({getCookie("login-company")})</h1>
-          <h2>Add to company</h2>
-          <input type='text' placeholder='Email' onChange={(e) => this.setState({ emailToCompany: e.target.value })}></input>
-          <button className='rounded-btn-secondary' onClick={() => this.warn(this.state.emailToCompany, "colleague", "add", this.addColleague)}>Add</button>
-          <ul>
-            {this.state.colleagues.map((colleague,index) => (
-              <div className='li-i' key={index}>
-                <li><h5>{colleague.email} - {colleague.role == 1 ? "Admin" : "Colleague"}</h5></li>
-                <p className='interactable' onClick={() => this.warn(colleague.email, "colleague", "remove", this.removeColleague)}>Remove</p>
-                {colleague.role == 1 && <p className='interactable' onClick={() => this.removeAdmin(colleague.email)}>Remove as admin</p>}
-                {colleague.role == 0 && <p className='interactable' style={{ color: "var(--success)" }} onClick={() => this.warn(colleague.email, "admin", "add", this.addAdmin)}>Promote to admin</p>}
-                <br></br>
-              </div>
-            ))}
-          </ul>
-          <h2>Saved Work Types</h2>
-              <ul className='work-types'>
-                <input placeholder='New work type'></input><p className='interactable' style={{ color: "var(--success)" }}>+</p>
-                {this.state.workTypes.map((workType,index) => (
-                  <div key={index}>
-                    <li>{workType.label}</li>
-                    <p className='interactable' style={{ color: "var(--error)" }}>-</p>
-                  </div>
-                ))}
-              </ul>
+          <div className='colleagues-panel'>
+            <h2>Add to company</h2>
+            <input type='text' placeholder='Email' onChange={(e) => this.setState({ emailToCompany: e.target.value })}></input>
+            <button className='rounded-btn-secondary' onClick={() => this.warn(this.state.emailToCompany, "colleague", "add", this.addColleague)}>Add</button>
+            <ul>
+              {this.state.colleagues.map((colleague, index) => (
+                <div className='li-i' key={index}>
+                  <li><h5>{colleague.email} - {colleague.role == 1 ? "Admin" : "Colleague"}</h5></li>
+                  <p className='interactable' onClick={() => this.warn(colleague.email, "colleague", "remove", this.removeColleague)}>Remove</p>
+                  {colleague.role == 1 && <p className='interactable' onClick={() => this.removeAdmin(colleague.email)}>Remove as admin</p>}
+                  {colleague.role == 0 && <p className='interactable' style={{ color: "var(--success)" }} onClick={() => this.warn(colleague.email, "admin", "add", this.addAdmin)}>Promote to admin</p>}
+                  <br></br>
+                </div>
+              ))}
+            </ul>
+          </div>
+          <div className='workTypes-panel'>
+            <h2>Saved Work Types</h2>
+            <input placeholder='New work type' className='new-worktype-input' id="new-worktype"></input>
+            <p className='interactable' style={{ color: "var(--success)", display: "inline" }} onClick={()=>this.add()}>+</p>
+            <ul className='work-types'>
+              {this.state.workTypes.map((workType, index) => (
+                <div key={index} className='worktype'>
+                  <li>{workType.label}</li>
+                  <p className='interactable' style={{ color: "var(--error)" }} onClick={()=> this.removeWorkTypes(index)}>-</p>
+                </div>
+              ))}
+            </ul>
+          </div>
         </div>
         <NavBar />
       </div>

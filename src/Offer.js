@@ -97,8 +97,9 @@ class Offer extends Component {
 }
 componentDidUpdate(prevProps, prevState){
   if(prevProps.offer != this.props.offer){
-    console.log(this.props.offer.data)
-  this.setState({editingData: this.props.offer.data})
+    if(this.props.offer.data.length > 0){
+      this.setState({editingData: this.props.offer.data})
+    }
   }
 }
   render() {

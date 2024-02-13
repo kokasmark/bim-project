@@ -37,6 +37,7 @@ class CustomerDashboard extends Component {
         request: { sorszam: '', projekt: '', munkanem: '', cegnev: '', datum: '' },
         selectedOffer: {},
         selectedWorktypes: '',
+        selectedCompany: "",
         depositpopup: false,
         offerpopup: false,
         seeOffer: {},
@@ -50,7 +51,7 @@ class CustomerDashboard extends Component {
         myHeaders.append("Content-Type", "application/json");
 
         var raw = JSON.stringify({
-        "token": getCookie("login-token")
+            "company": getCookie("login-company")
         });
 
         var requestOptions = {
@@ -60,9 +61,9 @@ class CustomerDashboard extends Component {
         redirect: 'follow'
         };
 
-        fetch("http://localhost:3001/api/get-offers-person", requestOptions)
+        fetch("http://localhost:3001/api/get-orders", requestOptions)
         .then(response => response.text())
-        .then(result => {var r = JSON.parse(result); this.assignOffers(r.offers)})
+        .then(result => {var r = JSON.parse(result); this.assignOffers(r.orders)})
         .catch(error => console.log('error', error));
     }
     sendOffers(header){
@@ -89,21 +90,7 @@ class CustomerDashboard extends Component {
     assignOffers(offers){
         offers.forEach(offer => {
             let updatedOffers = this.state.offers;
-            console.log(offer)
-            if(offer.status > 0){
-                updatedOffers[0].push(offer)
-            }
-            
-            if(offer.status == 1){
-                updatedOffers[offer.status].push(offer)
-            }
-            else{
-                try{
-                    updatedOffers[offer.status-1].push(offer)
-                }catch{
-                    updatedOffers[0].push(offer)
-                }
-            }
+            updatedOffers[offer.status].push(offer)
             this.setState({offers: updatedOffers})
         });
     }
@@ -119,20 +106,22 @@ class CustomerDashboard extends Component {
                 {
                     var r = JSON.parse(result);
                     if(r.success){
-                        console.log(r)
                         this.setState({companies: r.companies})
                     }
                 })
             .catch(error => console.log('error', error));
     
-            var myHeaders = new Headers();
+            
+    }
+    setWorkTypes(company){
+        var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
     
             var raw = JSON.stringify({
-            "company": getCookie("login-company")
+            "company": company
             });
     
-            requestOptions = {
+            const requestOptions = {
             method: 'POST',
             headers: myHeaders,
             body: raw,
@@ -175,7 +164,7 @@ class CustomerDashboard extends Component {
         t.setState({ selectedWorktypes: wt })
     }
     handleSelectChange(option, t){
-        console.log(option)
+        this.setWorkTypes(option.label)
         t.setState({selectedCompany: option.label})
     }
     sendOfferRequest() {
@@ -183,10 +172,11 @@ class CustomerDashboard extends Component {
         var r = {
             projectName: document.getElementById('project-name').value,
             workTypes: this.state.selectedWorktypes,
-            companyName: document.getElementById('company-name').value,
-            author: `${getCookie("login-name")}(${getCookie("login-company")})`,
+            companyName: this.state.selectedCompany,
+            author: `${getCookie("login-company")}`,
             datum: date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate()
         };
+        console.log(r)
         this.sendOffers(r)
         this.setState({ requestingOffer: false, requestSent: true, request: r });
     }
@@ -478,7 +468,7 @@ class CustomerDashboard extends Component {
                                 <div className='rows-rw-4'>
                                     <p>{this.state.request.projectName}</p>
                                     <p>{this.state.request.workTypes}</p>
-                                    <p>{this.state.request.workTypes}</p>
+                                    <p>{this.state.request.companyName}</p>
                                     <p>{this.state.request.datum}</p>
                                 </div>
                             </div>
