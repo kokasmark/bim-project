@@ -42,7 +42,7 @@ class CustomerDashboard extends Component {
         offerpopup: false,
         seeOffer: {},
         blur: false,
-        statusText: ["Sent","Waiting Calculation", "Waiting payment", "Paid", "Can be downloaded", "Billed"],
+        statusText: ["Waiting Calculation", "Waiting payment", "Paid", "Can be downloaded", "Billed"],
         companies: [],
         selectableWorkTypes: []
     }
@@ -90,6 +90,9 @@ class CustomerDashboard extends Component {
     assignOffers(offers){
         offers.forEach(offer => {
             let updatedOffers = this.state.offers;
+            if(offer.status != 0){
+                updatedOffers[0].push(offer)
+            }
             updatedOffers[offer.status].push(offer)
             this.setState({offers: updatedOffers})
         });
@@ -203,6 +206,31 @@ class CustomerDashboard extends Component {
         });
         return osszeg / 2;
     }
+    offerDateFormat(timestamp){
+        try{
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            
+            // Convert milliseconds to minutes and days
+            const minutes = Math.floor(diff / (1000 * 60));
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            // Format the output
+            let formattedDate;
+            if (hours < 1) {
+              formattedDate = `${minutes} minutes ago`;
+            } else if (days < 1) {
+              formattedDate = `${hours} hours ago`;
+            } else {
+              formattedDate = `${days} days ago`;
+            }
+            return formattedDate
+        }catch{
+            return "Error"
+        }
+    }
     render() {
         return (
             <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }} ref={this.dashboard}>
@@ -215,7 +243,7 @@ class CustomerDashboard extends Component {
                             <img src={require('./assets/dashboard_icons/icon-5.png')} />
                             <div style={{ marginTop: -30 }}>
                                 <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[0].length}</Card.Text>
-                                <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Custom Offers</Card.Text>
+                                <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Orders</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
@@ -258,7 +286,7 @@ class CustomerDashboard extends Component {
                 </div>
                 <div className='dashboard-category' ref={this.offer_requestsRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
-                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-5.png')} /> Custom Offers</Card.Title>
+                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-5.png')} />Orders</Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-6'>
                                 <p>Ajánlatkérési sorszám</p>
@@ -325,7 +353,7 @@ class CustomerDashboard extends Component {
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
                                 <p>Rövid cégnév</p>
-                                <p>Ajánlatkérési dátum</p>
+                                <p>Frissítve</p>
                                 <p>Status</p>
                                 <div className='line'></div>
                             </div>
@@ -336,7 +364,7 @@ class CustomerDashboard extends Component {
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.companyName}</p>
-                                    <p>{offer.header.datum}</p>
+                                    <p>{this.offerDateFormat(offer.header.updated)}</p>
                                     <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -20}} onClick={()=> this.offerPopUp(offer)}>See offer</p>
                                     <div className='line'>
                                     </div>

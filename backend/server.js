@@ -145,7 +145,9 @@ app.post('/api/update-offer', async (req, res) => {
       // Update the offer document with the provided offerId
       const offerDocRef = offersCollectionRef.doc(offerId);
       const offerDocSnapshot = await offerDocRef.get();
-      await offerDocRef.update({ data: data != undefined ? data :  offerDocSnapshot.data().data, status: status });
+      var updatedHeader =  offerDocSnapshot.data().header;
+      updatedHeader.updated = new Date().getTime();
+      await offerDocRef.update({header: updatedHeader,data: data != undefined ? data :  offerDocSnapshot.data().data, status: status});
 
       res.status(200).json({ success: true, message: 'Offer updated successfully' });
     } else {

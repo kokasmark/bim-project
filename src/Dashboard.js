@@ -32,11 +32,11 @@ class Dashboard extends Component {
 
     state = {
         onTop: true,
-        offers: [[],[],[],[],[],[]],//based on status
+        offers: [[],[],[],[],[]],//based on status
         requestingOffer: false,
         requestSent: false,
         acceptedFilesOnUpload: ["JPG", "PNG", "SVG", "PDF"],
-        request: { sorszam: '', projekt: '', munkanem: '', cegnev: '', datum: '' },
+        request: {},
         selectedOffer: {},
         selectedWorktypes: '',
         depositpopup: false,
@@ -70,7 +70,6 @@ class Dashboard extends Component {
     assignOffers(offers){
         offers.forEach(offer => {
             let updatedOffers = this.state.offers;
-            console.log(offer)
             updatedOffers[offer.status].push(offer)
             this.setState({offers: updatedOffers})
         });
@@ -147,7 +146,7 @@ class Dashboard extends Component {
                 const raw = JSON.stringify({
                 "companyName": offer.header.companyName,
                 "offerId": offer.id,
-                "status": 3
+                "status": 2
                 });
 
                 const requestOptions = {
@@ -168,6 +167,28 @@ class Dashboard extends Component {
           });
     }
     sendFinishedJob(offer){
+        const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+
+                const raw = JSON.stringify({
+                "companyName": offer.header.companyName,
+                "offerId": offer.id,
+                "status": 3
+                });
+
+                const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+                };
+
+                fetch("http://localhost:3001/api/update-offer", requestOptions)
+                .then((response) => response.text())
+                .then((result) => console.log(result))
+                .catch((error) => console.error(error));
+    }
+    sendInvoice(offer){
         const myHeaders = new Headers();
                 myHeaders.append("Content-Type", "application/json");
 
@@ -231,7 +252,7 @@ class Dashboard extends Component {
                             <img src={require('./assets/dashboard_icons/icon-6.png')} />
                             <div style={{ marginTop: -30 }}>
                                 <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[2].length}</Card.Text>
-                                <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Orders(Not paid)</Card.Text>
+                                <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Processing</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
@@ -240,7 +261,7 @@ class Dashboard extends Component {
                             <img src={require('./assets/dashboard_icons/icon-1.png')} />
                             <div style={{ marginTop: -30 }}>
                                 <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[3].length + this.state.offers[4].length}</Card.Text>
-                                <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Processing</Card.Text>
+                                <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Finished Jobs</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
@@ -249,7 +270,7 @@ class Dashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-7.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[5].length}</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[4].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Invoiced Jobs</Card.Text>
                             </div>
                         </Card.Body>
@@ -306,7 +327,7 @@ class Dashboard extends Component {
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.author}</p>
                                     {this.daysToFinish(offer.header.datum)}
-                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -20}} onClick={()=> this.offerPopUp(offer,false)}>See offer</p>
+                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -50}} onClick={()=> this.depositArrivedPopup(offer)}>Deposit arrived</p>
                                     <div className='line'>
                                     </div>
                                 </div>
@@ -316,26 +337,28 @@ class Dashboard extends Component {
                 </div>
                 <div className='dashboard-category' ref={this.ordersRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
-                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-6.png')} /> Orders(Not paid)</Card.Title>
+                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-6.png')} /> Processing</Card.Title>
                         <Card.Body>
-                            <div className='column-headers-rw-6'>
+                            <div className='column-headers-rw-7'>
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
                                 <p>Megrendelő</p>
-                                <p>Befejezési határidő</p>
+                                <p>Ajánlatkérési dátum</p>
                                 <p>Action</p>
+                                <p></p>
                                 <div className='line'></div>
                             </div>
 
                             {this.state.offers[2].map((offer) =>
-                                <div className='rows-rw-6'>
+                                <div className='rows-rw-7'>
                                     <p>{offer.id}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.author}</p>
                                     <p>{this.offerDateFormat(offer.header.datum)}</p>
-                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -50}} onClick={()=> this.depositArrivedPopup(offer)}>Deposit arrived</p>
+                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: 0}} onClick={()=> this.offerPopUp(offer,true)}>Modify</p>
+                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: 0 , backgroundColor: 'var(--success)'}} onClick={()=> this.sendFinishedJob(offer)}>Send Finished Job</p>
                                     <div className='line'>
                                     </div>
                                 </div>
@@ -345,14 +368,14 @@ class Dashboard extends Component {
                 </div>
                 <div className='dashboard-category' ref={this.processingRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
-                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-1.png')} /> Processing</Card.Title>
+                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-1.png')} /> Finished Jobs</Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-6'>
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
                                 <p>Megrendelő</p>
-                                <p>Befejezési határidő</p>
+                                <p>Ajánlatkérési dátum</p>
                                 <p>Action</p>
                                 <div className='line'></div>
                             </div>
@@ -364,38 +387,7 @@ class Dashboard extends Component {
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.author}</p>
                                     <p>{this.offerDateFormat(offer.header.datum)}</p>
-                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -50 , backgroundColor: 'var(--success)'}} onClick={()=> this.sendFinishedJob(offer)}>Send Finished Job</p>
-                                    <div className='line'>
-                                    </div>
-                                </div>
-                            )}
-                        </Card.Body>
-                    </Card>
-                </div>
-                <div className='dashboard-category' ref={this.processingRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
-                    <Card>
-                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-1.png')} /> Finished Jobs (Processing)</Card.Title>
-                        <Card.Body>
-                            <div className='column-headers-rw-7'>
-                                <p>Ajánlatkérési sorszám</p>
-                                <p>Projekt</p>
-                                <p>Munkanem</p>
-                                <p>Megrendelő</p>
-                                <p>Befejezési határidő</p>
-                                <p></p>
-                                <p>Action</p>
-                                <div className='line'></div>
-                            </div>
-
-                            {this.state.offers[4].map((offer) =>
-                                <div className='rows-rw-7'>
-                                    <p>{offer.id}</p>
-                                    <p>{offer.header.projectName}</p>
-                                    <p>{offer.header.workTypes}</p>
-                                    <p>{offer.header.author}</p>
-                                    <p>{this.offerDateFormat(offer.header.datum)}</p>
-                                    <p className='rounded-btn-secondary' style={{width: 'fit-content', marginLeft: 0}} onClick={()=> this.offerPopUp(offer,true)}>Modify</p>
-                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: 50 , backgroundColor: 'var(--success)'}} onClick={()=>this.sendFinishedJob(offer)}>Send Finished Job</p>
+                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -60, backgroundColor: 'var(--success)'}} onClick={()=>this.sendInvoice(offer)}><img src={download_icon}/>Send Invoice</p>
                                     <div className='line'>
                                     </div>
                                 </div>
@@ -412,19 +404,19 @@ class Dashboard extends Component {
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
                                 <p>Megrendelő</p>
-                                <p>Befejezési határidő</p>
+                                <p>Ajánlatkérési dátum</p>
                                 <p>Status</p>
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offers[5].map((offer) =>
+                            {this.state.offers[4].map((offer) =>
                                 <div className='rows-rw-6'>
                                     <p>{offer.id}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.author}</p>
                                     <p>{this.offerDateFormat(offer.header.datum)}</p>
-                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -60, backgroundColor: 'var(--success)'}}><img src={download_icon}/>Send Invoice</p>
+                                    <p style={{color: "var(--success)"}}>Done</p>
                                     <div className='line'>
                                     </div>
                                 </div>
