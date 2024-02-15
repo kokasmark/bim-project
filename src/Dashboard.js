@@ -142,11 +142,11 @@ class Dashboard extends Component {
             if (result.isConfirmed) {
                 const myHeaders = new Headers();
                 myHeaders.append("Content-Type", "application/json");
-
                 const raw = JSON.stringify({
                 "companyName": offer.header.companyName,
                 "offerId": offer.id,
-                "status": 2
+                "status": 2,
+                "token": getCookie("login-token")
                 });
 
                 const requestOptions = {
@@ -173,7 +173,8 @@ class Dashboard extends Component {
                 const raw = JSON.stringify({
                 "companyName": offer.header.companyName,
                 "offerId": offer.id,
-                "status": 3
+                "status": 3,
+                "token": getCookie("login-token")
                 });
 
                 const requestOptions = {
@@ -195,7 +196,8 @@ class Dashboard extends Component {
                 const raw = JSON.stringify({
                 "companyName": offer.header.companyName,
                 "offerId": offer.id,
-                "status": 4
+                "status": 4,
+                "token": getCookie("login-token")
                 });
 
                 const requestOptions = {

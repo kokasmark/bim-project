@@ -17,7 +17,8 @@ class ManagePage extends Component {
     emailToCompany: "",
     emailToAdmin: "",
     colleagues: [{}],
-    workTypes: [{}]
+    workTypes: [{}],
+    logs: []
   }
   addAdmin(email) {
 
@@ -162,9 +163,35 @@ class ManagePage extends Component {
       .then((result) => { var r = JSON.parse(result); this.setState({ colleagues: r.colleagues }); })
       .catch((error) => console.error(error));
   }
+  getLogs(){
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+      "company": getCookie("login-company")
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+    };
+
+    fetch("http://localhost:3001/api/get-logs", requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        var r = JSON.parse(result); 
+        if(r.success){
+          this.setState({logs: r.logs})
+        }
+      })
+      .catch((error) => console.error(error));
+  }
   componentDidMount() {
     this.getColleagues()
     this.getWorkTypes()
+    this.getLogs()
   }
   warn(person, asA, action, func) {
     Swal.fire({
@@ -258,6 +285,31 @@ class ManagePage extends Component {
       .then(result => {})
       .catch(error => console.log('error', error));
   }
+  offerDateFormat(timestamp){
+    try{
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diff = now - date;
+        
+        // Convert milliseconds to minutes and days
+        const minutes = Math.floor(diff / (1000 * 60));
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        
+        // Format the output
+        let formattedDate;
+        if (hours < 1) {
+          formattedDate = `${minutes} minutes ago`;
+        } else if (days < 1) {
+          formattedDate = `${hours} hours ago`;
+        } else {
+          formattedDate = `${days} days ago`;
+        }
+        return formattedDate
+    }catch{
+        return "Error"
+    }
+}
   render() {
     return (
       <div className='page'>
@@ -283,7 +335,7 @@ class ManagePage extends Component {
             <h2>Saved Work Types</h2>
             <input placeholder='New work type' className='new-worktype-input' id="new-worktype"></input>
             <p className='interactable' style={{ color: "var(--success)", display: "inline" }} onClick={()=>this.add()}>+</p>
-            <ul className='work-types'>
+              <ul className='work-types'>
               {this.state.workTypes.map((workType, index) => (
                 <div key={index} className='worktype'>
                   <li>{workType.label}</li>
@@ -291,6 +343,15 @@ class ManagePage extends Component {
                 </div>
               ))}
             </ul>
+          </div>
+          <div className='logs-panel'>
+              {this.state.logs.map((log, index) => (
+                <div key={index} className='log'>
+                  <p>{log.message} </p>
+                  <p>{log.user}</p>
+                  <p>{this.offerDateFormat(log.timestamp)}</p>
+                </div>
+              ))}
           </div>
         </div>
         <NavBar />

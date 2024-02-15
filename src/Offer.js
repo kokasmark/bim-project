@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import logo from './assets/logo.png';
 import { ReactComponent as Icon_close } from './assets/dashboard_icons/icon-close.svg';
 import Swal from 'sweetalert2';
-
+import { getCookie } from './cookie';
 
 class Offer extends Component {
   state = {
@@ -65,12 +65,12 @@ class Offer extends Component {
   updateOffer(offer){
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    console.log(`Updating offer ${offer.id} at ${offer.header.companyName}`)
     var raw = JSON.stringify({
       "companyName": offer.header.companyName,
       "offerId": offer.id,
       "data": this.state.editingData,
-      "status": offer.status > 1 ? offer.status : 1
+      "status": offer.status > 1 ? offer.status : 1,
+      "token": getCookie("login-token")
     });
 
     var requestOptions = {

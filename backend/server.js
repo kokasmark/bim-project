@@ -18,6 +18,22 @@ admin.initializeApp({
 // Initialize Firestore
 const db = admin.firestore();
 
+async function Log(company, message, token){
+  const companyQuerySnapshot = await db.collection('companies').where('name', '==', company).get();
+  const userRef = (await db.collection('users').where('token', '==', token).get()).docs[0];
+  var user = userRef.data().email;
+    // Check if the company document exists
+    if (!companyQuerySnapshot.empty) {
+      const companyDocRef = companyQuerySnapshot.docs[0].ref;
+
+      // Access the "offers" subcollection for the company
+      const offersCollectionRef = companyDocRef.collection('logs');
+
+      // Add a new document to the "offers" subcollection with the offer data
+      const offerDocRef = await offersCollectionRef.add({ message: message, user: user, timestamp: new Date().getTime()});
+    }
+}
+
 function generateUserToken(){
   return require('crypto').randomBytes(32).toString('hex');
 }
@@ -129,10 +145,10 @@ app.post('/api/add-offer', async (req, res) => {
 
 app.post('/api/update-offer', async (req, res) => {
   try {
-    const { companyName, offerId, data, status } = req.body;
-
+    const { companyName, offerId, data, status, token } = req.body;
     // Retrieve the document reference for the user based on the companyName
     const companyQuerySnapshot = await db.collection('companies').where('name', '==', companyName).get();
+    
 
     // Check if the company document exists
     if (!companyQuerySnapshot.empty) {
@@ -148,7 +164,7 @@ app.post('/api/update-offer', async (req, res) => {
       var updatedHeader =  offerDocSnapshot.data().header;
       updatedHeader.updated = new Date().getTime();
       await offerDocRef.update({header: updatedHeader,data: data != undefined ? data :  offerDocSnapshot.data().data, status: status});
-
+      Log(companyName, `Offer ${offerId} updated. Status: ${status}`, token)
       res.status(200).json({ success: true, message: 'Offer updated successfully' });
     } else {
       res.status(400).json({ success: false, error: 'Company not found' });
@@ -247,7 +263,41 @@ app.post('/api/get-orders', async (req, res) => {
 });
 
 
+app.post('/api/get-logs', async (req, res) => {
+  try {
+    const { company } = req.body;
 
+    // Retrieve the document reference for the company based on its name
+    const companyQuerySnapshot = await db.collection('companies').where('name', '==', company).get();
+
+    // Check if the company document exists
+    if (!companyQuerySnapshot.empty) {
+      const companyDocRef = companyQuerySnapshot.docs[0].ref;
+
+      // Access the "logs" subcollection for the company
+      const logsCollectionRef = companyDocRef.collection('logs');
+
+      // Query the "logs" subcollection
+      const logsQuerySnapshot = await logsCollectionRef.limit(10).get();
+
+      // Extract the data from each log document
+      const logsPromises = logsQuerySnapshot.docs.map(async (doc) => {
+        const { message, user, timestamp } = doc.data();
+        return { message, user, timestamp };
+      });
+
+      // Wait for all log retrieval promises to resolve
+      const logs = await Promise.all(logsPromises);
+
+      res.status(200).json({ success: true, logs });
+    } else {
+      res.status(400).json({ success: false, error: 'Company not found' });
+    }
+  } catch (error) {
+    console.error('Error getting logs:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
 
 app.post('/api/role', async (req, res) => {
   try {
