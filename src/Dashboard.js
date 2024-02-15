@@ -260,7 +260,7 @@ class Dashboard extends Component {
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-1.png')} />
                             <div style={{ marginTop: -30 }}>
-                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[3].length + this.state.offers[4].length}</Card.Text>
+                                <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[3].length}</Card.Text>
                                 <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Finished Jobs</Card.Text>
                             </div>
                         </Card.Body>
