@@ -1,13 +1,13 @@
 :root{
   --primary: #C77E23;
-  --secondary: #1F7778;
+  --secondary: #b3cde0;
   --success: #00C853;
   --error: #F44336;
   --warning: #FFC107;
   
-  --bg: #010F17;
-  --darker-bg: #01080c;
-  --lighter-bg: #0d171e;
+  --bg: #03396c;
+  --darker-bg: #011f4b;
+  --lighter-bg: #005b96;
   --shadow: #000203;
 }
 .page{
@@ -262,8 +262,8 @@ body{
   box-shadow: 5px 5px 5px var(--shadow);
 }
 input{
-  background: var(--darker-bg);
-  color: #8492C4;
+  background: var(--bg);
+  color: var(--secondary);
   border-radius: 8px;
   min-height: 40px;
   border: rgb(27, 27, 27);
@@ -301,6 +301,9 @@ input::placeholder{
 }
 .basic-multi-select .select__multi-value{
   background: var(--bg);
+}
+.basic-multi-select .select__single-value{
+  color: var(--secondary) !important;
 }
 .basic-multi-select .select__multi-value__label{
   color: #8492C4 !important;
@@ -557,9 +560,10 @@ input::placeholder{
   overflow-y: auto;
 }
 .manage-panel .work-types .worktype{
-  background-color: var(--secondary);
+  background-color: var(--darker-bg);
   padding: 5px;
   border-radius: 5px;
+  margin-bottom: 2px;
 }
 .manage-panel .new-worktype-input{
   position: relative;

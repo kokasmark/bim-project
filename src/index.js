@@ -19,8 +19,8 @@ root.render(
   <BrowserRouter >
   <Routes>
     <Route exact={true} path="/" element={<App />} />
-    <Route exact={true} path="/dashboard" element={<CustomerDashboard />} />
-    <Route exact={true} path="/admin" element={<Dashboard />} />
+    <Route exact={true} path="/orders" element={<CustomerDashboard />} />
+    <Route exact={true} path="/offers" element={<Dashboard />} />
     <Route exact={true} path="/manage" element={<ManageWrapper />} />
 
     <Route exact={true} path="/signup" element={<SignUpPage />} />

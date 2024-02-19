@@ -31,7 +31,7 @@ class NavBar extends Component{
             if(r.success){
               console.log(r.role)
               setCookie("login-company", r.company,1)
-              this.setState({dashboard: r.role === 1 ? "/admin" : "/dashboard", role: r.role})
+              this.setState({dashboard: r.role === 1 ? "/offers" : "/orders", role: r.role})
             }
           })
           .catch(error => console.log('error', error));
@@ -44,7 +44,7 @@ class NavBar extends Component{
       <div className='navbar'>
         <Link to={'/'}><img src={logo}/></Link>
         <Link to={this.state.dashboard}><p>Dashboard</p></Link>
-        {this.state.role > 0 && <Link to={'/dashboard'}><p>Orders</p></Link>}
+        {this.state.role > 0 && <Link to={'/orders'}><p>Orders</p></Link>}
         {this.state.role > 0 && <Link to={'/manage'}><p>Manage</p></Link>}
 
         {getCookie("login-token") == "" && <div>
@@ -54,7 +54,7 @@ class NavBar extends Component{
 
         {getCookie("login-token") != ""  && 
           <div style={{position: "absolute", right: 100, display: 'flex'}}>
-              <h5>Logged in as {getCookie("login-name")}({getCookie("login-company")})</h5>
+              <p>Logged in as <b>{getCookie("login-name")}({getCookie("login-company")})</b></p>
               <p className='interactable' onClick={()=> {removeCookie("login-token");  window.location.reload(false);}} style={{color: "red"}}>sign out</p>
           </div>
         }

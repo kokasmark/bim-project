@@ -102,6 +102,18 @@ componentDidUpdate(prevProps, prevState){
     }
   }
 }
+formatOfferId(offer) {
+  // Ensure the ID is a string
+var id = offer.offerId.toString();
+
+// Calculate the number of leading zeros needed
+var leadingZeros = 6 - id.length;
+
+// Add leading zeros
+var formatted = offer.header.companyName+"-"+"0".repeat(leadingZeros) + id;
+
+return formatted;
+}
   render() {
     return (
       <div className='offer' style={{ display: this.state.open ? "block" : "none" }}>
@@ -119,7 +131,7 @@ componentDidUpdate(prevProps, prevState){
               <div className='line'></div>
             </div>
             <div className='rows-rw-5'>
-              <p>{this.props.offer.id}</p>
+              <p>{this.formatOfferId(this.props.offer)}</p>
               <p>{this.props.offer.header.projectName}</p>
               <p>{this.props.offer.header.workTypes}</p>
               <p>{this.props.offer.header.companyName}</p>

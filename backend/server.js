@@ -34,6 +34,28 @@ async function Log(company, message, token){
     }
 }
 
+async function getNextOfferId(companyName) {
+  // Retrieve the document reference for the company based on its name
+  const companyQuerySnapshot = await db.collection('companies').where('name', '==', companyName).get();
+  
+  if (!companyQuerySnapshot.empty) {
+    const companyDocRef = companyQuerySnapshot.docs[0].ref;
+    
+    // Access the "offers" subcollection for the company
+    const offersCollectionRef = companyDocRef.collection('offers');
+
+    // Fetch all documents in the "offers" subcollection
+    const offersQuerySnapshot = await offersCollectionRef.get();
+
+    // Get the size of the offers subcollection to determine the next offer ID
+    const nextOfferId = offersQuerySnapshot.size + 1;
+
+    return nextOfferId;
+  } else {
+    return null;
+  }
+}
+
 function generateUserToken(){
   return require('crypto').randomBytes(32).toString('hex');
 }
@@ -112,7 +134,9 @@ app.post('/api/add-offer', async (req, res) => {
       const offersCollectionRef = companyDocRef.collection('offers');
 
       // Add a new document to the "offers" subcollection with the offer data
-      const offerDocRef = await offersCollectionRef.add({ header: header, data: "", status: 0 });
+
+      const offerId = await getNextOfferId(header.companyName)
+      const offerDocRef = await offersCollectionRef.add({ header: header, data: "", status: 0, offerId: offerId });
 
       // Retrieve the user document based on the token
       const userQuerySnapshot = await db.collection('companies').where('name', '==', header.author).get();
@@ -164,7 +188,7 @@ app.post('/api/update-offer', async (req, res) => {
       var updatedHeader =  offerDocSnapshot.data().header;
       updatedHeader.updated = new Date().getTime();
       await offerDocRef.update({header: updatedHeader,data: data != undefined ? data :  offerDocSnapshot.data().data, status: status});
-      Log(companyName, `Offer ${offerId} updated. Status: ${status}`, token)
+      Log(companyName, `Offer ${offerDocSnapshot.data().offerId} updated. Status: ${status}`, token)
       res.status(200).json({ success: true, message: 'Offer updated successfully' });
     } else {
       res.status(400).json({ success: false, error: 'Company not found' });
@@ -198,9 +222,9 @@ app.post('/api/get-offers', async (req, res) => {
 
       // Extract the "header" and "status" fields from each offer document
       const offers = offersQuerySnapshot.docs.map(doc => {
-        const { header, status, data } = doc.data();
+        const { header, status, data, offerId } = doc.data();
         const id = doc.id; // Retrieve the document ID
-        return { id, header, data, status };
+        return { id, header, data, status, offerId };
       });
 
       res.status(200).json({ success: true, offers });
@@ -238,9 +262,9 @@ app.post('/api/get-orders', async (req, res) => {
 
         // Check if the offer document exists
         if (offerDocSnapshot.exists) {
-          const { header, status, data } = offerDocSnapshot.data();
+          const { header, status, data, offerId } = offerDocSnapshot.data();
           const id = offerDocSnapshot.id;
-          return { id, header, data, status };
+          return { id, header, data, status, offerId };
         } else {
           return null;
         }

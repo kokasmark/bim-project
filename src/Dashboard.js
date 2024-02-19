@@ -132,7 +132,7 @@ class Dashboard extends Component {
     }
     depositArrivedPopup(offer){
         Swal.fire({
-            title: `Did the deposit arrived for order ${offer.id}?\n\nPayment: ${this.calculateDepositOsszeg(offer)} Ft`,
+            title: `Did the deposit arrived for order ${this.formatOfferId(offer)}?\n\nPayment: ${this.calculateDepositOsszeg(offer)} Ft`,
             showDenyButton: true,
             showCancelButton: false,
             confirmButtonText: "Deposit arrived",
@@ -144,7 +144,7 @@ class Dashboard extends Component {
                 myHeaders.append("Content-Type", "application/json");
                 const raw = JSON.stringify({
                 "companyName": offer.header.companyName,
-                "offerId": offer.id,
+                "offerId": this.formatOfferId(offer),
                 "status": 2,
                 "token": getCookie("login-token")
                 });
@@ -172,7 +172,7 @@ class Dashboard extends Component {
 
                 const raw = JSON.stringify({
                 "companyName": offer.header.companyName,
-                "offerId": offer.id,
+                "offerId": this.formatOfferId(offer),
                 "status": 3,
                 "token": getCookie("login-token")
                 });
@@ -195,7 +195,7 @@ class Dashboard extends Component {
 
                 const raw = JSON.stringify({
                 "companyName": offer.header.companyName,
-                "offerId": offer.id,
+                "offerId": this.formatOfferId(offer),
                 "status": 4,
                 "token": getCookie("login-token")
                 });
@@ -221,6 +221,18 @@ class Dashboard extends Component {
         });
         return osszeg / 2;
     }
+    formatOfferId(offer) {
+        // Ensure the ID is a string
+    var id = offer.offerId.toString();
+    
+    // Calculate the number of leading zeros needed
+    var leadingZeros = 6 - id.length;
+
+    // Add leading zeros
+    var formatted = offer.header.companyName+"-"+"0".repeat(leadingZeros) + id;
+
+    return formatted;
+}
     render() {
         const options = [
             { value: 'ajzatbeton', label: 'Ajzat Beton' },
@@ -295,7 +307,7 @@ class Dashboard extends Component {
 
                             {this.state.offers[0].map((offer) =>
                                 <div className='rows-rw-6'>
-                                    <p>{offer.id}</p>
+                                    <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.author}</p>
@@ -324,7 +336,7 @@ class Dashboard extends Component {
 
                             {this.state.offers[1].map((offer,_index) =>
                                 <div className='rows-rw-6' index={_index}>
-                                    <p>{offer.id}</p>
+                                    <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.author}</p>
@@ -354,7 +366,7 @@ class Dashboard extends Component {
 
                             {this.state.offers[2].map((offer) =>
                                 <div className='rows-rw-7'>
-                                    <p>{offer.id}</p>
+                                    <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.author}</p>
@@ -384,7 +396,7 @@ class Dashboard extends Component {
 
                             {this.state.offers[3].map((offer) =>
                                 <div className='rows-rw-6'>
-                                    <p>{offer.id}</p>
+                                    <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.author}</p>
@@ -413,7 +425,7 @@ class Dashboard extends Component {
 
                             {this.state.offers[4].map((offer) =>
                                 <div className='rows-rw-6'>
-                                    <p>{offer.id}</p>
+                                    <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.author}</p>
@@ -472,7 +484,7 @@ class Dashboard extends Component {
                         </div>
                         <div className='deposit-popup-order-info'>
                             <p className='header-text'>Your order number</p>
-                            <p className='text' style={{color: 'green',fontWeight: 'bolder'}}>{this.state.selectedOffer.id}</p>
+                            <p className='text' style={{color: 'green',fontWeight: 'bolder'}}>{this.formatOfferId(this.state.selectedOffer)}</p>
                             <p className='header-text'>Project</p>
                             <p className='text'>{this.state.selectedOffer.header.projectName}</p>
                             <p className='header-text'>Work type</p>

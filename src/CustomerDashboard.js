@@ -89,6 +89,7 @@ class CustomerDashboard extends Component {
     }
     assignOffers(offers){
         offers.forEach(offer => {
+            console.log(offer)
             let updatedOffers = this.state.offers;
             if(offer.status != 0){
                 updatedOffers[0].push(offer)
@@ -231,6 +232,18 @@ class CustomerDashboard extends Component {
             return "Error"
         }
     }
+    formatOfferId(offer) {
+            // Ensure the ID is a string
+        var id = offer.offerId.toString();
+        
+        // Calculate the number of leading zeros needed
+        var leadingZeros = 6 - id.length;
+
+        // Add leading zeros
+        var formatted = offer.header.companyName+"-"+"0".repeat(leadingZeros) + id;
+
+        return formatted;
+    }
     render() {
         return (
             <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }} ref={this.dashboard}>
@@ -300,7 +313,7 @@ class CustomerDashboard extends Component {
 
                             {this.state.offers[0].map((offer) =>
                                 <div className='rows-rw-6'>
-                                    <p>{offer.id}</p>
+                                    <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.companyName}</p>
@@ -330,7 +343,7 @@ class CustomerDashboard extends Component {
 
                             {this.state.offers[1].map((offer,_index) =>
                                 <div className='rows-rw-7' index={_index}>
-                                    <p>{offer.id}</p>
+                                    <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.companyName}</p>
@@ -360,7 +373,7 @@ class CustomerDashboard extends Component {
 
                             {this.state.offers[2].map((offer) =>
                                 <div className='rows-rw-6'>
-                                    <p>{offer.id}</p>
+                                    <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.companyName}</p>
@@ -390,7 +403,7 @@ class CustomerDashboard extends Component {
 
                             {this.state.offers[3].map((offer) =>
                                 <div className='rows-rw-7'>
-                                    <p>{offer.id}</p>
+                                    <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.companyName}</p>
@@ -420,7 +433,7 @@ class CustomerDashboard extends Component {
 
                             {this.state.offers[4].map((offer) =>
                                 <div className='rows-rw-6'>
-                                    <p>{offer.id}</p>
+                                    <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
                                     <p>{offer.header.companyName}</p>
@@ -508,12 +521,12 @@ class CustomerDashboard extends Component {
                         <div className='deposit-popup-head'>
                             <Icon_close style={{position: 'relative', left: '70%', top: -40}} className='interactable' onClick={()=> this.setState({depositpopup: false,blur: false})}/>
                             <img src={logo}/>
-                            <p style={{color: 'green'}}>We recieved your order with your following data</p>
+                            <p style={{color: 'var(--success)'}}>We recieved your order with the following data</p>
                             <div className='line'></div>
                         </div>
                         <div className='deposit-popup-order-info'>
                             <p className='header-text'>Offer</p>
-                            <p className='text' style={{color: 'green',fontWeight: 'bolder'}}>{this.state.selectedOffer.id}</p>
+                            <p className='text' style={{color: 'var(--success)',fontWeight: 'bolder'}}>{this.formatOfferId(this.state.selectedOffer)}</p>
                             <p className='header-text'>Project</p>
                             <p className='text'>{this.state.selectedOffer.header.projectName}</p>
                             <p className='header-text'>Work type</p>
@@ -531,7 +544,7 @@ class CustomerDashboard extends Component {
                             <p className='header-text'>Bank számlaszám</p>
                             <p className='text'>123145678-12345678-121345678 <img className='interactable' src={icon_copy} onClick={() => {navigator.clipboard.writeText('123145678-12345678-121345678')}}/></p>
                             <p className='header-text'>Közlemény</p>
-                            <p className='text'>{this.state.selectedOffer.id} <img className='interactable' src={icon_copy} onClick={() => {navigator.clipboard.writeText(this.state.selectedOffer.sorszam)}}/></p>
+                            <p className='text'>{this.formatOfferId(this.state.selectedOffer)} <img className='interactable' src={icon_copy} onClick={() => {navigator.clipboard.writeText(this.state.selectedOffer.sorszam)}}/></p>
                             <div className='line' style={{marginBottom: 50}}></div>
                             <p className='header-text'>Összeg</p>
                             <p className='text'>{this.calculateDepositOsszeg(this.state.selectedOffer)} Ft</p>
