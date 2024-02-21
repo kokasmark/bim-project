@@ -256,7 +256,7 @@ class CustomerDashboard extends Component {
                             <img src={require('./assets/dashboard_icons/icon-5.png')} />
                             <div style={{ marginTop: -30 }}>
                                 <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[0].length}</Card.Text>
-                                <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Orders</Card.Text>
+                                <Card.Text style={{ marginTop: -30 }}>Orders</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
@@ -265,7 +265,7 @@ class CustomerDashboard extends Component {
                             <img src={require('./assets/dashboard_icons/icon-2.png')} />
                             <div style={{ marginTop: -30 }}>
                                 <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[1].length}</Card.Text>
-                                <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Orders (waiting payment)</Card.Text>
+                                <Card.Text style={{ marginTop: -30 }}>Orders (waiting payment)</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
@@ -274,7 +274,7 @@ class CustomerDashboard extends Component {
                             <img src={require('./assets/dashboard_icons/icon-6.png')} />
                             <div style={{ marginTop: -30 }}>
                                 <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[2].length}</Card.Text>
-                                <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Orders (paid)</Card.Text>
+                                <Card.Text style={{ marginTop: -30 }}>Orders (paid)</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
@@ -283,7 +283,7 @@ class CustomerDashboard extends Component {
                             <img src={require('./assets/dashboard_icons/icon-1.png')} />
                             <div style={{ marginTop: -30 }}>
                                 <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[3].length}</Card.Text>
-                                <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Finished jobs</Card.Text>
+                                <Card.Text style={{ marginTop: -30 }}>Finished jobs</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
@@ -292,7 +292,7 @@ class CustomerDashboard extends Component {
                             <img src={require('./assets/dashboard_icons/icon-7.png')} />
                             <div style={{ marginTop: -30 }}>
                                 <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[4].length}</Card.Text>
-                                <Card.Text style={{ color: "#8492C4", marginTop: -30 }}>Billed Jobs</Card.Text>
+                                <Card.Text style={{ marginTop: -30 }}>Billed Jobs</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
@@ -311,8 +311,8 @@ class CustomerDashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offers[0].map((offer) =>
-                                <div className='rows-rw-6'>
+                            {this.state.offers[0].map((offer,index) =>
+                                <div className='rows-rw-6' style={{animation: `row-load ${index}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
@@ -342,7 +342,7 @@ class CustomerDashboard extends Component {
                             </div>
 
                             {this.state.offers[1].map((offer,_index) =>
-                                <div className='rows-rw-7' index={_index}>
+                                <div className='rows-rw-7' index={_index}  style={{animation: `row-load ${_index}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
@@ -371,8 +371,8 @@ class CustomerDashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offers[2].map((offer) =>
-                                <div className='rows-rw-6'>
+                            {this.state.offers[2].map((offer,index) =>
+                                <div className='rows-rw-6'  style={{animation: `row-load ${index}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
@@ -401,8 +401,8 @@ class CustomerDashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offers[3].map((offer) =>
-                                <div className='rows-rw-7'>
+                            {this.state.offers[3].map((offer, index) =>
+                                <div className='rows-rw-7'  style={{animation: `row-load ${index}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
@@ -431,8 +431,8 @@ class CustomerDashboard extends Component {
                                 <div className='line'></div>
                             </div>
 
-                            {this.state.offers[4].map((offer) =>
-                                <div className='rows-rw-6'>
+                            {this.state.offers[4].map((offer,index) =>
+                                <div className='rows-rw-6'  style={{animation: `row-load ${index}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>

@@ -5,9 +5,9 @@
   --error: #F44336;
   --warning: #FFC107;
   
-  --bg: #03396c;
-  --darker-bg: #011f4b;
-  --lighter-bg: #005b96;
+  --bg: #248bfd;
+  --darker-bg: #0f2946;
+  --lighter-bg: #00A9FF;
   --shadow: #000203;
 }
 .page{
@@ -600,6 +600,14 @@ input::placeholder{
 }
 .manage-panel .logs-panel .log p{
   margin: 5px;
+}
+@keyframes row-load {
+  0%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
 }
 @keyframes anim-scale {
   0%{
