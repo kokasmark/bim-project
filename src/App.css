@@ -1,6 +1,6 @@
 :root{
-  --primary: #C77E23;
-  --secondary: #b3cde0;
+  --primary: #0074e3;
+  --secondary: #f6fdff;
   --success: #00C853;
   --error: #F44336;
   --warning: #FFC107;
@@ -63,6 +63,7 @@ body{
   font-size: 20px;
   color: white;
   cursor: pointer;
+  border: 1px #fff solid;
 }
 .rounded-btn-secondary{
   background-color: var(--secondary);
