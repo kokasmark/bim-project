@@ -245,6 +245,7 @@ class CustomerDashboard extends Component {
         return formatted;
     }
     render() {
+        if(getCookie("login-company") !== "undefined"){
         return (
             <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }} ref={this.dashboard}>
                 <h1 style={{ marginTop: 100, padding: '50px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : ''}}>Customer Dashboard</h1>
@@ -558,6 +559,18 @@ class CustomerDashboard extends Component {
                 <NavBar />
             </div>
         )
+        }else{
+            return(
+                <div>
+                    <div className='no-company'>
+                        <h1>A felhasználó egy cégnek se a tagja.</h1>
+                        <h2>Vegye fel a cége adminjával a kapcsolatot hogy oldalunkat használhassa!</h2>
+                    </div>
+
+                    <NavBar />
+                </div>
+            )
+        }
     }
 }
 

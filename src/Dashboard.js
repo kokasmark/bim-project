@@ -239,6 +239,7 @@ class Dashboard extends Component {
             { value: 'ablak', label: 'Ablak' },
             { value: 'ajto', label: 'Ajtó' }
         ]
+        if(getCookie("login-company") !== undefined){
         return (
             <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }} ref={this.dashboard}>
                 <h1 style={{ marginTop: 100, padding: '60px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : ''}}>{getCookie("login-company")} Dashboard</h1>
@@ -516,6 +517,13 @@ class Dashboard extends Component {
                 <NavBar />
             </div>
         )
+    }else{
+        return(
+            <div>
+                <h1>Register to a company</h1>
+            </div>
+        )
+    }
     }
 }
 
