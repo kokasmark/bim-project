@@ -183,10 +183,10 @@ return formatted;
                     {data.elements.map((element,eindex) => (
                       <li key={element.id}>
                         <div className='rows-rw-4'>
-                        <div><input style={{border: "none", margin: 5}} placeholder='Pl. helységköny' value={element.title} onChange={(e) => this.ChangeDataInnerTitle(index,eindex,e.target.value)}></input></div>
-                        <div><input id={`${index}-${eindex}-ftdb`} style={{width: 50, border: "none"}} value={element.ftDb} onChange={(e) => this.ChangeDataFtDb(index,eindex,e.target.value)}></input><p>Ft/db</p></div>
-                        <div><input id={`${index}-${eindex}-db`} style={{width: 50, border: "none"}} value={element.db} onChange={(e) => this.ChangeDataDb(index,eindex,e.target.value)}></input><p>db</p></div>
-                        <div><input disabled style={{width: 50, border: "none"}}value={this.CalculateFt(index,eindex)}></input><p>Ft</p></div>
+                        <div><input style={{border: "1px solid var(--primary)", background: "var(--darker-bg)", margin: 5}} placeholder='Pl. helységköny' value={element.title} onChange={(e) => this.ChangeDataInnerTitle(index,eindex,e.target.value)}></input></div>
+                        <div><input id={`${index}-${eindex}-ftdb`} style={{width: 50, border: "1px solid var(--primary)", background: "var(--darker-bg)"}} value={element.ftDb} onChange={(e) => this.ChangeDataFtDb(index,eindex,e.target.value)}></input><p>Ft/db</p></div>
+                        <div><input id={`${index}-${eindex}-db`} style={{width: 50, border: "1px solid var(--primary)",background: "var(--darker-bg)"}} value={element.db} onChange={(e) => this.ChangeDataDb(index,eindex,e.target.value)}></input><p>db</p></div>
+                        <div><input disabled style={{width: 50, border: "1px solid var(--primary)", background: "var(--darker-bg)"}}value={this.CalculateFt(index,eindex)}></input><p>Ft</p></div>
                         </div>
                       </li>
                     ))}

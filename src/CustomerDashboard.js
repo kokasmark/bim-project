@@ -110,7 +110,11 @@ class CustomerDashboard extends Component {
                 {
                     var r = JSON.parse(result);
                     if(r.success){
-                        this.setState({companies: r.companies})
+                        let companies = []
+                        r.companies.forEach(company => {
+                            companies.push({label: company.label, value: company.label});
+                        });
+                        this.setState({companies: companies})
                     }
                 })
             .catch(error => console.log('error', error));
@@ -138,7 +142,11 @@ class CustomerDashboard extends Component {
                 {
                     var r = JSON.parse(result);
                     if(r.success){
-                        this.setState({workTypes: r.workTypes})
+                        let workTypes = []
+                        r.workTypes.forEach(wtype => {
+                            workTypes.push({label: wtype.label, value: wtype.label});
+                        });
+                        this.setState({workTypes: workTypes})
                     }
                 })
             .catch(error => console.log('error', error));
@@ -465,7 +473,7 @@ class CustomerDashboard extends Component {
                                     id='company-select'
                                     onChange={(e) => this.handleSelectChange(e, this)}
                                 />
-                                <input placeholder='Short project Name' id='project-name' style={{marginTop: 20}}></input>
+                                <input placeholder='Short project Name' id='project-name' style={{marginTop: 20, background: "var(--darker-bg)"}}></input>
                                 
                                 <Select
                                     isMulti
@@ -477,7 +485,7 @@ class CustomerDashboard extends Component {
                                     id='work-types'
                                     onChange={(e) => this.handleMultiChange(e, this)}
                                 />
-                                <input placeholder='Please write here the needed data takeoffs or jobs on the drawings' style={{ height: 100, position: 'relative', top: 20 }}></input>
+                                <input placeholder='Please write here the needed data takeoffs or jobs on the drawings' style={{ height: 100, position: 'relative', top: 20, background: "var(--darker-bg)" }}></input>
 
                                 <div className='upload-file-container'><FileUploader classes='upload-file' children={
                                     <div style={{ width: '100%' }}>

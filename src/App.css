@@ -5,8 +5,8 @@
   --error: #F44336;
   --warning: #FFC107;
   
-  --bg: #248bfd;
-  --darker-bg: #0f2946;
+  --bg: #126a9c;
+  --darker-bg: #0b0c0e;
   --lighter-bg: #00A9FF;
   --shadow: #000203;
 }
@@ -313,7 +313,7 @@ input::placeholder{
   width: 100% !important;
 }
 .upload-file-container{
-  border: 2px dashed #8492C4;
+  border: 2px dashed var(--darker-bg);
   width: 80% !important;
   height: fit-content !important;
   text-align: center;
@@ -321,7 +321,7 @@ input::placeholder{
   margin: 20px 8%;
 }
 .upload-file p{
-  color: #8492C4 !important;
+  color: white;
   margin-top: -10px;
 }
 .request-sent{
@@ -433,7 +433,7 @@ input::placeholder{
 .offer{
   height: 80%;
   position: absolute;
-  top: 10%;
+  top: 20%;
   left: 15%;
   width: 80%;
 }
@@ -447,7 +447,7 @@ input::placeholder{
   padding-top: 10px;
 }
 .offer-order{
-  height: 65%;
+  height: 50%;
   border-radius: 8px;
   width: 80%;
   background-color: #051721;
@@ -460,7 +460,7 @@ input::placeholder{
 .offer-order .fields{
   margin-left: -3%;
   overflow-y: scroll;
-  max-height: 400px;
+  max-height: 300px;
   
 }
 .offer-order .fields li{
@@ -610,6 +610,9 @@ input::placeholder{
   justify-content: center;
   flex-direction: column;
   align-items: center;
+}
+a{
+  text-decoration: none;
 }
 @keyframes row-load {
   0%{
