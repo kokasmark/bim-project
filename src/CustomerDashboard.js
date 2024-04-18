@@ -253,7 +253,7 @@ class CustomerDashboard extends Component {
         return formatted;
     }
     render() {
-        if(getCookie("login-company") !== "undefined"){
+        if(getCookie("login-company") !== "undefined" && getCookie("login-company") !== ""){
         return (
             <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }} ref={this.dashboard}>
                 <h1 style={{ marginTop: 100, padding: '50px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : ''}}>Customer Dashboard</h1>
@@ -418,7 +418,7 @@ class CustomerDashboard extends Component {
                                     <p>{offer.header.companyName}</p>
                                     <p>{offer.header.datum}</p>
                                     <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -20}}>Sample</p>
-                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: 40}}> <img src={card_icon}/>Pay remaining</p>
+                                    <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: 60}}> <img src={card_icon}/>Pay remaining</p>
                                     <div className='line'>
                                     </div>
                                 </div>
@@ -492,8 +492,8 @@ class CustomerDashboard extends Component {
                                         <img src={upload_file_icon} />
                                         <p>Click to upload or drag and drop</p>
                                     </div>} name="file" types={this.acceptedFilesOnUpload} /></div>
-                                <button className='outlined-btn-secondary' style={{ height: 40 }} onClick={() => this.setState({ requestingOffer: false,blur: false })}>Back</button>
-                                <button className='rounded-btn-primary' style={{ width: '90%', position: 'relative', top: -40, left: 100, height: 40 }}
+                                <button className='outlined-btn-secondary' style={{ }} onClick={() => this.setState({ requestingOffer: false,blur: false })}>Back</button>
+                                <button className='rounded-btn-primary' style={{ marginLeft: 10}}
                                     onClick={() => this.sendOfferRequest()}>Send offer Request</button>
                             </div>
                         </div>
@@ -504,8 +504,8 @@ class CustomerDashboard extends Component {
                             <div className='request-head'>
                                 <Icon_close style={{position: 'relative', left: '58%', top: -30}} className='interactable' onClick={()=> this.setState({requestSent: false,blur: false})}/>
                                 <img src={logo} />
-                                <p style={{ color: 'green' }}>We recieved your request with the following datas</p>
-                                <p style={{ color: 'gray' }}>The expected time to recieve your offer is 5 working days</p>
+                                <p style={{ color: 'var(--success)' }}>We recieved your request with the following datas</p>
+                                <p style={{ color: 'lightgray' }}>The expected time to recieve your offer is 5 working days</p>
                             </div>
                             <div className='request-data'>
                                 <div className='column-headers-rw-4'>
@@ -557,7 +557,7 @@ class CustomerDashboard extends Component {
                             <div className='line' style={{marginBottom: 50}}></div>
                             <p className='header-text'>Összeg</p>
                             <p className='text'>{this.calculateDepositOsszeg(this.state.selectedOffer)} Ft</p>
-                            <p style={{color: 'gray', marginTop: -30, fontSize: 12}}>(net offer price x1.27 what is our vat (=VAT))</p>
+                            <p style={{color: 'lightgray', marginTop: -30, fontSize: 12}}>(net offer price x1.27 what is our vat (=VAT))</p>
                         </div>
                     </div>}
                     

@@ -13,7 +13,7 @@ class Offer extends Component {
     editing: false
   }
   popUpOpen() {
-    this.setState({ open: true })
+    this.setState({ open: true, editingData: this.props.editing ? [] : this.state.editingData })
   }
   popUpClose() {
     this.props.parent.blur(false)
@@ -82,7 +82,7 @@ class Offer extends Component {
 
     fetch("http://localhost:3001/api/update-offer", requestOptions)
       .then(response => response.text())
-      .then(result => {Swal.fire("Success!", `Offer [${offer.id}] updated successfully!`,"success"); this.popUpClose()})
+      .then(result => {Swal.fire("Success!", `Offer [${this.formatOfferId(offer)}] updated successfully!`,"success"); this.popUpClose()})
       .catch(error => {Swal.fire("Oops!", error.error, "error")});
   }
   calculateDepositOsszeg(e){
@@ -168,7 +168,7 @@ return formatted;
                   </li>
                 ))}
               </ul>
-              <div style={{backgroundColor: "var(--bg)", padding: 10, borderRadius: 10, width: "fit-content"}}>
+              <div style={{border:'1px solid white',padding: 5, borderRadius: 10, width: "fit-content", display: 'flex', gap: 10}}>
                 <h3>Összeszen: {this.calculateDepositOsszeg(1)} Ft</h3>
                 <h3>Deposit: {this.calculateDepositOsszeg(2)} Ft</h3>
               </div>

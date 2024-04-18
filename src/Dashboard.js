@@ -127,7 +127,7 @@ class Dashboard extends Component {
         if(daysDifference > 0){
             return <p>{daysDifference} days</p>;
         }else{
-            return <p style={{color: "red"}}>Behind by {Math.abs(daysDifference)} days</p>
+            return <p style={{color: "var(--error)"}}>Behind by {Math.abs(daysDifference)} days</p>
         }
     }
     depositArrivedPopup(offer){

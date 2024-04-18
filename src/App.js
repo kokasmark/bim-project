@@ -19,21 +19,24 @@ class App extends Component {
       <div>
 
         <div ref={this.heroRef}>
-          <div style={{ display: 'inline-block', position: 'relative', left: 300, top: -200}}>
+          <div style={{ display: 'inline-block', position: 'relative', left: 300, top: 0}}>
             <h1 style={{ fontSize: 56, width: 600 }}>
               Digitális Műszaki előkészítés
             </h1>
             <p style={{ fontSize: 18, width: 450 }}>
               A Digitálisan előkészített anyag használható az ajánlatadástól az átadásig.
             </p>
-            <b className='interactable' onClick={() =>
+            <b className='interactable'
+                style={{color: "var(--lighter-bg)", fontSize: 30}}
+                onClick={() =>
               window.scrollTo({
                 top: this.moreInfoRef.current.offsetTop,
                 behavior: "smooth"
               })
             }>More Info</b>
           </div>
-          <img src={hero_img} style={{ position: 'relative', top: 100, left: '32%', width: 980, height: '100%' }} />
+          <img src={hero_img} style={{ position: 'relative', top: 200, left: '20%', width: 1000, height: '100%',filter:'drop-shadow(-10px 5px 2px #202227)' }} />
+          
         </div>
         <div style={{ position: 'relative', top: 500, marginLeft: '15%', height: 800 }} ref={this.moreInfoRef}>
           <Icon_arrow className='interactable' style={{ position: 'relative', left: '39%', width: 50, height: 50 }} onClick={() =>

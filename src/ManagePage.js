@@ -334,15 +334,15 @@ class ManagePage extends Component {
           <div className='workTypes-panel'>
             <h2>Saved Work Types</h2>
             <input placeholder='New work type' className='new-worktype-input' id="new-worktype"></input>
-            <p className='interactable' style={{ color: "var(--success)", display: "inline" }} onClick={()=>this.add()}>+</p>
-              <ul className='work-types'>
+            <p className='interactable' style={{ color: "var(--success)"}} onClick={()=>this.add()}>+</p>
+              <div className='work-types'>
               {this.state.workTypes.map((workType, index) => (
                 <div key={index} className='worktype'>
-                  <li>{workType.label}</li>
+                  <p>{workType.label}</p>
                   <p className='interactable' style={{ color: "var(--error)" }} onClick={()=> this.removeWorkTypes(index)}>-</p>
                 </div>
               ))}
-            </ul>
+            </div>
           </div>
           <div className='logs-panel'>
               {this.state.logs.map((log, index) => (
