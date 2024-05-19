@@ -43,7 +43,9 @@ class Dashboard extends Component {
         offerpopup: false,
         seeOffer: {},
         blur: false,
-        offerAction: true //true if editing
+        offerAction: true, //true if editing
+        selectedCategory: "requests"
+
     }
 
     getOffers(){
@@ -244,56 +246,73 @@ class Dashboard extends Component {
             <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }} ref={this.dashboard}>
                 <h1 style={{ marginTop: 100, padding: '60px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : ''}}>{getCookie("login-company")} Dashboard</h1>
                 <div className='dashboard-header' style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
-                    <Card>
+
+                    <Card className={this.state.selectedCategory == "requests"?"header selected":"header"}
+                        onClick={()=> this.setState({selectedCategory: "requests"})}>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-5.png')} />
                             <div style={{ marginTop: -30 }}>
                                 <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[0].length}</Card.Text>
-                                <Card.Text style={{marginTop: -30 }}>Offer Requests</Card.Text>
+                                <Card.Text style={{marginTop: -30 }}>Rendelések</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
-                    <Card>
+                    <Card  className={this.state.selectedCategory == "sent"?"header selected":"header"}
+                    onClick={()=> this.setState({selectedCategory: "sent"})}>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-2.png')} />
                             <div style={{ marginTop: -30 }}>
                                 <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[1].length}</Card.Text>
-                                <Card.Text style={{marginTop: -30 }}>Sent Offers</Card.Text>
+                                <Card.Text style={{marginTop: -30 }}>Elküldött</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
-                    <Card>
+                    <Card  className={this.state.selectedCategory == "processing"?"header selected":"header"}
+                    onClick={()=> this.setState({selectedCategory: "processing"})}>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-6.png')} />
                             <div style={{ marginTop: -30 }}>
                                 <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[2].length}</Card.Text>
-                                <Card.Text style={{ marginTop: -30 }}>Processing</Card.Text>
+                                <Card.Text style={{ marginTop: -30 }}>Feldolgozás alatt</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
-                    <Card>
+                    <Card  className={this.state.selectedCategory == "finished"?"header selected":"header"}
+                    onClick={()=> this.setState({selectedCategory: "finished"})}>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-1.png')} />
                             <div style={{ marginTop: -30 }}>
                                 <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[3].length}</Card.Text>
-                                <Card.Text style={{marginTop: -30 }}>Finished Jobs</Card.Text>
+                                <Card.Text style={{marginTop: -30 }}>Kész</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
                     
-                    <Card>
+                    <Card className={this.state.selectedCategory == "invoiced"?"header selected":"header"}
+                    onClick={()=> this.setState({selectedCategory: "invoiced"})}>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-7.png')} />
                             <div style={{ marginTop: -30 }}>
                                 <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[4].length}</Card.Text>
-                                <Card.Text style={{marginTop: -30 }}>Invoiced Jobs</Card.Text>
+                                <Card.Text style={{marginTop: -30 }}>Számlázott</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>
                 </div>
-                <div className='dashboard-category' ref={this.offer_requestsRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
+                {this.state.selectedCategory == "requests" && <div className='dashboard-category' ref={this.offer_requestsRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
-                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-5.png')} />Offer Requests</Card.Title>
+                        <Card.Title style={{ fontSize: 24 }}>
+                            <img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-5.png')} />
+                            Rendelések
+                            <select>
+                                <option>Sorszám</option>
+                                <option>Projekt</option>
+                                <option>Munkanem</option>
+                                <option>Megrendelő</option>
+                            </select>
+                            <input></input>
+                            <p className='rounded-btn-primary' style={{width: 100, textAlign: 'center', display: 'inline-block'}}>Szűrés</p>
+                            </Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-6'>
                                 <p>Ajánlatkérési sorszám</p>
@@ -320,10 +339,20 @@ class Dashboard extends Component {
                             )}
                         </Card.Body>
                     </Card>
-                </div>
-                <div className='dashboard-category' ref={this.sent_offersRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
+                </div>}
+                {this.state.selectedCategory == "sent" && <div className='dashboard-category' ref={this.sent_offersRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
-                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-2.png')} />Sent Offers</Card.Title>
+                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-2.png')} />
+                        Sent Offers
+                        <select>
+                                <option>Sorszám</option>
+                                <option>Projekt</option>
+                                <option>Munkanem</option>
+                                <option>Megrendelő</option>
+                            </select>
+                            <input></input>
+                            <p className='rounded-btn-primary' style={{width: 100, textAlign: 'center', display: 'inline-block'}}>Szűrés</p>
+                        </Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-6'>
                                 <p>Ajánlatkérési sorszám</p>
@@ -349,10 +378,20 @@ class Dashboard extends Component {
                             )}
                         </Card.Body>
                     </Card>
-                </div>
-                <div className='dashboard-category' ref={this.ordersRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
+                </div>}
+                {this.state.selectedCategory == "processing" && <div className='dashboard-category' ref={this.ordersRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
-                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-6.png')} /> Processing</Card.Title>
+                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-6.png')} /> 
+                        Processing
+                        <select>
+                                <option>Sorszám</option>
+                                <option>Projekt</option>
+                                <option>Munkanem</option>
+                                <option>Megrendelő</option>
+                            </select>
+                            <input></input>
+                            <p className='rounded-btn-primary' style={{width: 100, textAlign: 'center', display: 'inline-block'}}>Szűrés</p>
+                        </Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-7'>
                                 <p>Ajánlatkérési sorszám</p>
@@ -380,10 +419,20 @@ class Dashboard extends Component {
                             )}
                         </Card.Body>
                     </Card>
-                </div>
-                <div className='dashboard-category' ref={this.processingRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
+                </div>}
+                {this.state.selectedCategory == "finished" &&  <div className='dashboard-category' ref={this.processingRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
-                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-1.png')} /> Finished Jobs</Card.Title>
+                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-1.png')} />
+                         Finished Jobs
+                         <select>
+                                <option>Sorszám</option>
+                                <option>Projekt</option>
+                                <option>Munkanem</option>
+                                <option>Megrendelő</option>
+                            </select>
+                            <input></input>
+                            <p className='rounded-btn-primary' style={{width: 100, textAlign: 'center', display: 'inline-block'}}>Szűrés</p>
+                         </Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-6'>
                                 <p>Ajánlatkérési sorszám</p>
@@ -409,10 +458,20 @@ class Dashboard extends Component {
                             )}
                         </Card.Body>
                     </Card>
-                </div>
-                <div className='dashboard-category' ref={this.invoicedRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
+                </div>}
+                {this.state.selectedCategory == "invoiced" && <div className='dashboard-category' ref={this.invoicedRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
-                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-7.png')} /> Invoiced Jobs</Card.Title>
+                        <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-7.png')} />
+                         Invoiced Jobs
+                         <select>
+                                <option>Sorszám</option>
+                                <option>Projekt</option>
+                                <option>Munkanem</option>
+                                <option>Megrendelő</option>
+                            </select>
+                            <input></input>
+                            <p className='rounded-btn-primary' style={{width: 100, textAlign: 'center', display: 'inline-block'}}>Szűrés</p>
+                         </Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-6'>
                                 <p>Ajánlatkérési sorszám</p>
@@ -438,7 +497,7 @@ class Dashboard extends Component {
                             )}
                         </Card.Body>
                     </Card>
-                </div>
+                </div>}
 
                 {this.state.requestingOffer &&
                     <div style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }}>

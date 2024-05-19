@@ -5,8 +5,8 @@
   --error: #ff2314;
   --warning: #FFC107;
   
-  --bg: #0074e3;
-  --darker-bg: #001224;
+  --bg: #fff735;
+  --darker-bg: #0b0a0a;
   --lighter-bg: #00A9FF;
   --shadow: #000203;
 
@@ -17,7 +17,7 @@
 }
 body{
   background-color: var(--darker-bg);
-  color: white;
+  color: black;
   overflow: hidden;
   transition: 0.5s ease;
   -webkit-user-select: none; /* Safari */
@@ -61,10 +61,10 @@ body{
   border-radius: 40px;
   padding: 10px 20px;
   border: none;
-  font-size: 20px;
+  font-size: 15px;
   color: white;
   cursor: pointer;
-  border: 1px #fff solid;
+  border: 2px white solid;
 }
 .rounded-btn-secondary{
   background-color: transparent;
@@ -72,7 +72,7 @@ body{
   padding: 10px 20px;
   border: 1px solid white;
   font-size: 14px;
-  color: white;
+  color: black;
   cursor: pointer;
 }
 .rounded-btn-primary img{
@@ -101,7 +101,7 @@ body{
   flex-direction: row;
 }
 .navbar p{
-  color: white;
+  color: black;
   margin: 22px 10px;
 }
 .navbar img{
@@ -136,9 +136,6 @@ body{
   border-radius: 8px;
   margin: 10px;
   cursor: pointer;
-  animation: anim-scale 0.5s ease-out;
-  transform: scale(0);
-  animation-fill-mode: forwards;
   box-shadow: 5px 5px 5px var(--shadow);
 }
 .dashboard-header .card-text{
@@ -160,58 +157,86 @@ body{
   background-color: var(--bg);
   border-radius: 8px;
   margin: 2.5%;
+  margin-top: 0px;
   box-shadow: 5px 5px 5px var(--shadow);
+  margin-bottom: 100px;
+}
+.dashboard-header .header.card{
+  transform: scale(0.8);
+  opacity: 0.5;
+  transition: 0.3s;
+}
+.dashboard-header .card.header.selected{
+  transform: scale(1);
+  opacity: 1;
 }
 .dashboard-category .card-body{
   margin-left: 100px;
 }
+.dashboard-category .card-title{
+  margin-bottom: 40px;
+}
+.dashboard-category .card-title input{
+  height: 30px !important;
+  width: 250px;
+  margin: 5px;
+  background-color: white;
+  color: black;
+}
+
+.dashboard-category .card-title select{
+  height: 30px !important;
+  width: 100px;
+  margin: 5px;
+  border-radius: 10px;
+}
 .column-headers-rw-4 p{
   display: inline-block;
-  color: white;
+  color: black;
   width: calc(100%/4);
   font-weight: bold;
 }
 .column-headers-rw-5 p{
   display: inline-block;
-  color: white;
+  color: black;
   width: calc(100%/5);
   font-weight: bold;
 }
 .column-headers-rw-6 p{
   display: inline-block;
-  color: white;
+  color: black;
   width: calc(100%/6);
   font-weight: bold;
 }
 .column-headers-rw-7 p{
   display: inline-block;
-  color: white;
+  color: black;
   width: calc(100%/7);
   font-weight: bold;
 }
 .rows-rw-4 p{
   display: inline-block;
-  color: white;
+  color: black;
   width: calc(100%/4);
 }
 .rows-rw-4 div{
   display: inline-block;
-  color: white;
+  color: black;
   width: calc(100%/4);
 }
 .rows-rw-5 p{
   display: inline-block;
-  color: white;
+  color: black;
   width: calc(100%/5);
 }
 .rows-rw-6 p{
   display: inline-block;
-  color: white;
+  color: black;
   width: calc(100%/6);
 }
 .rows-rw-7 p{
   display: inline-block;
-  color: white;
+  color: black;
   width: calc(100%/7);
 }
 .rows-rw-7 .rounded-btn-primary{
@@ -235,12 +260,12 @@ body{
 .line{
   width: 90%;
   height: 1px;
-  background-color: #181F25;
+  background-color: black;
 }
 .vline{
   width: 1px;
   height: 90%;
-  background-color: #181F25;
+  background-color: black;
 }
 .dashboard-up-btn{
   position: fixed; 
@@ -446,6 +471,16 @@ input::placeholder{
   background-color: var(--primary);
   padding: 50px;
   padding-top: 10px;
+}
+.offer-order-data .column-headers-rw-5{
+  background-color: var(--darker-bg);
+  padding: 5px;
+  border-radius: 10px 10px 0px 0px;
+}
+.offer-order-data .rows-rw-5{
+  background-color: var(--darker-bg);
+  padding: 5px;
+  border-radius: 0px 0px 10px 10px;
 }
 .offer-order{
   height: 50%;
