@@ -235,7 +235,6 @@ class Dashboard extends Component {
 
         return (
             <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }} ref={this.dashboard}>
-                <h1 style={{ marginTop: 100, padding: '60px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : ''}}>{getCookie("login-company")} Dashboard</h1>
                 <div className='dashboard-header' style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
 
                     <Card className={this.state.selectedCategory == "requests"?"header selected":"header"}
