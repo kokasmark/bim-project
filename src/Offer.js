@@ -103,16 +103,7 @@ componentDidUpdate(prevProps, prevState){
   }
 }
 formatOfferId(offer) {
-  // Ensure the ID is a string
-var id = offer.offerId.toString();
-
-// Calculate the number of leading zeros needed
-var leadingZeros = 6 - id.length;
-
-// Add leading zeros
-var formatted = offer.header.companyName+"-"+"0".repeat(leadingZeros) + id;
-
-return formatted;
+  return offer.id;
 }
   render() {
     return (
@@ -122,19 +113,17 @@ return formatted;
             <Icon_close style={{ marginBottom: -20, marginLeft: "100%" }} className='interactable' onClick={() => this.popUpClose()} />
             <h1 style={{ marginTop: 0 }}>Order Data</h1>
 
-            <div className='column-headers-rw-5'>
+            <div className='column-headers-rw-4'>
               <p>Ajánlatkérési sorszám</p>
               <p>Projekt</p>
               <p>Munkanem</p>
-              <p>Rövid cégnév</p>
               <p>Ajánlatkérési dátum</p>
               <div className='line'></div>
             </div>
-            <div className='rows-rw-5'>
+            <div className='rows-rw-4'>
               <p>{this.formatOfferId(this.props.offer)}</p>
               <p>{this.props.offer.header.projectName}</p>
               <p>{this.props.offer.header.workTypes}</p>
-              <p>{this.props.offer.header.companyName}</p>
               <p>{this.offerDateFormat(this.props.offer.header.datum)}</p>
             </div>
           </div>

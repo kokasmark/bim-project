@@ -54,7 +54,7 @@ class Dashboard extends Component {
 
         var raw = JSON.stringify({
             "token": getCookie("login-token"),
-            "companyName": getCookie("login-company")
+            "page": 1
             });
 
         var requestOptions = {
@@ -224,24 +224,15 @@ class Dashboard extends Component {
         return osszeg / 2;
     }
     formatOfferId(offer) {
-        // Ensure the ID is a string
-    var id = offer.offerId.toString();
-    
-    // Calculate the number of leading zeros needed
-    var leadingZeros = 6 - id.length;
-
-    // Add leading zeros
-    var formatted = offer.header.companyName+"-"+"0".repeat(leadingZeros) + id;
-
-    return formatted;
-}
+        return offer.id;
+    }
     render() {
         const options = [
             { value: 'ajzatbeton', label: 'Ajzat Beton' },
             { value: 'ablak', label: 'Ablak' },
             { value: 'ajto', label: 'Ajtó' }
         ]
-        if(getCookie("login-company") !== undefined){
+
         return (
             <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }} ref={this.dashboard}>
                 <h1 style={{ marginTop: 100, padding: '60px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : ''}}>{getCookie("login-company")} Dashboard</h1>
@@ -576,13 +567,6 @@ class Dashboard extends Component {
                 <NavBar />
             </div>
         )
-    }else{
-        return(
-            <div>
-                <h1>Register to a company</h1>
-            </div>
-        )
-    }
     }
 }
 

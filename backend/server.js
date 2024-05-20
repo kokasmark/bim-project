@@ -119,44 +119,31 @@ app.post('/api/login', async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
+
+//REWORKED
 app.post('/api/add-offer', async (req, res) => {
   try {
     const { token, header } = req.body;
 
-    // Retrieve the document reference for the company based on the company name
-    const companyQuerySnapshot = await db.collection('companies').where('name', '==', header.companyName).get();
+    // Add a new document to the "Jobs" collection with the offer data
+    const offerDocRef = await db.collection('Jobs').add({ header: header, data: "", status: 0});
 
-    // Check if the company document exists
-    if (!companyQuerySnapshot.empty) {
-      const companyDocRef = companyQuerySnapshot.docs[0].ref;
+    // Retrieve the user document based on the token
+    const userQuerySnapshot = await db.collection('users').where('token', '==', token).get();
 
-      // Access the "offers" subcollection for the company
-      const offersCollectionRef = companyDocRef.collection('offers');
+    // Check if the user document exists
+    if (!userQuerySnapshot.empty) {
+      const userDocRef = userQuerySnapshot.docs[0].ref;
 
-      // Add a new document to the "offers" subcollection with the offer data
+      // Access sentOffers
+      const ordersCollectionRef = userDocRef.collection('sentOffers');
 
-      const offerId = await getNextOfferId(header.companyName)
-      const offerDocRef = await offersCollectionRef.add({ header: header, data: "", status: 0, offerId: offerId });
+      // Add a new document to the "orders" subcollection with the offer reference
+      await ordersCollectionRef.add({ id: offerDocRef.id });
 
-      // Retrieve the user document based on the token
-      const userQuerySnapshot = await db.collection('companies').where('name', '==', header.author).get();
-
-      // Check if the user document exists
-      if (!userQuerySnapshot.empty) {
-        const userDocRef = userQuerySnapshot.docs[0].ref;
-
-        // Access the "orders" subcollection for the user
-        const ordersCollectionRef = userDocRef.collection('orders');
-
-        // Add a new document to the "orders" subcollection with the offer reference
-        await ordersCollectionRef.add({ offerRef: offerDocRef });
-        
-        res.status(200).json({ success: true, message: 'Offer uploaded successfully' });
-      } else {
-        res.status(400).json({ success: false, error: 'User not found' });
-      }
+      res.status(200).json({ success: true, message: 'Offer uploaded successfully' });
     } else {
-      res.status(400).json({ success: false, error: 'Company not found' });
+      res.status(400).json({ success: false, error: 'User not found' });
     }
   } catch (error) {
     console.error('Error adding offer:', error);
@@ -167,31 +154,33 @@ app.post('/api/add-offer', async (req, res) => {
 
 
 
+
 app.post('/api/update-offer', async (req, res) => {
   try {
-    const { companyName, offerId, data, status, token } = req.body;
-    // Retrieve the document reference for the user based on the companyName
-    const companyQuerySnapshot = await db.collection('companies').where('name', '==', companyName).get();
-    
+    const { offerId, data, status, token } = req.body;
 
-    // Check if the company document exists
-    if (!companyQuerySnapshot.empty) {
-      // There should be only one company document with a unique name
-      const companyDocRef = companyQuerySnapshot.docs[0].ref;
+    // Retrieve the document reference for the offer in the "Jobs" collection
+    const offerDocRef = db.collection('Jobs').doc(offerId);
+    const offerDocSnapshot = await offerDocRef.get();
 
-      // Access the "offers" subcollection for the company
-      const offersCollectionRef = companyDocRef.collection('offers');
-
-      // Update the offer document with the provided offerId
-      const offerDocRef = offersCollectionRef.doc(offerId);
-      const offerDocSnapshot = await offerDocRef.get();
-      var updatedHeader =  offerDocSnapshot.data().header;
+    // Check if the offer document exists
+    if (offerDocSnapshot.exists) {
+      // Update the offer document with the provided data and status
+      let updatedHeader = offerDocSnapshot.data().header;
       updatedHeader.updated = new Date().getTime();
-      await offerDocRef.update({header: updatedHeader,data: data != undefined ? data :  offerDocSnapshot.data().data, status: status});
-      Log(companyName, `Offer ${offerDocSnapshot.data().offerId} updated. Status: ${status}`, token)
+
+      await offerDocRef.update({
+        header: updatedHeader,
+        data: data !== undefined ? data : offerDocSnapshot.data().data,
+        status: status
+      });
+
+      // Log the update (assuming Log is a defined function)
+      //Log(`Offer ${offerId} updated. Status: ${status}`, token);
+
       res.status(200).json({ success: true, message: 'Offer updated successfully' });
     } else {
-      res.status(400).json({ success: false, error: 'Company not found' });
+      res.status(400).json({ success: false, error: 'Offer not found' });
     }
   } catch (error) {
     console.error('Error updating offer:', error);
@@ -199,29 +188,29 @@ app.post('/api/update-offer', async (req, res) => {
   }
 });
 
+
 app.post('/api/get-offers', async (req, res) => {
   try {
-    const { token, companyName} = req.body;
+    const { token, page } = req.body;
+    const pageSize = 10;
 
     // Retrieve the document reference for the user based on the token
     const userQuerySnapshot = await db.collection('users').where('token', '==', token).get();
 
-    // Check if the user document exists and if the user is an admin
+    // Check if the user document exists
     if (!userQuerySnapshot.empty) {
-      const userData = userQuerySnapshot.docs[0].data();
+      // Calculate the offset for pagination
+      const offset = (page - 1) * pageSize;
 
-      const companyQuerySnapshot = await db.collection('companies').where('name', '==', companyName).get();
-      // There should be only one user document with a unique token
-      const companyDocRef = companyQuerySnapshot.docs[0].ref;
+      // Query the "Jobs" collection with pagination
+      const jobsQuerySnapshot = await db.collection('Jobs')
+        .orderBy('header.companyName') // Adjust the orderBy field as needed
+        .offset(offset)
+        .limit(pageSize)
+        .get();
 
-      // Access the "offers" subcollection for the user
-      const offersCollectionRef = companyDocRef.collection('offers');
-
-      // Query the "offers" subcollection based on the companyName in the header
-      const offersQuerySnapshot = await offersCollectionRef.limit(10).get();
-
-      // Extract the "header" and "status" fields from each offer document
-      const offers = offersQuerySnapshot.docs.map(doc => {
+      // Extract the necessary fields from each job document
+      const offers = jobsQuerySnapshot.docs.map(doc => {
         const { header, status, data, offerId } = doc.data();
         const id = doc.id; // Retrieve the document ID
         return { id, header, data, status, offerId };
@@ -236,38 +225,38 @@ app.post('/api/get-offers', async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
+
+//USER Retrieves its orders
 app.post('/api/get-orders', async (req, res) => {
   try {
-    const { company } = req.body;
+    const { token } = req.body;
 
-    // Retrieve the document reference for the company based on its name
-    const companyQuerySnapshot = await db.collection('companies').where('name', '==', company).get();
+    // Retrieve the user document based on the token
+    const userQuerySnapshot = await db.collection('users').where('token', '==', token).get();
 
-    // Check if the company document exists
-    if (!companyQuerySnapshot.empty) {
-      const companyDocRef = companyQuerySnapshot.docs[0].ref;
+    // Check if the user document exists
+    if (!userQuerySnapshot.empty) {
+      const userId = userQuerySnapshot.docs[0].id;
+      
+      // Retrieve the user's sentOffers subcollection
+      const sentOffersSnapshot = await db.collection('users').doc(userId).collection('sentOffers').get();
 
-      // Access the "orders" subcollection for the company
-      const ordersCollectionRef = companyDocRef.collection('orders');
+      const ordersPromises = [];
 
-      // Query the "orders" subcollection
-      const ordersQuerySnapshot = await ordersCollectionRef.limit(10).get();
-
-      // Extract the data from each order document
-      const ordersPromises = ordersQuerySnapshot.docs.map(async (doc) => {
-        const { offerRef } = doc.data();
-
-        // Retrieve the offer document based on the offerRef reference
-        const offerDocSnapshot = await offerRef.get();
-
-        // Check if the offer document exists
-        if (offerDocSnapshot.exists) {
-          const { header, status, data, offerId } = offerDocSnapshot.data();
-          const id = offerDocSnapshot.id;
-          return { id, header, data, status, offerId };
-        } else {
-          return null;
-        }
+      // Iterate through each sent offer document
+      sentOffersSnapshot.forEach(doc => {
+        const sentOffer = doc.data();
+        // Retrieve the offer document based on the offer ID
+        const promise = db.collection('Jobs').doc(sentOffer.id).get().then(offerDocSnapshot => {
+          if (offerDocSnapshot.exists) {
+            const { header, status, data, offerId } = offerDocSnapshot.data();
+            const id = offerDocSnapshot.id;
+            return { id, header, data, status, offerId };
+          } else {
+            return null;
+          }
+        });
+        ordersPromises.push(promise);
       });
 
       // Wait for all order retrieval promises to resolve
@@ -278,13 +267,15 @@ app.post('/api/get-orders', async (req, res) => {
 
       res.status(200).json({ success: true, orders: validOrders });
     } else {
-      res.status(400).json({ success: false, error: 'Company not found' });
+      res.status(400).json({ success: false, error: 'User not found' });
     }
   } catch (error) {
     console.error('Error getting orders:', error);
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
+
+
 
 
 app.post('/api/get-logs', async (req, res) => {
@@ -605,45 +596,24 @@ app.post('/api/get-colleagues', async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
-app.get('/api/get-companies', async (req, res) => {
-  try {
-    // Query the user document based on the token field
-    const userQuerySnapshot = await db.collection('companies').get();
-
-    // Check if the user document exists
-    if (!userQuerySnapshot.empty) {
-      let companies = []
-      for(var i = 0; i < userQuerySnapshot.docs.length; i++){
-        const userData = userQuerySnapshot.docs[i].data();
-        companies.push({label: userData.name})
-      }
-      res.status(200).json({ success: true, companies: companies });
-    } else {
-      res.status(400).json({ success: false, error: 'Company not found', role: -1 });
-    }
-  } catch (error) {
-    console.error('Error getting user:', error);
-    res.status(500).json({ success: false, error: 'Internal server error' });
-  }
-});
 app.post('/api/get-worktypes', async (req, res) => {
   try {
-    const { company } = req.body;
-    // Query the user document based on the token field
-    const userQuerySnapshot = await db.collection('companies').where("name", "==", company).get();
+    // Query the first document in the Constants collection
+    const constantsDocSnapshot = await db.collection('Constants').limit(1).get();
 
-    // Check if the user document exists
-    if (!userQuerySnapshot.empty) {
-      let companyQuerry = userQuerySnapshot.docs[0].data()
-      res.status(200).json({ success: true, workTypes: companyQuerry.workTypes });
+    // Check if the document exists
+    if (!constantsDocSnapshot.empty) {
+      const constantsDoc = constantsDocSnapshot.docs[0].data();
+      res.status(200).json({ success: true, workTypes: constantsDoc.worktypes });
     } else {
-      res.status(400).json({ success: false, error: 'Company not found', role: -1 });
+      res.status(400).json({ success: false, error: 'Constants document not found' });
     }
   } catch (error) {
-    console.error('Error getting user:', error);
+    console.error('Error getting work types:', error);
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
+
 app.post('/api/add-worktypes', async (req, res) => {
   try {
     const { company, workTypes } = req.body;

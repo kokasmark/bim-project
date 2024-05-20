@@ -44,14 +44,15 @@ class CustomerDashboard extends Component {
         blur: false,
         statusText: ["Waiting Calculation", "Waiting payment", "Paid", "Can be downloaded", "Billed"],
         companies: [],
-        selectableWorkTypes: []
+        selectableWorkTypes: [],
+        selectedCategory: "orders"
     }
     getOffers(){
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
         var raw = JSON.stringify({
-            "company": getCookie("login-company")
+            "token": getCookie("login-token")
         });
 
         var requestOptions = {
@@ -121,18 +122,14 @@ class CustomerDashboard extends Component {
     
             
     }
-    setWorkTypes(company){
+    setWorkTypes(){
         var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
-    
-            var raw = JSON.stringify({
-            "company": company
-            });
+
     
             const requestOptions = {
             method: 'POST',
             headers: myHeaders,
-            body: raw,
             redirect: 'follow'
             };
     
@@ -141,10 +138,11 @@ class CustomerDashboard extends Component {
             .then(result => 
                 {
                     var r = JSON.parse(result);
+                    console.log(r)
                     if(r.success){
                         let workTypes = []
                         r.workTypes.forEach(wtype => {
-                            workTypes.push({label: wtype.label, value: wtype.label});
+                            workTypes.push({label: wtype, value: wtype});
                         });
                         this.setState({workTypes: workTypes})
                     }
@@ -154,6 +152,7 @@ class CustomerDashboard extends Component {
     componentDidMount() {
         this.getOffers()
         this.start()
+        this.setWorkTypes()
     }
     requestOfferPopUp() {
         this.setState({ requestingOffer: true,blur: true });
@@ -185,7 +184,7 @@ class CustomerDashboard extends Component {
             projectName: document.getElementById('project-name').value,
             workTypes: this.state.selectedWorktypes,
             companyName: this.state.selectedCompany,
-            author: `${getCookie("login-company")}`,
+            author: `${getCookie("login-name")}`,
             datum: date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate()
         };
         console.log(r)
@@ -241,26 +240,18 @@ class CustomerDashboard extends Component {
         }
     }
     formatOfferId(offer) {
-            // Ensure the ID is a string
-        var id = offer.offerId.toString();
-        
-        // Calculate the number of leading zeros needed
-        var leadingZeros = 6 - id.length;
 
-        // Add leading zeros
-        var formatted = offer.header.companyName+"-"+"0".repeat(leadingZeros) + id;
-
-        return formatted;
+        return offer.id;
     }
     render() {
-        if(getCookie("login-company") !== "undefined" && getCookie("login-company") !== ""){
         return (
             <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }} ref={this.dashboard}>
                 <h1 style={{ marginTop: 100, padding: '50px 0px 0px 0px', marginLeft: '15%', display: 'inline-block', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : ''}}>Customer Dashboard</h1>
                 <button className='rounded-btn-primary' style={{ position: 'relative', top: 0, left: '50%', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}
                     onClick={() => this.requestOfferPopUp()}>Request New Offer</button>
                 <div className='dashboard-header' style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
-                    <Card>
+                    <Card className={this.state.selectedCategory == "orders"?"header selected":"header"}
+                        onClick={()=> this.setState({selectedCategory: "orders"})}>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-5.png')} />
                             <div style={{ marginTop: -30 }}>
@@ -269,7 +260,8 @@ class CustomerDashboard extends Component {
                             </div>
                         </Card.Body>
                     </Card>
-                    <Card>
+                    <Card className={this.state.selectedCategory == "waiting"?"header selected":"header"}
+                        onClick={()=> this.setState({selectedCategory: "waiting"})}>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-2.png')} />
                             <div style={{ marginTop: -30 }}>
@@ -278,7 +270,8 @@ class CustomerDashboard extends Component {
                             </div>
                         </Card.Body>
                     </Card>
-                    <Card>
+                    <Card className={this.state.selectedCategory == "paid"?"header selected":"header"}
+                        onClick={()=> this.setState({selectedCategory: "paid"})}>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-6.png')} />
                             <div style={{ marginTop: -30 }}>
@@ -287,7 +280,8 @@ class CustomerDashboard extends Component {
                             </div>
                         </Card.Body>
                     </Card>
-                    <Card>
+                    <Card className={this.state.selectedCategory == "finished"?"header selected":"header"}
+                        onClick={()=> this.setState({selectedCategory: "finished"})}>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-1.png')} />
                             <div style={{ marginTop: -30 }}>
@@ -296,7 +290,8 @@ class CustomerDashboard extends Component {
                             </div>
                         </Card.Body>
                     </Card>
-                    <Card>
+                    <Card className={this.state.selectedCategory == "billed"?"header selected":"header"}
+                        onClick={()=> this.setState({selectedCategory: "billed"})}>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-7.png')} />
                             <div style={{ marginTop: -30 }}>
@@ -306,26 +301,24 @@ class CustomerDashboard extends Component {
                         </Card.Body>
                     </Card>
                 </div>
-                <div className='dashboard-category' ref={this.offer_requestsRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
+                {this.state.selectedCategory == "orders" && <div className='dashboard-category' ref={this.offer_requestsRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-5.png')} />Orders</Card.Title>
                         <Card.Body>
-                            <div className='column-headers-rw-6'>
+                            <div className='column-headers-rw-5'>
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
-                                <p>Rövid cégnév</p>
                                 <p>Ajánlatkérési dátum</p>
                                 <p>Status</p>
                                 <div className='line'></div>
                             </div>
 
                             {this.state.offers[0].map((offer,index) =>
-                                <div className='rows-rw-6' style={{animation: `row-load ${index}s`}}>
+                                <div className='rows-rw-5' style={{animation: `row-load ${index}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
-                                    <p>{offer.header.companyName}</p>
                                     <p>{offer.header.datum}</p>
                                     <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -20}}>{this.state.statusText[offer.status]}</p>
                                     <div className='line'>
@@ -334,16 +327,15 @@ class CustomerDashboard extends Component {
                             )}
                         </Card.Body>
                     </Card>
-                </div>
-                <div className='dashboard-category' ref={this.sent_offersRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
+                </div>}
+                {this.state.selectedCategory == "waiting" && <div className='dashboard-category' ref={this.sent_offersRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-2.png')} /> Orders (waiting payment)</Card.Title>
                         <Card.Body>
-                            <div className='column-headers-rw-7'>
+                            <div className='column-headers-rw-6'>
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
-                                <p>Rövid cégnév</p>
                                 <p>Ajánlatkérési dátum</p>
                                 <p>Status</p>
                                 <p>Action</p>
@@ -351,11 +343,10 @@ class CustomerDashboard extends Component {
                             </div>
 
                             {this.state.offers[1].map((offer,_index) =>
-                                <div className='rows-rw-7' index={_index}  style={{animation: `row-load ${_index}s`}}>
+                                <div className='rows-rw-6' index={_index}  style={{animation: `row-load ${_index}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
-                                    <p>{offer.header.companyName}</p>
                                     <p>{offer.header.datum}</p>
                                     <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -20}} onClick={()=> this.offerPopUp(offer)}>See offer</p>
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: 50}} onClick={()=> this.depositPopUp(offer)}><img src={card_icon} /> Pay the deposit</p>
@@ -365,27 +356,25 @@ class CustomerDashboard extends Component {
                             )}
                         </Card.Body>
                     </Card>
-                </div>
-                <div className='dashboard-category' ref={this.ordersRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
+                </div>}
+                {this.state.selectedCategory == "paid" && <div className='dashboard-category' ref={this.ordersRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-6.png')} /> Orders (paid)</Card.Title>
                         <Card.Body>
-                            <div className='column-headers-rw-6'>
+                            <div className='column-headers-rw-5'>
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
-                                <p>Rövid cégnév</p>
                                 <p>Frissítve</p>
                                 <p>Status</p>
                                 <div className='line'></div>
                             </div>
 
                             {this.state.offers[2].map((offer,index) =>
-                                <div className='rows-rw-6'  style={{animation: `row-load ${index}s`}}>
+                                <div className='rows-rw-5'  style={{animation: `row-load ${index}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
-                                    <p>{offer.header.companyName}</p>
                                     <p>{this.offerDateFormat(offer.header.updated)}</p>
                                     <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -20}} onClick={()=> this.offerPopUp(offer)}>See offer</p>
                                     <div className='line'>
@@ -394,16 +383,15 @@ class CustomerDashboard extends Component {
                             )}
                         </Card.Body>
                     </Card>
-                </div>
-                <div className='dashboard-category' ref={this.processingRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
+                </div>}
+                {this.state.selectedCategory == "finished" && <div className='dashboard-category' ref={this.processingRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-1.png')} /> Finished Jobs</Card.Title>
                         <Card.Body>
-                            <div className='column-headers-rw-7'>
+                            <div className='column-headers-rw-6'>
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
-                                <p>Rövid cégnév</p>
                                 <p>Ajánlatkérési dátum</p>
                                 <p>Status</p>
                                 <p>Action</p>
@@ -411,11 +399,10 @@ class CustomerDashboard extends Component {
                             </div>
 
                             {this.state.offers[3].map((offer, index) =>
-                                <div className='rows-rw-7'  style={{animation: `row-load ${index}s`}}>
+                                <div className='rows-rw-6'  style={{animation: `row-load ${index}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
-                                    <p>{offer.header.companyName}</p>
                                     <p>{offer.header.datum}</p>
                                     <p className='outlined-btn-secondary' style={{width: 'fit-content', marginLeft: -20}}>Sample</p>
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: 60}}> <img src={card_icon}/>Pay remaining</p>
@@ -425,27 +412,25 @@ class CustomerDashboard extends Component {
                             )}
                         </Card.Body>
                     </Card>
-                </div>
-                <div className='dashboard-category' ref={this.invoicedRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
+                </div>}
+                {this.state.selectedCategory == "billed" && <div className='dashboard-category' ref={this.invoicedRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-7.png')} /> Billed Jobs</Card.Title>
                         <Card.Body>
-                            <div className='column-headers-rw-6'>
+                            <div className='column-headers-rw-5'>
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
-                                <p>Rövid cégnév</p>
                                 <p>Ajánlatkérési dátum</p>
                                 <p>Status</p>
                                 <div className='line'></div>
                             </div>
 
                             {this.state.offers[4].map((offer,index) =>
-                                <div className='rows-rw-6'  style={{animation: `row-load ${index}s`}}>
+                                <div className='rows-rw-5'  style={{animation: `row-load ${index}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
-                                    <p>{offer.header.companyName}</p>
                                     <p>{offer.header.datum}</p>
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -60, backgroundColor: 'var(--success)'}}><img src={download_icon}/>Download Job</p>
                                     <div className='line'>
@@ -454,7 +439,7 @@ class CustomerDashboard extends Component {
                             )}
                         </Card.Body>
                     </Card>
-                </div>
+                </div>}
 
                 {this.state.requestingOffer &&
                     <div style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }}>
@@ -464,15 +449,6 @@ class CustomerDashboard extends Component {
                             <p style={{ textAlign: 'center', marginTop: -30 }}>To request an offer, fill in all the details and we will process it within  2 business days</p>
 
                             <div className='form'>
-                                <Select
-                                    name="Work types"
-                                    options={this.state.companies}
-                                    className="basic-multi-select"
-                                    classNamePrefix="select"
-                                    placeholder="Company"
-                                    id='company-select'
-                                    onChange={(e) => this.handleSelectChange(e, this)}
-                                />
                                 <input placeholder='Short project Name' id='project-name' style={{marginTop: 20, background: "var(--darker-bg)"}}></input>
                                 
                                 <Select
@@ -567,18 +543,6 @@ class CustomerDashboard extends Component {
                 <NavBar />
             </div>
         )
-        }else{
-            return(
-                <div>
-                    <div className='no-company'>
-                        <h1>A felhasználó egy cégnek se a tagja.</h1>
-                        <h2>Vegye fel a cége adminjával a kapcsolatot hogy oldalunkat használhassa!</h2>
-                    </div>
-
-                    <NavBar />
-                </div>
-            )
-        }
     }
 }
 

@@ -468,17 +468,15 @@ input::placeholder{
   width: 80%;
   margin-bottom: 50px;
   border-radius: 8px;
-  background-color: var(--primary);
+  background-color: var(--bg);
   padding: 50px;
   padding-top: 10px;
 }
 .offer-order-data .column-headers-rw-5{
-  background-color: var(--darker-bg);
   padding: 5px;
   border-radius: 10px 10px 0px 0px;
 }
 .offer-order-data .rows-rw-5{
-  background-color: var(--darker-bg);
   padding: 5px;
   border-radius: 0px 0px 10px 10px;
 }
@@ -486,7 +484,7 @@ input::placeholder{
   height: 50%;
   border-radius: 8px;
   width: 80%;
-  background-color: var(--primary);
+  background-color: var(--bg);
   padding: 50px;
   padding-top: 10px;
 }
