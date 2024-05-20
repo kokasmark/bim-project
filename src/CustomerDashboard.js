@@ -246,10 +246,8 @@ class CustomerDashboard extends Component {
     render() {
         return (
             <div style={{ backgroundColor: 'var(--darker-bg)', overflowY: this.state.blur == false ? 'scroll' : 'hidden', maxHeight: '1000px' }} ref={this.dashboard}>
-                <button className='rounded-btn-primary' style={{ position: 'relative', top: 0, left: '50%', filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}
-                    onClick={() => this.requestOfferPopUp()}>Request New Offer</button>
                 <div className='dashboard-header' style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
-                    <Card className={this.state.selectedCategory == "orders"?"header selected":"header"}
+                    {this.state.offers[0].length > 0 && <Card className={this.state.selectedCategory == "orders"?"header selected":"header"}
                         onClick={()=> this.setState({selectedCategory: "orders"})}>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-5.png')} />
@@ -258,8 +256,8 @@ class CustomerDashboard extends Component {
                                 <Card.Text style={{ marginTop: -30 }}>Orders</Card.Text>
                             </div>
                         </Card.Body>
-                    </Card>
-                    <Card className={this.state.selectedCategory == "waiting"?"header selected":"header"}
+                    </Card>}
+                    {this.state.offers[1].length > 0 && <Card className={this.state.selectedCategory == "waiting"?"header selected":"header"}
                         onClick={()=> this.setState({selectedCategory: "waiting"})}>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-2.png')} />
@@ -268,8 +266,8 @@ class CustomerDashboard extends Component {
                                 <Card.Text style={{ marginTop: -30 }}>Orders (waiting payment)</Card.Text>
                             </div>
                         </Card.Body>
-                    </Card>
-                    <Card className={this.state.selectedCategory == "paid"?"header selected":"header"}
+                    </Card>}
+                    {this.state.offers[2].length > 0 && <Card className={this.state.selectedCategory == "paid"?"header selected":"header"}
                         onClick={()=> this.setState({selectedCategory: "paid"})}>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-6.png')} />
@@ -278,8 +276,8 @@ class CustomerDashboard extends Component {
                                 <Card.Text style={{ marginTop: -30 }}>Orders (paid)</Card.Text>
                             </div>
                         </Card.Body>
-                    </Card>
-                    <Card className={this.state.selectedCategory == "finished"?"header selected":"header"}
+                    </Card>}
+                    {this.state.offers[3].length > 0 && <Card className={this.state.selectedCategory == "finished"?"header selected":"header"}
                         onClick={()=> this.setState({selectedCategory: "finished"})}>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-1.png')} />
@@ -289,13 +287,24 @@ class CustomerDashboard extends Component {
                             </div>
                         </Card.Body>
                     </Card>
-                    <Card className={this.state.selectedCategory == "billed"?"header selected":"header"}
+                    }
+                    {this.state.offers[4].length > 0 && <Card className={this.state.selectedCategory == "billed"?"header selected":"header"}
                         onClick={()=> this.setState({selectedCategory: "billed"})}>
                         <Card.Body style={{ margin: 20 }}>
                             <img src={require('./assets/dashboard_icons/icon-7.png')} />
                             <div style={{ marginTop: -30 }}>
                                 <Card.Text style={{ fontSize: 34, fontWeight: 'medium' }}>{this.state.offers[4].length}</Card.Text>
                                 <Card.Text style={{ marginTop: -30 }}>Billed Jobs</Card.Text>
+                            </div>
+                        </Card.Body>
+                    </Card>}
+                    <Card className={"header"}
+                        onClick={() => this.requestOfferPopUp()}
+                        style={{backgroundColor: 'transparent', border: '2px solid var(--bg)', color: 'var(--bg)', opacity: 1}}>
+                        <Card.Body style={{ margin: 20 }}>
+                            <div style={{ marginTop: -80 }}>
+                            <Card.Text style={{fontSize: 80 }}>+</Card.Text>
+                                <Card.Text style={{fontSize: 20, marginTop:-80 }}>Új Rendelés</Card.Text>
                             </div>
                         </Card.Body>
                     </Card>

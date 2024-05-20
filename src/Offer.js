@@ -110,7 +110,7 @@ formatOfferId(offer) {
       <div className='offer' style={{ display: this.state.open ? "block" : "none" }}>
         {this.state.open && <div>
           <div className='offer-order-data'>
-            <Icon_close style={{ marginBottom: -20, marginLeft: "100%" }} className='interactable' onClick={() => this.popUpClose()} />
+            <Icon_close style={{ marginBottom: -20, marginLeft: "100%", filter: "invert(1)" }} className='interactable' onClick={() => this.popUpClose()} />
             <h1 style={{ marginTop: 0 }}>Order Data</h1>
 
             <div className='column-headers-rw-4'>

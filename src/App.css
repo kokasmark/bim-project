@@ -86,7 +86,7 @@ body{
   color: var(--secondary);
   border-radius: 40px;
   padding: 5px 20px;
-  border: 2px dashed var(--secondary);
+  border: 2px dashed black;
   font-size: 20px;
   cursor: pointer;
 }
@@ -129,6 +129,7 @@ body{
 .dashboard-header{
   margin-left: 13%;
   margin-top: 5%;
+  display: flex;
 }
 .dashboard-header .card{
   display: inline-block;
@@ -291,8 +292,8 @@ body{
   box-shadow: 5px 5px 5px var(--shadow);
 }
 input{
-  background: var(--bg);
-  color: var(--secondary);
+  background: white;
+  color: black;
   border-radius: 8px;
   min-height: 40px;
   border: rgb(27, 27, 27);
@@ -548,7 +549,7 @@ input::placeholder{
   width: 50%;
   margin-left: 25%;
   height: 100%;
-  color: white;
+  color: black;
   text-align: center;
 }
 .manage-panel h1{
@@ -592,7 +593,7 @@ input::placeholder{
   width: fit-content;
   height: 50px;
   display: flex;
-  border: 1px solid white;
+  border: 1px solid black;
   padding: 10px;
   border-radius: 5px;
   margin-top: 10px;

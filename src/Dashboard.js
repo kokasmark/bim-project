@@ -333,7 +333,7 @@ class Dashboard extends Component {
                 {this.state.selectedCategory == "sent" && <div className='dashboard-category' ref={this.sent_offersRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-2.png')} />
-                        Sent Offers
+                        Elküldött
                         <select>
                                 <option>Sorszám</option>
                                 <option>Projekt</option>
@@ -372,7 +372,7 @@ class Dashboard extends Component {
                 {this.state.selectedCategory == "processing" && <div className='dashboard-category' ref={this.ordersRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-6.png')} /> 
-                        Processing
+                        Feldolgozás alatt
                         <select>
                                 <option>Sorszám</option>
                                 <option>Projekt</option>
@@ -413,7 +413,7 @@ class Dashboard extends Component {
                 {this.state.selectedCategory == "finished" &&  <div className='dashboard-category' ref={this.processingRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-1.png')} />
-                         Finished Jobs
+                         Kész
                          <select>
                                 <option>Sorszám</option>
                                 <option>Projekt</option>
@@ -452,7 +452,7 @@ class Dashboard extends Component {
                 {this.state.selectedCategory == "invoiced" && <div className='dashboard-category' ref={this.invoicedRef} style={{ filter: this.state.blur == true ? 'blur(3px) brightness(50%)' : '' }}>
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-7.png')} />
-                         Invoiced Jobs
+                         Számlázott
                          <select>
                                 <option>Sorszám</option>
                                 <option>Projekt</option>
