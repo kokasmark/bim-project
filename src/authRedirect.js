@@ -30,15 +30,18 @@ const AuthRedirect = (WrappedComponent, roleNeeded = 0) => {
           body: raw,
           redirect: 'follow'
         };
-
         fetch("http://localhost:3001/api/role", requestOptions)
           .then(response => response.text())
           .then(result => {
             var r = JSON.parse(result);
             if(r.success){
+              console.log(roleNeeded, r.role)
               if(roleNeeded >  r.role){
                 navigate('/')
               }
+            }
+            else{
+              navigate('/')
             }
           })
           .catch(error => console.log('error', error));

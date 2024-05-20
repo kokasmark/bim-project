@@ -20,14 +20,14 @@ class App extends Component {
 
         <div ref={this.heroRef}>
           <div style={{ display: 'inline-block', position: 'relative', left: 300, top: 0}}>
-            <h1 style={{ fontSize: 56, width: 600 }}>
+            <h1 style={{ fontSize: 56, width: 600,color: 'var(--bg)' }}>
               Digitális Műszaki előkészítés
             </h1>
-            <p style={{ fontSize: 18, width: 450 }}>
+            <p style={{ fontSize: 18, width: 450,color: 'white'  }}>
               A Digitálisan előkészített anyag használható az ajánlatadástól az átadásig.
             </p>
             <b className='interactable'
-                style={{color: "var(--lighter-bg)", fontSize: 30}}
+                style={{color: 'var(--bg)' , fontSize: 30}}
                 onClick={() =>
               window.scrollTo({
                 top: this.moreInfoRef.current.offsetTop,

@@ -31,7 +31,7 @@ class NavBar extends Component{
             if(r.success){
               console.log(r.role)
               setCookie("login-company", r.company,1)
-              this.setState({dashboard: r.role === 1 ? "/offers" : "/orders", role: r.role})
+              this.setState({dashboard: r.role === 1 ? "/dashboard" : "/orders", role: r.role})
             }
           })
           .catch(error => console.log('error', error));
@@ -44,7 +44,6 @@ class NavBar extends Component{
       <div className='navbar'>
         <Link to={'/'}><img src={logo}/></Link>
         <Link to={this.state.dashboard}><p>Dashboard</p></Link>
-        {this.state.role > 0 && <Link to={'/orders'}><p>Orders</p></Link>}
         {this.state.role > 0 && <Link to={'/manage'}><p>Manage</p></Link>}
 
         {getCookie("login-token") == "" && <div>

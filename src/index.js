@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter, Route, Routes} from 'react-router-dom';
+import { BrowserRouter, Route, Routes,Navigate} from 'react-router-dom';
 import Dashboard from './Dashboard';
 import CustomerDashboard from './CustomerDashboard';
 import SignUpPage from './SignUpPage';
@@ -20,13 +20,14 @@ root.render(
   <Routes>
     <Route exact={true} path="/" element={<App />} />
     <Route exact={true} path="/orders" element={<CustomerDashboard />} />
-    <Route exact={true} path="/offers" element={<Dashboard />} />
+    <Route exact={true} path="/dashboard" element={<Dashboard />} />
     <Route exact={true} path="/manage" element={<ManageWrapper />} />
 
     <Route exact={true} path="/signup" element={<SignUpPage />} />
     <Route exact={true} path="/signin" element={<SignInWrapper />} />
 
     <Route exact={true} path="/forgot-password" element={<ForgotPasswordWrapper/>} />
+    <Route path="*" element={<Navigate to="/" />} />
   </Routes>
   </BrowserRouter>
 );
