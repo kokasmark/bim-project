@@ -36,7 +36,9 @@ class SignInPage extends Component{
           Swal.fire("Success!", "Successfully logged in!","success"); 
           setCookie("login-token", r.token,1);
           setCookie("login-name", r.name,1);
-          setCookie("login-company", r.company)
+          setCookie("login-email", this.state.email);
+          setCookie("notifications", r.notifications)
+          console.log(r);
           const { navigate } = this.props;
           navigate("/");
         }else{
@@ -49,9 +51,8 @@ class SignInPage extends Component{
     return(
       <div>
         <div className='panel'>
-          <img className='logo' src={require("./assets/logo.png")}/>
-          <h1>Sign In</h1>
-          <p>Enter your credentials to continue</p>
+          <h1>Bejentkezés</h1>
+          <p>Kérem adja meg belépési adatait</p>
           <div>
             <div className='inputs'>
               <input placeholder='Email address' style={{width: "92%", marginTop: 20}} onChange={(e) => this.setState({email: e.target.value})}></input>
@@ -59,7 +60,8 @@ class SignInPage extends Component{
               
               <button className='validate-btn interactable' onClick={()=>this.validate()}>Sign In</button>
               <br/>
-              <Link to={"/forgot-password"} style={{textDecoration: "none", color: 'white'}} className='interactable'><p>Forgot Password?</p></Link>
+              <Link to={"/forgot-password"} style={{textDecoration: "none", color: 'white'}} className='interactable'><p>Elfelejtette jelszavát?</p></Link>
+              <Link to={"/register"} style={{textDecoration: "none", color: 'white'}} className='interactable'><p>Nincs még fiókja?</p></Link>
             </div>
             
           </div>

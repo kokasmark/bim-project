@@ -23,8 +23,8 @@ root.render(
     <Route exact={true} path="/dashboard" element={<Dashboard />} />
     <Route exact={true} path="/manage" element={<ManageWrapper />} />
 
-    <Route exact={true} path="/signup" element={<SignUpPage />} />
-    <Route exact={true} path="/signin" element={<SignInWrapper />} />
+    <Route exact={true} path="/register" element={<SignUpPage />} />
+    <Route exact={true} path="/login" element={<SignInWrapper />} />
 
     <Route exact={true} path="/forgot-password" element={<ForgotPasswordWrapper/>} />
     <Route path="*" element={<Navigate to="/" />} />

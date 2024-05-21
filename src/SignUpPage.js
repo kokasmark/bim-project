@@ -49,9 +49,8 @@ class SignUpPage extends Component{
     return(
       <div>
         <div className='panel'>
-          <img className='logo' src={require("./assets/logo.png")}/>
-          <h1>Sign Up</h1>
-          <p>Enter your credentials to continue</p>
+          <h1>Regisztrálás</h1>
+          <p>Kérem adja meg adatait a folytatáshoz</p>
           <div>
             <div className='inputs'>
               <input placeholder='First Name' style={{marginRight: "10%"}} onChange={(e) => this.setState({firstName: e.target.value})}></input>
@@ -59,7 +58,8 @@ class SignUpPage extends Component{
               <input placeholder='Email address' style={{width: "92%", marginTop: 20}} onChange={(e) => this.setState({email: e.target.value})}></input>
               <input placeholder='Password' style={{width: "92%", marginTop: 20}} type='password' onChange={(e) => this.setState({password: e.target.value})}></input>
               <PasswordStrengthBar style={{width: "92%", marginLeft: "4%", marginTop: 20}} password={this.state.password} />
-              <button className='validate-btn interactable' onClick={()=>this.validate()}>Sign Up</button>
+              <button className='validate-btn interactable' onClick={()=>this.validate()}>Regisztrálás</button>
+              <Link to={"/login"} style={{textDecoration: "none", color: 'white'}} className='interactable'><p>Van már fiókja?</p></Link>
             </div>
             
           </div>

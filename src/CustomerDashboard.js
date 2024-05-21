@@ -185,6 +185,7 @@ class CustomerDashboard extends Component {
             workTypes: this.state.selectedWorktypes,
             companyName: this.state.selectedCompany,
             author: `${getCookie("login-name")}`,
+            authorEmail: getCookie("login-email"),
             datum: date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate()
         };
         console.log(r)

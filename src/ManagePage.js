@@ -314,7 +314,7 @@ class ManagePage extends Component {
     return (
       <div className='page'>
         <div className='manage-panel'>
-          <h1>Manage({getCookie("login-company")})</h1>
+          <h1 style={{color: 'white'}}>Admin</h1>
           <div className='colleagues-panel'>
             <h2>Add to company</h2>
             <input type='text' placeholder='Email' onChange={(e) => this.setState({ emailToCompany: e.target.value })}></input>
@@ -330,19 +330,6 @@ class ManagePage extends Component {
                 </div>
               ))}
             </ul>
-          </div>
-          <div className='workTypes-panel'>
-            <h2>Saved Work Types</h2>
-            <input placeholder='New work type' className='new-worktype-input' id="new-worktype"></input>
-            <p className='interactable' style={{ color: "var(--success)"}} onClick={()=>this.add()}>+</p>
-              <div className='work-types'>
-              {this.state.workTypes.map((workType, index) => (
-                <div key={index} className='worktype'>
-                  <p>{workType.label}</p>
-                  <p className='interactable' style={{ color: "var(--error)" }} onClick={()=> this.removeWorkTypes(index)}>-</p>
-                </div>
-              ))}
-            </div>
           </div>
           <div className='logs-panel'>
               {this.state.logs.map((log, index) => (

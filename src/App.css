@@ -101,6 +101,15 @@ body{
   justify-content: center;
   flex-direction: row;
 }
+.navbar .notifications{
+  background-color: var(--bg);
+  width: 400px;
+  height: fit-content;
+  position: absolute;
+  right: 50px;
+  top: 50px;
+  border-radius: 0px 0px 10px 10px;
+}
 .navbar p{
   color: black;
   margin: 22px 10px;
@@ -127,7 +136,7 @@ body{
   cursor: pointer;
 }
 .dashboard-header{
-  margin-left: 13%;
+  margin-left: 5%;
   margin-top: 5%;
   display: flex;
 }
@@ -290,6 +299,9 @@ body{
   border-radius: 10px;
   animation: anim-scale .5s ease;
   box-shadow: 5px 5px 5px var(--shadow);
+}
+.request-offer input{
+  color: white;
 }
 input{
   background: white;
@@ -491,6 +503,9 @@ input::placeholder{
   padding: 50px;
   padding-top: 10px;
 }
+.offer-order input{
+  color: white;
+}
 .offer-order .column-headers-rw-4 .line{
   width: 100%;
 }
@@ -520,6 +535,10 @@ input::placeholder{
   position: absolute;
   left: 30%;
   text-align: center;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .panel .logo{
   width: 50%;
@@ -538,10 +557,10 @@ input::placeholder{
 .panel .inputs .validate-btn{
   width: 92%;
   padding: 15px;
-  background-color: var(--primary);
+  background-color: var(--bg);
   border-radius: 10px;
   border: none;
-  color: white;
+  color: black;
   font-size: 20px;
   margin-top: 50px;
 }

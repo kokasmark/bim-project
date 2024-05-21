@@ -18,6 +18,78 @@ admin.initializeApp({
 // Initialize Firestore
 const db = admin.firestore();
 
+async function addNotification(email, message) {
+  try {
+    // Retrieve the user document based on the email
+    const userQuerySnapshot = await db.collection('users').where('email', '==', email).get();
+
+    // Check if the user document exists
+    if (!userQuerySnapshot.empty) {
+      const userDocRef = userQuerySnapshot.docs[0].ref;
+
+      // Add the message to the user's notifications array
+      await userDocRef.update({
+        notifications: admin.firestore.FieldValue.arrayUnion(message)
+      });
+
+    } else {
+      console.error('User not found');
+    }
+  } catch (error) {
+    console.error('Error adding notification:', error);
+  }
+}
+async function getNotifications(token) {
+  try {
+    // Retrieve the user document based on the token
+    const userQuerySnapshot = await db.collection('users').where('token', '==', token).get();
+
+    // Check if the user document exists
+    if (!userQuerySnapshot.empty) {
+      const userDocRef = userQuerySnapshot.docs[0].ref;
+
+      // Get the user's notifications
+      const userDocSnapshot = await userDocRef.get();
+      const notifications = userDocSnapshot.data().notifications || [];
+
+      // Clear the notifications array
+      await userDocRef.update({
+        notifications: []
+      });
+
+      return notifications;
+    } else {
+      console.error('User not found');
+      return [];
+    }
+  } catch (error) {
+    console.error('Error retrieving and clearing notifications:', error);
+    return [];
+  }
+}
+async function addNotificationsForAdmins(message) {
+  try {
+    // Retrieve the first document from the Constants collection
+    const constantsQuerySnapshot = await db.collection('Constants').limit(1).get();
+
+    // Check if the Constants document exists
+    if (!constantsQuerySnapshot.empty) {
+      const constantsDoc = constantsQuerySnapshot.docs[0].data();
+      const admins = constantsDoc.admins || [];
+
+      // Iterate over the admins array and add a notification for each admin
+      for (const adminEmail of admins) {
+        await addNotification(adminEmail, message);
+      }
+
+      console.log('Notifications added for all admins');
+    } else {
+      console.error('Constants document not found');
+    }
+  } catch (error) {
+    console.error('Error adding notifications for admins:', error);
+  }
+}
 async function Log(company, message, token){
   const companyQuerySnapshot = await db.collection('companies').where('name', '==', company).get();
   const userRef = (await db.collection('users').where('token', '==', token).get()).docs[0];
@@ -32,28 +104,6 @@ async function Log(company, message, token){
       // Add a new document to the "offers" subcollection with the offer data
       const offerDocRef = await offersCollectionRef.add({ message: message, user: user, timestamp: new Date().getTime()});
     }
-}
-
-async function getNextOfferId(companyName) {
-  // Retrieve the document reference for the company based on its name
-  const companyQuerySnapshot = await db.collection('companies').where('name', '==', companyName).get();
-  
-  if (!companyQuerySnapshot.empty) {
-    const companyDocRef = companyQuerySnapshot.docs[0].ref;
-    
-    // Access the "offers" subcollection for the company
-    const offersCollectionRef = companyDocRef.collection('offers');
-
-    // Fetch all documents in the "offers" subcollection
-    const offersQuerySnapshot = await offersCollectionRef.get();
-
-    // Get the size of the offers subcollection to determine the next offer ID
-    const nextOfferId = offersQuerySnapshot.size + 1;
-
-    return nextOfferId;
-  } else {
-    return null;
-  }
 }
 
 function generateUserToken(){
@@ -81,7 +131,7 @@ app.post('/api/register', async (req, res) => {
     var token = generateUserToken();
     let passHash = await generatePasswordHash(password);
     passHash = passHash.toString();
-    console.log({email, passHash, name, token})
+    console.log(`${new Date().getTime()} - `,`New registration data: ${name}, ${email}`)
     // Add the new user document to Firestore
     await userRef.set({ email, password: passHash, name, token, role: 0});
 
@@ -112,8 +162,12 @@ app.post('/api/login', async (req, res) => {
 
     var token = generateUserToken()
     await userRef.update({ token:  token});
+
+    getNotifications(token).then(n => {
+      res.json({ success: true, token: token, name: userData.name, notifications: JSON.stringify(n)});
+  });
     // Password matches, user is authenticated
-    res.json({ success: true, token: token, name: userData.name, company: userData.company });
+    
   } catch (error) {
     console.error('Error logging in user:', error);
     res.status(500).json({ success: false, error: 'Internal server error' });
@@ -137,7 +191,9 @@ app.post('/api/add-offer', async (req, res) => {
 
       // Access sentOffers
       const ordersCollectionRef = userDocRef.collection('sentOffers');
-
+      
+      addNotificationsForAdmins(`Egy új rendelés érkezett! Projekt: ${header.projectName}`)
+      console.log(`${new Date().getTime()} - `,`New offer data: `,{header})
       // Add a new document to the "orders" subcollection with the offer reference
       await ordersCollectionRef.add({ id: offerDocRef.id });
 
@@ -177,7 +233,8 @@ app.post('/api/update-offer', async (req, res) => {
 
       // Log the update (assuming Log is a defined function)
       //Log(`Offer ${offerId} updated. Status: ${status}`, token);
-
+      addNotification(updatedHeader.authorEmail,`A '${updatedHeader.projectName}' projekthez kapcsolódó rendelése frissült!`)
+      console.log(`${new Date().getTime()} - `,`Offer updated data: `,{updatedHeader})
       res.status(200).json({ success: true, message: 'Offer updated successfully' });
     } else {
       res.status(400).json({ success: false, error: 'Offer not found' });

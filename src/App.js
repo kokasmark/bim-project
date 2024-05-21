@@ -45,7 +45,7 @@ class App extends Component {
               behavior: "smooth"
             })
           } />
-          <h1 style={{ fontSize: 34, width: 420, textAlign: 'center', marginLeft: '28%' }}>Solution for thriving product communities</h1>
+          <h1 style={{ fontSize: 34, width: 420, textAlign: 'center', marginLeft: '28%', opacity: 0 }}>Solution for thriving product communities</h1>
           <div className='home-card'>
             <img src={yellow_icon} style={{ margin: 10 }} />
             <div style={{ margin: 20 }}>
