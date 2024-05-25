@@ -135,6 +135,9 @@ body{
 .interactable{
   cursor: pointer;
 }
+.interactable:hover{
+  font-weight: bold;
+}
 .dashboard-header{
   margin-left: 5%;
   margin-top: 5%;
@@ -230,6 +233,7 @@ body{
   display: inline-block;
   color: black;
   width: calc(100%/4);
+  user-select: text;
 }
 .rows-rw-4 div{
   display: inline-block;
@@ -240,16 +244,19 @@ body{
   display: inline-block;
   color: black;
   width: calc(100%/5);
+  user-select: text;
 }
 .rows-rw-6 p{
   display: inline-block;
   color: black;
   width: calc(100%/6);
+  user-select: text;
 }
 .rows-rw-7 p{
   display: inline-block;
   color: black;
   width: calc(100%/7);
+  user-select: text;
 }
 .rows-rw-7 .rounded-btn-primary{
   font-size: 15px !important;
@@ -302,6 +309,27 @@ body{
 }
 .request-offer input{
   color: white;
+}
+.request-offer .file-upload{
+  background-color: transparent;
+  border: 3px dotted black;
+  padding: 20px 0px 10px 0px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: black;
+}
+.request-offer .file-upload input{
+  background-color: transparent;
+  border: none;
+  color: black;
+  margin-bottom: 0px;
+  margin-left: 40px;
+}
+.request-offer .file-upload ul{
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  list-style-type: none;
 }
 input{
   background: white;
@@ -686,6 +714,17 @@ input::placeholder{
 }
 a{
   text-decoration: none;
+}
+.info-popup{
+  background-color: var(--bg);
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  width: 60%;
+  height: 60%;
+  padding-left: 100px;
+  border-radius: 10px;
+  padding-top: 50px;
 }
 @keyframes row-load {
   0%{

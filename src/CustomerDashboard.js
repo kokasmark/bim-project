@@ -34,7 +34,8 @@ class CustomerDashboard extends Component {
         requestingOffer: false,
         requestSent: false,
         acceptedFilesOnUpload: ["JPG", "PNG", "SVG", "PDF"],
-        request: { sorszam: '', projekt: '', munkanem: '', cegnev: '', datum: '' },
+        request: { sorszam: '', projekt: '', munkanem: '', cegnev: '', datum: '', files: {}},
+        description: '',
         selectedOffer: {},
         selectedWorktypes: '',
         selectedCompany: "",
@@ -45,7 +46,8 @@ class CustomerDashboard extends Component {
         statusText: ["Waiting Calculation", "Waiting payment", "Paid", "Can be downloaded", "Billed"],
         companies: [],
         selectableWorkTypes: [],
-        selectedCategory: "orders"
+        selectedCategory: "orders",
+        uploadedFiles: []
     }
     getOffers(){
         var myHeaders = new Headers();
@@ -73,7 +75,8 @@ class CustomerDashboard extends Component {
 
         var raw = JSON.stringify({
         "token": getCookie("login-token"),
-        "header": header
+        "header": header,
+        "files": this.state.request.files
         });
 
         var requestOptions = {
@@ -186,7 +189,8 @@ class CustomerDashboard extends Component {
             companyName: this.state.selectedCompany,
             author: `${getCookie("login-name")}`,
             authorEmail: getCookie("login-email"),
-            datum: date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate()
+            datum: date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate(),
+            description: this.state.description
         };
         console.log(r)
         this.sendOffers(r)
@@ -243,6 +247,39 @@ class CustomerDashboard extends Component {
     formatOfferId(offer) {
 
         return offer.id;
+    }
+   handleFileUpload(e) {
+    let files = [];
+    const promises = [];
+    let fileNames = [];
+    Array.from(e.target.files).forEach((file) => {
+        fileNames.push(file.name);
+        const promise = new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+            resolve(reader.result);
+        };
+        reader.onerror = (error) => {
+            reject(error);
+        };
+        });
+
+        promises.push(promise);
+    });
+
+    Promise.all(promises)
+        .then((base64Files) => {
+        base64Files.forEach(base64String => {
+            files.push(base64String);
+        });
+            var updatedReques = this.state.request;
+            updatedReques.files = files;
+            this.setState({uploadedFiles: [...this.state.uploadedFiles,fileNames],request: updatedReques});
+        })
+        .catch((error) => {
+            console.error('Error converting files to base64:', error);
+        });
     }
     render() {
         return (
@@ -324,7 +361,7 @@ class CustomerDashboard extends Component {
                             </div>
 
                             {this.state.offers[0].map((offer,index) =>
-                                <div className='rows-rw-5' style={{animation: `row-load ${index}s`}}>
+                                <div className='rows-rw-5' style={{animation: `row-load ${index/this.state.offers[0].length}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
@@ -352,7 +389,7 @@ class CustomerDashboard extends Component {
                             </div>
 
                             {this.state.offers[1].map((offer,_index) =>
-                                <div className='rows-rw-6' index={_index}  style={{animation: `row-load ${_index}s`}}>
+                                <div className='rows-rw-6' index={_index}  style={{animation: `row-load ${_index/this.state.offers[1].length}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
@@ -380,7 +417,7 @@ class CustomerDashboard extends Component {
                             </div>
 
                             {this.state.offers[2].map((offer,index) =>
-                                <div className='rows-rw-5'  style={{animation: `row-load ${index}s`}}>
+                                <div className='rows-rw-5'  style={{animation: `row-load ${index/this.state.offers[2].length}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
@@ -408,7 +445,7 @@ class CustomerDashboard extends Component {
                             </div>
 
                             {this.state.offers[3].map((offer, index) =>
-                                <div className='rows-rw-6'  style={{animation: `row-load ${index}s`}}>
+                                <div className='rows-rw-6'  style={{animation: `row-load ${index/this.state.offers[3].length}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
@@ -436,7 +473,7 @@ class CustomerDashboard extends Component {
                             </div>
 
                             {this.state.offers[4].map((offer,index) =>
-                                <div className='rows-rw-5'  style={{animation: `row-load ${index}s`}}>
+                                <div className='rows-rw-5'  style={{animation: `row-load ${index/this.state.offers[4].length}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
@@ -470,14 +507,18 @@ class CustomerDashboard extends Component {
                                     id='work-types'
                                     onChange={(e) => this.handleMultiChange(e, this)}
                                 />
-                                <input placeholder='Please write here the needed data takeoffs or jobs on the drawings' style={{ height: 100, position: 'relative', top: 20, background: "var(--darker-bg)" }}></input>
+                                <input placeholder='Please write here the needed data takeoffs or jobs on the drawings' 
+                                style={{ height: 100, position: 'relative', top: 20, background: "var(--darker-bg)" }} onChange={(e)=>this.setState({description: e.target.value})}></input>
 
-                                <div className='upload-file-container'><FileUploader classes='upload-file' children={
-                                    <div style={{ width: '100%' }}>
-                                        <img src={upload_file_icon} />
-                                        <p>Click to upload or drag and drop</p>
-                                    </div>} name="file" types={this.acceptedFilesOnUpload} /></div>
-                                <button className='outlined-btn-secondary' style={{ }} onClick={() => this.setState({ requestingOffer: false,blur: false })}>Back</button>
+                                <div className='file-upload'>
+                                    <input  type='file' accept='image/*,.pdf' multiple onChange={(e)=>this.handleFileUpload(e)}/>
+                                    <ul>
+                                        {this.state.uploadedFiles.map((name, index) => (
+                                            <li>{name}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <button className='outlined-btn-secondary' onClick={() => this.setState({ requestingOffer: false,blur: false })}>Back</button>
                                 <button className='rounded-btn-primary' style={{ marginLeft: 10}}
                                     onClick={() => this.sendOfferRequest()}>Send offer Request</button>
                             </div>

@@ -13,12 +13,14 @@ import Select from 'react-select';
 import { FileUploader } from "react-drag-drop-files";
 import upload_file_icon from './assets/dashboard_icons/UploadFileFilled.png';
 import logo from './assets/logo.png';
+import { FaCircleInfo } from "react-icons/fa6";
 
 import Swal from 'sweetalert2';
 import Offer from './Offer';
 import calc_icon from './assets/dashboard_icons/calculate_black_24dp 1.png'
 import AuthRedirect from './authRedirect';
 import { getCookie } from './cookie';
+import Filter from './Filter';
 
 
 class Dashboard extends Component {
@@ -44,8 +46,9 @@ class Dashboard extends Component {
         seeOffer: {},
         blur: false,
         offerAction: true, //true if editing
-        selectedCategory: "requests"
-
+        selectedCategory: "requests",
+        filter: {by: null, value: ''},
+        infoPopUp: null
     }
 
     getOffers(){
@@ -226,6 +229,59 @@ class Dashboard extends Component {
     formatOfferId(offer) {
         return offer.id;
     }
+    setFilter(value){
+        this.setState({filter: value});
+    }
+    filter(offer){
+        var by = this.state.filter.by;
+        var val = this.state.filter.value;
+        var flag = false;
+        console.log(by)
+        if(by != null){
+            switch(by){
+                case 'Sorszám':
+                    if(offer.id == val)
+                        flag = true
+                    break;
+                case 'Projekt':
+                    if(offer.header.projectName == val)
+                        flag = true
+                    break;
+                case 'Munkanem':
+                    if(offer.header.workTypes.has(val))
+                        flag = true
+                    break;
+                case 'Megrendelő':
+                    if(offer.header.author == val)
+                        flag = true
+                    break;
+            }
+        }
+        else{
+            flag = true;
+        }
+        console.log(flag)
+        return flag;
+    }
+    downloadBase64File(base64, fileName) {
+        // Create a link element
+        const link = document.createElement('a');
+    
+        // Set the href attribute to the base64 string
+        link.href = base64;
+    
+        // Set the download attribute to the desired file name
+        link.download = fileName;
+    
+        // Append the link to the body
+        document.body.appendChild(link);
+    
+        // Programmatically click the link to trigger the download
+        link.click();
+    
+        // Remove the link from the document
+        document.body.removeChild(link);
+    }
     render() {
         const options = [
             { value: 'ajzatbeton', label: 'Ajzat Beton' },
@@ -294,17 +350,11 @@ class Dashboard extends Component {
                         <Card.Title style={{ fontSize: 24 }}>
                             <img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-5.png')} />
                             Rendelések
-                            <select>
-                                <option>Sorszám</option>
-                                <option>Projekt</option>
-                                <option>Munkanem</option>
-                                <option>Megrendelő</option>
-                            </select>
-                            <input></input>
-                            <p className='rounded-btn-primary' style={{width: 100, textAlign: 'center', display: 'inline-block'}}>Szűrés</p>
+                            <Filter parent={this}></Filter>
                             </Card.Title>
                         <Card.Body>
-                            <div className='column-headers-rw-6'>
+                            <div className='column-headers-rw-7'>
+                                <p></p>
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>
                                 <p>Munkanem</p>
@@ -316,7 +366,12 @@ class Dashboard extends Component {
                             </div>
 
                             {this.state.offers[0].map((offer,index) =>
-                                <div className='rows-rw-6'  style={{animation: `row-load ${index}s`}}>
+                            <div>
+                                {this.filter(offer) == true && 
+                                    
+                                <div className='rows-rw-7'  style={{animation: `row-load ${index}s`}}>
+                                    <p className='interactable' style={{textAlign: 'center'}} onClick={()=> this.setState({infoPopUp: offer, blur: true})}>
+                                        <FaCircleInfo style={{fontSize: 30, marginBottom: -10}}/> Részletes információ</p>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
@@ -325,6 +380,7 @@ class Dashboard extends Component {
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -50}}  onClick={()=> this.offerPopUp(offer, true)}><img src={calc_icon}/>Calculation</p>
                                     <div className='line'>
                                     </div>
+                                </div>}
                                 </div>
                             )}
                         </Card.Body>
@@ -334,14 +390,7 @@ class Dashboard extends Component {
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-2.png')} />
                         Elküldött
-                        <select>
-                                <option>Sorszám</option>
-                                <option>Projekt</option>
-                                <option>Munkanem</option>
-                                <option>Megrendelő</option>
-                            </select>
-                            <input></input>
-                            <p className='rounded-btn-primary' style={{width: 100, textAlign: 'center', display: 'inline-block'}}>Szűrés</p>
+                        <Filter parent={this}></Filter>
                         </Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-6'>
@@ -355,7 +404,8 @@ class Dashboard extends Component {
                             </div>
 
                             {this.state.offers[1].map((offer,_index) =>
-                                <div className='rows-rw-6' index={_index}  style={{animation: `row-load ${_index}s`}}>
+                            <div>
+                                {this.filter(offer) == true &&<div className='rows-rw-6' index={_index}  style={{animation: `row-load ${_index}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
@@ -364,6 +414,7 @@ class Dashboard extends Component {
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -50}} onClick={()=> this.depositArrivedPopup(offer)}>Deposit arrived</p>
                                     <div className='line'>
                                     </div>
+                                </div>}
                                 </div>
                             )}
                         </Card.Body>
@@ -373,14 +424,7 @@ class Dashboard extends Component {
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-6.png')} /> 
                         Feldolgozás alatt
-                        <select>
-                                <option>Sorszám</option>
-                                <option>Projekt</option>
-                                <option>Munkanem</option>
-                                <option>Megrendelő</option>
-                            </select>
-                            <input></input>
-                            <p className='rounded-btn-primary' style={{width: 100, textAlign: 'center', display: 'inline-block'}}>Szűrés</p>
+                       <Filter parent={this}></Filter>
                         </Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-7'>
@@ -395,7 +439,8 @@ class Dashboard extends Component {
                             </div>
 
                             {this.state.offers[2].map((offer,index) =>
-                                <div className='rows-rw-7'  style={{animation: `row-load ${index}s`}}>
+                            <div>
+                                {this.filter(offer) == true &&<div className='rows-rw-7'  style={{animation: `row-load ${index}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
@@ -405,6 +450,7 @@ class Dashboard extends Component {
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: 0 , backgroundColor: 'var(--success)'}} onClick={()=> this.sendFinishedJob(offer)}>Send Finished Job</p>
                                     <div className='line'>
                                     </div>
+                                </div>}
                                 </div>
                             )}
                         </Card.Body>
@@ -414,14 +460,7 @@ class Dashboard extends Component {
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-1.png')} />
                          Kész
-                         <select>
-                                <option>Sorszám</option>
-                                <option>Projekt</option>
-                                <option>Munkanem</option>
-                                <option>Megrendelő</option>
-                            </select>
-                            <input></input>
-                            <p className='rounded-btn-primary' style={{width: 100, textAlign: 'center', display: 'inline-block'}}>Szűrés</p>
+                         <Filter parent={this}></Filter>
                          </Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-6'>
@@ -435,7 +474,8 @@ class Dashboard extends Component {
                             </div>
 
                             {this.state.offers[3].map((offer,index) =>
-                                <div className='rows-rw-6'  style={{animation: `row-load ${index}s`}}>
+                            <div>
+                                {this.filter(offer) == true &&<div className='rows-rw-6'  style={{animation: `row-load ${index}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
@@ -444,6 +484,7 @@ class Dashboard extends Component {
                                     <p className='rounded-btn-primary' style={{width: 'fit-content', marginLeft: -60, backgroundColor: 'var(--success)'}} onClick={()=>this.sendInvoice(offer)}><img src={download_icon}/>Send Invoice</p>
                                     <div className='line'>
                                     </div>
+                                </div>}
                                 </div>
                             )}
                         </Card.Body>
@@ -453,14 +494,7 @@ class Dashboard extends Component {
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-7.png')} />
                          Számlázott
-                         <select>
-                                <option>Sorszám</option>
-                                <option>Projekt</option>
-                                <option>Munkanem</option>
-                                <option>Megrendelő</option>
-                            </select>
-                            <input></input>
-                            <p className='rounded-btn-primary' style={{width: 100, textAlign: 'center', display: 'inline-block'}}>Szűrés</p>
+                         <Filter parent={this}></Filter>
                          </Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-6'>
@@ -474,7 +508,8 @@ class Dashboard extends Component {
                             </div>
 
                             {this.state.offers[4].map((offer,index) =>
-                                <div className='rows-rw-6'  style={{animation: `row-load ${index}s`}}>
+                            <div>
+                                 {this.filter(offer) == true &&<div className='rows-rw-6'  style={{animation: `row-load ${index}s`}}>
                                     <p>{this.formatOfferId(offer)}</p>
                                     <p>{offer.header.projectName}</p>
                                     <p>{offer.header.workTypes}</p>
@@ -483,6 +518,7 @@ class Dashboard extends Component {
                                     <p style={{color: "var(--success)"}}>Done</p>
                                     <div className='line'>
                                     </div>
+                                </div>}
                                 </div>
                             )}
                         </Card.Body>
@@ -560,6 +596,44 @@ class Dashboard extends Component {
                         </div>
                     </div>}
                     
+                    {this.state.infoPopUp != null && 
+                        <div className='info-popup'>
+                             <div className='column-headers-rw-5'>
+                                <p>Ajánlatkérési sorszám</p>
+                                <p>Projekt</p>
+                                <p>Munkanem</p>
+                                <p>Megrendelő</p>
+                                <p>Ajánlatkérési dátum</p>
+                                <div className='line'></div>
+                            </div>
+
+
+                            <div className='rows-rw-5'>
+                            <p>{this.state.infoPopUp.id}</p>
+                            <p>{this.state.infoPopUp.header.projectName}</p>
+                            <p>{this.state.infoPopUp.header.workTypes}</p>
+                            <p>{this.state.infoPopUp.header.author}</p>
+                            <p>{this.offerDateFormat(this.state.infoPopUp.header.datum)}</p>
+                            <div className='line'>
+                            </div>
+
+                            <div style={{width: '100%',display: 'flex', justifyContent: 'center', flexDirection: 'column'}}>
+                                <h2>Rendelő elérhetősége</h2>
+                                <p>Email cím: <b>{this.state.infoPopUp.header.authorEmail}</b></p>
+                                <h2>Leírás</h2>
+                                <p>{this.state.infoPopUp.header.description}</p>
+                                <h2>Fájlok({this.state.infoPopUp.files.length})</h2>
+                                <ol>
+                                    {this.state.infoPopUp.files.map((file, index) => (
+                                        <div style={{display: 'flex', gap: 10, alignContent: 'center', alignItems: 'center'}}>
+                                            <li>{file.split(';')[0]}</li>
+                                            <div className='rounded-btn-primary' style={{width: 'fit-content'}} onClick={()=>this.downloadBase64File(file, `${this.state.infoPopUp.id}-${index+1}`)}>Letöltés</div>
+                                        </div>
+                                    ))}
+                                </ol>
+                            </div>
+                        </div>
+                        </div>}
                     
                     <Offer offer={this.state.seeOffer} ref={this.offerRef} parent={this} editing={this.state.offerAction}/>
                     

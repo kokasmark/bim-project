@@ -2,11 +2,11 @@ const express = require('express');
 const admin = require('firebase-admin');
 const cors = require('cors');
 const bcrypt = require("bcrypt");
-
+const bodyParser = require('body-parser');
 const app = express();
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 const port = 3001;
 
 // Initialize Firebase Admin SDK with your service account credentials
@@ -14,6 +14,7 @@ const serviceAccount = require('./serviceAccountKey.json');
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
+
 
 // Initialize Firestore
 const db = admin.firestore();
@@ -177,10 +178,10 @@ app.post('/api/login', async (req, res) => {
 //REWORKED
 app.post('/api/add-offer', async (req, res) => {
   try {
-    const { token, header } = req.body;
+    const { token, header,files } = req.body;
 
     // Add a new document to the "Jobs" collection with the offer data
-    const offerDocRef = await db.collection('Jobs').add({ header: header, data: "", status: 0});
+    const offerDocRef = await db.collection('Jobs').add({ header: header, data: "", status: 0, files: files});
 
     // Retrieve the user document based on the token
     const userQuerySnapshot = await db.collection('users').where('token', '==', token).get();
@@ -268,9 +269,9 @@ app.post('/api/get-offers', async (req, res) => {
 
       // Extract the necessary fields from each job document
       const offers = jobsQuerySnapshot.docs.map(doc => {
-        const { header, status, data, offerId } = doc.data();
+        const { header, status, data, offerId, files } = doc.data();
         const id = doc.id; // Retrieve the document ID
-        return { id, header, data, status, offerId };
+        return { id, header, data, status, offerId,files };
       });
 
       res.status(200).json({ success: true, offers });
