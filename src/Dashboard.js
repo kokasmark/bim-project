@@ -598,6 +598,7 @@ class Dashboard extends Component {
                     
                     {this.state.infoPopUp != null && 
                         <div className='info-popup'>
+                            <Icon_close className='icon-close interactable' onClick={()=>this.setState({infoPopUp: null, blur: false})}/>
                              <div className='column-headers-rw-5'>
                                 <p>Ajánlatkérési sorszám</p>
                                 <p>Projekt</p>

@@ -3,7 +3,9 @@ const admin = require('firebase-admin');
 const cors = require('cors');
 const bcrypt = require("bcrypt");
 const bodyParser = require('body-parser');
+const path = require("path");
 const app = express();
+
 app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
@@ -714,6 +716,13 @@ app.post('/api/remove-worktypes', async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
+
+app.use(express.static("build"));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

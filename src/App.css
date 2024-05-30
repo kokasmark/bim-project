@@ -725,6 +725,13 @@ a{
   padding-left: 100px;
   border-radius: 10px;
   padding-top: 50px;
+  overflow-y: auto;
+}
+.info-popup .icon-close{
+  filter: invert(1);
+  position: absolute;
+  right: 2%;
+  top: 4%;
 }
 @keyframes row-load {
   0%{
