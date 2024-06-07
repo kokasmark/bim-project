@@ -259,22 +259,24 @@ app.post('/api/get-offers', async (req, res) => {
 
     // Check if the user document exists
     if (!userQuerySnapshot.empty) {
-      // Calculate the offset for pagination
-      const offset = (page - 1) * pageSize;
+      const statuses = [0, 1, 2, 3, 4];
+      const offers = [];
 
-      // Query the "Jobs" collection with pagination
-      const jobsQuerySnapshot = await db.collection('Jobs')
-        .orderBy('header.companyName') // Adjust the orderBy field as needed
-        .offset(offset)
-        .limit(pageSize)
-        .get();
+      for (let status of statuses) {
+        // Query the "Jobs" collection with pagination for each status
+        const jobsQuerySnapshot = await db.collection('Jobs')
+          .where('status', '==', status)
+          .orderBy('header.companyName') // Adjust the orderBy field as needed
+          .limit(pageSize)
+          .get();
 
-      // Extract the necessary fields from each job document
-      const offers = jobsQuerySnapshot.docs.map(doc => {
-        const { header, status, data, offerId, files } = doc.data();
-        const id = doc.id; // Retrieve the document ID
-        return { id, header, data, status, offerId,files };
-      });
+        // Extract the necessary fields from each job document
+        jobsQuerySnapshot.docs.forEach(doc => {
+          const { header, status, data, offerId, files } = doc.data();
+          const id = doc.id; // Retrieve the document ID
+          offers.push({ id, header, data, status, offerId, files });
+        });
+      }
 
       res.status(200).json({ success: true, offers });
     } else {
@@ -285,6 +287,7 @@ app.post('/api/get-offers', async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
+
 
 //USER Retrieves its orders
 app.post('/api/get-orders', async (req, res) => {

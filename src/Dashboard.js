@@ -52,9 +52,9 @@ class Dashboard extends Component {
     }
 
     getOffers(){
+        this.setState({offers: [[],[],[],[],[]]});
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
-
         var raw = JSON.stringify({
             "token": getCookie("login-token"),
             "page": 1
@@ -166,6 +166,7 @@ class Dashboard extends Component {
                 .then((result) => console.log(result))
                 .catch((error) => console.error(error));
               Swal.fire("Saved!", "", "success");
+              this.getOffers();
             } else if (result.isDenied) {
 
             }
@@ -173,49 +174,51 @@ class Dashboard extends Component {
     }
     sendFinishedJob(offer){
         const myHeaders = new Headers();
-                myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Content-Type", "application/json");
 
-                const raw = JSON.stringify({
-                "companyName": offer.header.companyName,
-                "offerId": offer.id,
-                "status": 3,
-                "token": getCookie("login-token")
-                });
+        const raw = JSON.stringify({
+        "companyName": offer.header.companyName,
+        "offerId": offer.id,
+        "status": 3,
+        "token": getCookie("login-token")
+        });
 
-                const requestOptions = {
-                method: "POST",
-                headers: myHeaders,
-                body: raw,
-                redirect: "follow"
-                };
+        const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow"
+        };
 
-                fetch("http://localhost:3001/api/update-offer", requestOptions)
-                .then((response) => response.text())
-                .then((result) => console.log(result))
-                .catch((error) => console.error(error));
+        fetch("http://localhost:3001/api/update-offer", requestOptions)
+        .then((response) => response.text())
+        .then((result) => console.log(result))
+        .catch((error) => console.error(error));
+        this.getOffers();
     }
     sendInvoice(offer){
         const myHeaders = new Headers();
-                myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Content-Type", "application/json");
 
-                const raw = JSON.stringify({
-                "companyName": offer.header.companyName,
-                "offerId": offer.id,
-                "status": 4,
-                "token": getCookie("login-token")
-                });
+        const raw = JSON.stringify({
+        "companyName": offer.header.companyName,
+        "offerId": offer.id,
+        "status": 4,
+        "token": getCookie("login-token")
+        });
 
-                const requestOptions = {
-                method: "POST",
-                headers: myHeaders,
-                body: raw,
-                redirect: "follow"
-                };
+        const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow"
+        };
 
-                fetch("http://localhost:3001/api/update-offer", requestOptions)
-                .then((response) => response.text())
-                .then((result) => console.log(result))
-                .catch((error) => console.error(error));
+        fetch("http://localhost:3001/api/update-offer", requestOptions)
+        .then((response) => response.text())
+        .then((result) => console.log(result))
+        .catch((error) => console.error(error));
+        this.getOffers();
     }
     calculateDepositOsszeg(offer){
         var osszeg = 0
@@ -350,7 +353,7 @@ class Dashboard extends Component {
                         <Card.Title style={{ fontSize: 24 }}>
                             <img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-5.png')} />
                             Rendelések
-                            <Filter parent={this}></Filter>
+                            {/* <Filter parent={this}></Filter> */}
                             </Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-7'>
@@ -390,7 +393,7 @@ class Dashboard extends Component {
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-2.png')} />
                         Elküldött
-                        <Filter parent={this}></Filter>
+                        {/* <Filter parent={this}></Filter> */}
                         </Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-6'>
@@ -424,7 +427,7 @@ class Dashboard extends Component {
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-6.png')} /> 
                         Feldolgozás alatt
-                       <Filter parent={this}></Filter>
+                       {/* <Filter parent={this}></Filter> */}
                         </Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-7'>
@@ -460,7 +463,7 @@ class Dashboard extends Component {
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-1.png')} />
                          Kész
-                         <Filter parent={this}></Filter>
+                         {/* <Filter parent={this}></Filter> */}
                          </Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-6'>
@@ -494,7 +497,7 @@ class Dashboard extends Component {
                     <Card>
                         <Card.Title style={{ fontSize: 24 }}><img style={{ margin: 10, width: 50, height: 50, marginBottom: -15 }} src={require('./assets/dashboard_icons/icon-7.png')} />
                          Számlázott
-                         <Filter parent={this}></Filter>
+                         {/* <Filter parent={this}></Filter> */}
                          </Card.Title>
                         <Card.Body>
                             <div className='column-headers-rw-6'>

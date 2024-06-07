@@ -84,6 +84,7 @@ class Offer extends Component {
       .then(response => response.text())
       .then(result => {Swal.fire("Success!", `Offer [${this.formatOfferId(offer)}] updated successfully!`,"success"); this.popUpClose()})
       .catch(error => {Swal.fire("Oops!", error.error, "error")});
+      this.props.parent.getOffers();
   }
   calculateDepositOsszeg(e){
     var offer = this.props.offer;
@@ -172,18 +173,18 @@ formatOfferId(offer) {
                     {data.elements.map((element,eindex) => (
                       <li key={element.id}>
                         <div className='rows-rw-4'>
-                        <div><input style={{border: "1px solid var(--primary)", background: "var(--darker-bg)", margin: 5}} placeholder='Pl. helységköny' value={element.title} onChange={(e) => this.ChangeDataInnerTitle(index,eindex,e.target.value)}></input></div>
-                        <div><input id={`${index}-${eindex}-ftdb`} style={{width: 50, border: "1px solid var(--primary)", background: "var(--darker-bg)"}} value={element.ftDb} onChange={(e) => this.ChangeDataFtDb(index,eindex,e.target.value)}></input><p>Ft/db</p></div>
-                        <div><input id={`${index}-${eindex}-db`} style={{width: 50, border: "1px solid var(--primary)",background: "var(--darker-bg)"}} value={element.db} onChange={(e) => this.ChangeDataDb(index,eindex,e.target.value)}></input><p>db</p></div>
-                        <div><input disabled style={{width: 50, border: "1px solid var(--primary)", background: "var(--darker-bg)"}}value={this.CalculateFt(index,eindex)}></input><p>Ft</p></div>
+                        <div><input style={{border: "1px solid var(--bg)", background: "var(--darker-bg)", margin: 5}} placeholder='Pl. helységköny' value={element.title} onChange={(e) => this.ChangeDataInnerTitle(index,eindex,e.target.value)}></input></div>
+                        <div><input id={`${index}-${eindex}-ftdb`} style={{width: 50, border: "1px solid var(--bg)", background: "var(--darker-bg)"}} value={element.ftDb} onChange={(e) => this.ChangeDataFtDb(index,eindex,e.target.value)}></input><p>Ft/db</p></div>
+                        <div><input id={`${index}-${eindex}-db`} style={{width: 50, border: "1px solid var(--bg)",background: "var(--darker-bg)"}} value={element.db} onChange={(e) => this.ChangeDataDb(index,eindex,e.target.value)}></input><p>db</p></div>
+                        <div><input disabled style={{width: 50, border: "1px solid var(--bg)", background: "var(--darker-bg)"}}value={this.CalculateFt(index,eindex)}></input><p>Ft</p></div>
                         </div>
                       </li>
                     ))}
-                    <h2  style={{width: "90%", padding: 5,backgroundColor: "var(--bg)", borderRadius: 10}} onClick={()=> this.addElementLine(index)} className='interactable'>+</h2>
+                    <h2  style={{width: "90%", padding: 5,backgroundColor: "var(--bg)", borderRadius: 10}} onClick={()=> this.addElementLine(index)} className='interactable add-data'>+</h2>
                   </ul>
                 </li>
               ))}
-              <h1 style={{width: "90%", padding: 5,backgroundColor: "var(--bg)", borderRadius: 10}} onClick={()=> this.addDataLine()} className='interactable'>+</h1>
+              <h1 style={{width: "90%", padding: 5,backgroundColor: "var(--bg)", borderRadius: 10}} onClick={()=> this.addDataLine()} className='interactable add-data'>+</h1>
             </ul>
             <button className='rounded-btn-primary' onClick={()=> this.updateOffer(this.props.offer)}>Update Offer</button>
             </div>

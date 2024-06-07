@@ -733,6 +733,13 @@ a{
   right: 2%;
   top: 4%;
 }
+.add-data{
+  transition: 0.3s;
+}
+.add-data:hover{
+  color: white;
+  background: var(--darker-bg) !important;
+}
 @keyframes row-load {
   0%{
     opacity: 0;
