@@ -35,7 +35,7 @@ class App extends Component {
               })
             }>More Info</b>
           </div>
-          <img src={hero_img} style={{ position: 'relative', top: 200, left: '20%', width: 1000, height: '100%',filter:'drop-shadow(-10px 5px 2px #202227)' }} />
+          <img src={hero_img} draggable={false} style={{ position: 'relative', top: 200, left: '20%', width: 1000, height: '100%',filter:'drop-shadow(-10px 5px 2px #202227)' }} />
           
         </div>
         <div style={{ position: 'relative', top: 500, marginLeft: '15%', height: 800 }} ref={this.moreInfoRef}>

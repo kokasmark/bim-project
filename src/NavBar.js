@@ -51,7 +51,7 @@ class NavBar extends Component{
     return(
       <div className='navbar'>
         <Link to={'/'}><img src={logo}/></Link>
-        <Link to={this.state.dashboard}><p>Dashboard</p></Link>
+        {getCookie("login-token") != "" && <Link to={this.state.dashboard}><p>Dashboard</p></Link>}
         {this.state.role > 0 && <Link to={'/manage'}><p>Manage</p></Link>}
 
         {getCookie("login-token") == "" && <div>

@@ -12,7 +12,7 @@ const AuthRedirect = (WrappedComponent, roleNeeded = 0) => {
 
       // If the token is not present, redirect to the login page
       if (!hasToken) {
-        navigate('/signin');
+        navigate('/');
       }
       else{
         var role = -1;
