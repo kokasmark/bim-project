@@ -511,14 +511,14 @@ class CustomerDashboard extends Component {
                                 style={{ height: 100, position: 'relative', top: 20, background: "var(--darker-bg)" }} onChange={(e)=>this.setState({description: e.target.value})}></input>
 
                                 <div className='file-upload'>
-                                    <input  type='file' accept='image/*,.pdf' multiple onChange={(e)=>this.handleFileUpload(e)}/>
+                                    <input type='file' accept='image/*,.pdf' multiple onChange={(e)=>this.handleFileUpload(e)}/>
                                     <ul>
                                         {this.state.uploadedFiles.map((name, index) => (
                                             <li>{name}</li>
                                         ))}
                                     </ul>
                                 </div>
-                                <button className='outlined-btn-secondary' onClick={() => this.setState({ requestingOffer: false,blur: false })}>Back</button>
+                                <button className='outlined-btn-secondary' style={{color: 'black'}} onClick={() => this.setState({ requestingOffer: false,blur: false })}>Back</button>
                                 <button className='rounded-btn-primary' style={{ marginLeft: 10}}
                                     onClick={() => this.sendOfferRequest()}>Send offer Request</button>
                             </div>

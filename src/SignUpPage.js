@@ -5,8 +5,13 @@ import { Link } from 'react-router-dom';
 import PasswordStrengthBar from 'react-password-strength-bar';
 import Swal from 'sweetalert2';
 import {setCookie} from './cookie';
+import { useNavigate } from "react-router-dom";
 
+const SignUpWrapper = () => {
+  const navigate = useNavigate();
 
+  return <SignUpPage navigate={navigate} />;
+};
 class SignUpPage extends Component{
   state = {
     firstName: '',
@@ -39,6 +44,8 @@ class SignUpPage extends Component{
           Swal.fire("Success!", "Successfully registered!","success"); 
           setCookie("login-token", r.token,1);
           setCookie("login-name", r.name,1);
+          const { navigate } = this.props;
+          navigate("/");
         }else{
           Swal.fire("Oops!",r.error,"error")
         }
@@ -69,4 +76,4 @@ class SignUpPage extends Component{
   }
 }
 
-export default SignUpPage;
+export default SignUpWrapper;

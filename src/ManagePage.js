@@ -135,16 +135,18 @@ class ManagePage extends Component {
       <div className='page'>
         <div className='manage-panel'>
           <h1>Manage</h1>
-            <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'column', background: 'var(--primary)', width: 400, borderRadius: 10, maxHeight: 200, overflowY: 'auto'}}>
+            <div style={{
+              display: 'flex', justifyContent: 'center', flexDirection: 'column', textAlign: 'left', 
+              background: 'var(--bg)', width: 400, borderRadius: 10, maxHeight: 200, overflowY: 'auto', color: 'black', paddingLeft: 20}}>
               {this.state.admins.map((admin, index) =>(
-                <p key={'admin-'+index}><b>{admin.name}</b> - {admin.email}</p>
+                <p key={'admin-'+index}><b>{index+1}. {admin.name}</b> - {admin.email}</p>
               ))
 
               }
             </div>
             <div style={{display: 'flex', gap: 10, justifyContent: 'center', marginTop: 50}}>
               <input style={{width: 300, height: 40}} placeholder='pl.: admin@admin.com' onChange={(e)=> this.setState({email: e.target.value})}></input>
-              <div className='rounded-btn-primary' onClick={()=>this.addAdmin()}>Felvétel Adminnak</div>
+              <div className='rounded-btn-primary' style={{background: 'var(--bg)', color: 'black'}} onClick={()=>this.addAdmin()}>Felvétel Adminnak</div>
             </div>
 
             <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'column', marginTop: 50}}>
@@ -159,7 +161,7 @@ class ManagePage extends Component {
               }
                <div style={{display: 'flex', gap: 10, justifyContent: 'center', marginTop: 50}}>
               <input style={{width: 300, height: 40}} placeholder='Új munkatípus' onChange={(e)=> this.setState({newWorkType: e.target.value})}></input>
-              <div className='rounded-btn-primary' onClick={(e)=>this.updateWorktype(this.state.newWorkType,1)}>Felvétel</div>
+              <div className='rounded-btn-primary' style={{background: 'var(--bg)', color: 'black'}} onClick={(e)=>this.updateWorktype(this.state.newWorkType,1)}>Felvétel</div>
             </div>
             </div>
         </div>
